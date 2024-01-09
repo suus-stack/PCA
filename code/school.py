@@ -158,6 +158,7 @@ class Experiment(Creature):
 
             # Plot range is from 0 to 1 for both x and y axis 
             self.ax1.axis([0, 1, 0, 1])
+            self.ax1.set_facecolor((0.7, 0.8, 1.0))
             coordinates_x_h = []
             coordinates_y_h = []
             coordinates_x_p = []
@@ -178,7 +179,7 @@ class Experiment(Creature):
 
             # Achteraf nog aparte creature lijsten maken zodat je aparte markers en groottes kan kiezen
             self.ax1.scatter(coordinates_x_h, coordinates_y_h, c=color_herring, alpha=0.5, marker=marker_herring)
-            self.ax1.scatter(coordinates_x_p, coordinates_y_p, c=color_predator, alpha=0.5, marker=marker_predator)
+            self.ax1.scatter(coordinates_x_p, coordinates_y_p, c=color_predator, alpha=0.5, marker=marker_predator, s=150)
             plt.title(f'Simulation of herring school with {self.nr_herring} herring and {self.nr_predators} predator(s)')
             plt.draw()
             plt.pause(0.01) 
@@ -199,5 +200,5 @@ class Experiment(Creature):
             self.ax1.axes.get_yaxis().set_visible(False)
 
 if __name__ == "__main__":
-    my_experiment = Experiment(1000, 100, 1)
+    my_experiment = Experiment(100, 100, 1)
     my_experiment.run()
