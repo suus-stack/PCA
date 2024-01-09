@@ -40,21 +40,27 @@ class Creature():
         """
         distance = (self.pos_x - other.pos_x)**2 + (self.pos_y - other.pos_y)**2
         eucl_distance = np.sqrt(distance)
-
         return eucl_distance
     
-    def step(self):
+    def step(self, other=None):
         """
         The step function updates the coordinates of a creature, ensuring the
         movement of creatures in the simulation.
         """
         dx = math.cos(self.angle) * self.speed
         dy = math.sin(self.angle) * self.speed
-        self.pos_x += dx
-        self.pos_y += dy
 
-        # vissen moeten bij elkaar blijven
-        # attraction implementeren --> use eucladian distance 
+        # The location of the predator does not depend on another creature (yet)
+        if other == None:
+            self.pos_x += dx
+            self.pos_y += dy
+        # The location of the herring depends on its closest neighbour
+        else:
+            self.pos_x = other.pos_x + dx
+            self.pos_y = other.pos_y + dy
+
+        self.pos_x %= 1
+        self.pos_y %= 1
 
     def interact(self):
         pass
@@ -69,11 +75,11 @@ class Herring(Creature):
         self.color = 'blue'
         self.marker = 'o'
 
-    def step(self):
+    def step(self, other):
         # When a creature crosses a boundary it returns the other way around (torus)
-        self.pos_x = self.pos_x % 1
-        self.pos_y = self.pos_y % 1
-        super().step()
+        self.pos_x %= 1
+        self.pos_y %= 1
+        super().step(other)
 
     def __repr__(self):
         return f'Herring: {self.pos_x}, {self.pos_y}'
@@ -91,8 +97,8 @@ class Predator(Creature):
     def step(self):
 
         # When a creature crosses a boundary it returns the other way around (torus)
-        self.pos_x = self.pos_x % 1
-        self.pos_y = self.pos_y % 1
+        # self.pos_x %= 1
+        # self.pos_y %= 1
         super().step()
 
 class Experiment(Creature):
@@ -100,7 +106,8 @@ class Experiment(Creature):
         self.iterations = iterations
         self.nr_herring = nr_herring
         self.nr_predators = nr_predators
-        self.creatures = []
+        self.herring = []
+        self.predators = []
         self.visualize = True
         self.add_herring(nr_herring)
         self.add_predators(nr_predators)
@@ -114,7 +121,7 @@ class Experiment(Creature):
             pos_y_h = random.uniform(0,1)
             angle_h = random.uniform(0,1) * math.pi
             herring = Herring(pos_x_h, pos_y_h, angle_h, perception_length=None)
-            self.creatures.append(herring)
+            self.herring.append(herring)
         
 
     def add_predators(self, nr_predators):
@@ -123,11 +130,24 @@ class Experiment(Creature):
             pos_y_p = random.uniform(0,1)
             angle_p = random.uniform(0,1) * math.pi
             predator = Predator(pos_x_p, pos_y_p, angle_p, perception_length=None)
-            self.creatures.append(predator)
-         
+            self.predators.append(predator)
+
+    
     def step(self):
-        for creature in self.creatures:
-            creature.step()
+        for herring1 in self.herring:
+            min_distance = math.inf
+            for herring2 in self.herring:
+                if herring1 != herring2:
+                    distance = herring1.distance(herring2)
+                    # Finding the closest herring
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_neighbour = herring2
+
+            herring1.step(closest_neighbour)
+
+        for predator in self.predators:
+            predator.step()
 
     def draw(self):
             """
@@ -138,20 +158,27 @@ class Experiment(Creature):
 
             # Plot range is from 0 to 1 for both x and y axis 
             self.ax1.axis([0, 1, 0, 1])
-            coordinates_x = []
-            coordinates_y = []
-            colors = []
-            markers = []
+            coordinates_x_h = []
+            coordinates_y_h = []
+            coordinates_x_p = []
+            coordinates_y_p = []
 
-            for creature in self.creatures:
-                coordinates_x.append(creature.pos_x)
-                coordinates_y.append(creature.pos_y)
-                markers.append(creature.marker)
-                colors.append(creature.color)
+            for herring in self.herring:
+                coordinates_x_h.append(herring.pos_x)
+                coordinates_y_h.append(herring.pos_y)
+                marker_herring = herring.marker
+                color_herring = herring.color
+
+            for predator in self.predators:
+                coordinates_x_p.append(predator.pos_x)
+                coordinates_y_p.append(predator.pos_y)
+                marker_predator = predator.marker
+                color_predator = predator.color
+            
 
             # Achteraf nog aparte creature lijsten maken zodat je aparte markers en groottes kan kiezen
-            self.ax1.scatter(coordinates_x, coordinates_y, c=colors, alpha=0.5)
-
+            self.ax1.scatter(coordinates_x_h, coordinates_y_h, c=color_herring, alpha=0.5, marker=marker_herring)
+            self.ax1.scatter(coordinates_x_p, coordinates_y_p, c=color_predator, alpha=0.5, marker=marker_predator)
             plt.title(f'Simulation of herring school with {self.nr_herring} herring and {self.nr_predators} predator(s)')
             plt.draw()
             plt.pause(0.01) 
@@ -172,5 +199,5 @@ class Experiment(Creature):
             self.ax1.axes.get_yaxis().set_visible(False)
 
 if __name__ == "__main__":
-    my_experiment = Experiment(1000, 10, 1)
+    my_experiment = Experiment(1000, 100, 1)
     my_experiment.run()
