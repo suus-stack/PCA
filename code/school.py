@@ -18,8 +18,6 @@
 # is strategy still valid in different sizes of pools 
 
 
-
-
 # 1. zorgen dat de vissen een bepaalde afstand tot elkaar bewaren 
 # 2. gedragsregels voor vissen implementeren 
 # ze kunnen dezelfde positie op het grid hebben (transparency hoog)
@@ -69,6 +67,7 @@ class Herring(Creature):
         super().__init__(pos_x, pos_y, angle)
         self.perception_length = perception_length
         self.color = 'blue'
+        self.marker = 'o'
 
     def step(self):
         # When a creature crosses a boundary it returns the other way around (torus)
@@ -84,6 +83,7 @@ class Predator(Creature):
         super().__init__(pos_x, pos_y, angle)
         self.perception_length = perception_length
         self.color = 'red'
+        self.marker = 'D'
 
     def __repr__(self):
         return f'Predator: {self.pos_x}, {self.pos_y}'
@@ -141,13 +141,16 @@ class Experiment(Creature):
             coordinates_x = []
             coordinates_y = []
             colors = []
+            markers = []
 
             for creature in self.creatures:
                 coordinates_x.append(creature.pos_x)
                 coordinates_y.append(creature.pos_y)
+                markers.append(creature.marker)
                 colors.append(creature.color)
 
-            self.ax1.scatter(coordinates_x, coordinates_y, c=colors)
+            # Achteraf nog aparte creature lijsten maken zodat je aparte markers en groottes kan kiezen
+            self.ax1.scatter(coordinates_x, coordinates_y, c=colors, alpha=0.5)
 
             plt.title(f'Simulation of herring school with {self.nr_herring} herring and {self.nr_predators} predator(s)')
             plt.draw()
@@ -155,7 +158,6 @@ class Experiment(Creature):
             self.ax1.cla()
 
     def run(self):
-        # print('creatures lijst', self.creatures)
 
         for i in range(self.iterations):
             self.step()
@@ -170,5 +172,5 @@ class Experiment(Creature):
             self.ax1.axes.get_yaxis().set_visible(False)
 
 if __name__ == "__main__":
-    my_experiment = Experiment(100, 10, 1)
+    my_experiment = Experiment(1000, 10, 1)
     my_experiment.run()
