@@ -1,25 +1,25 @@
-# Eerste simulatie is random laten bewegen  
+# Eerste simulatie is random laten bewegen
 # implement the two basic principles of escape of and attraction
 
-# stap 1: eerst dat de visjes binnen een bepaalde afstand van elkaar blijven 
-# niet meer dan 
+# stap 1: eerst dat de visjes binnen een bepaalde afstand van elkaar blijven
+# niet meer dan
 
 # aanpak 1: via coordinaten systeem en dan verschillende snelheid
 # aanpak 2: moore neighbourhood
 
-# data: 
+# data:
 # geo
-# percepetion length 
-# find realistic values for these parameters 
+# percepetion length
+# find realistic values for these parameters
 # make a parameter not constant (maybe change over the day nightitme they see less)
 # small amount of randomness into perception length (random fluctuation =)
-# oval body, circle shape, connecting two ponds 
+# oval body, circle shape, connecting two ponds
 # agents cannot move out agent based models support boundaries (opzoeken en onderbouwen)
-# is strategy still valid in different sizes of pools 
+# is strategy still valid in different sizes of pools
 
 
-# 1. zorgen dat de vissen een bepaalde afstand tot elkaar bewaren 
-# 2. gedragsregels voor vissen implementeren 
+# 1. zorgen dat de vissen een bepaalde afstand tot elkaar bewaren
+# 2. gedragsregels voor vissen implementeren
 # ze kunnen dezelfde positie op het grid hebben (transparency hoog)
 import matplotlib
 import matplotlib.pyplot as plt
@@ -41,7 +41,7 @@ class Creature():
         distance = (self.pos_x - other.pos_x)**2 + (self.pos_y - other.pos_y)**2
         eucl_distance = np.sqrt(distance)
         return eucl_distance
-    
+
     def step(self, other=None):
         """
         The step function updates the coordinates of a creature, ensuring the
@@ -98,11 +98,19 @@ class Predator(Creature):
 
         super().step()
 
+class Rock(Creature):
+    def __init__(self, pos_x, pos_y, ):
+        super().__init__(pos_x, pos_y)
+        self.perception_length = perception_length
+        self.color = 'gray'
+        self.marker = 's'
+
 class Experiment(Creature):
-    def __init__(self, iterations, nr_herring, nr_predators, visualize=True):
+    def __init__(self, iterations, nr_herring, nr_predators, nr_rocks, visualize=True):
         self.iterations = iterations
         self.nr_herring = nr_herring
         self.nr_predators = nr_predators
+        self.nr_rocks = nr_rocks
         self.herring = []
         self.predators = []
         self.visualize = True
@@ -119,7 +127,7 @@ class Experiment(Creature):
             angle_h = random.uniform(0,100) * math.pi
             herring = Herring(pos_x_h, pos_y_h, angle_h, perception_length=None)
             self.herring.append(herring)
-        
+
 
     def add_predators(self, nr_predators):
          for _ in range(self.nr_predators):
@@ -129,7 +137,14 @@ class Experiment(Creature):
             predator = Predator(pos_x_p, pos_y_p, angle_p, perception_length=None)
             self.predators.append(predator)
 
-    
+    def add_rock(self, nr_rocks):
+        for _ in range(self.nr_rocks):
+            pos_x_h = random.uniform(0,100)
+            pos_y_h = random.uniform(0,100)
+            rock = Rock(pos_x_h, pos_y_h)
+            self.herring.append(herring)
+
+
     def step(self):
         for herring1 in self.herring:
             min_distance = math.inf
@@ -140,7 +155,7 @@ class Experiment(Creature):
                     if distance < min_distance:
                         min_distance = distance
                         closest_neighbour = herring2
-# misschien gemiddelde x en gemiddelde y van meerdere neighbours 
+# misschien gemiddelde x en gemiddelde y van meerdere neighbours
             herring1.step(closest_neighbour)
 
         for predator in self.predators:
@@ -153,7 +168,7 @@ class Experiment(Creature):
             a scatterplot.
             """
 
-            # Plot range is from 0 to 1 for both x and y axis 
+            # Plot range is from 0 to 1 for both x and y axis
             self.ax1.axis([0, 100, 0, 100])
             self.ax1.set_facecolor((0.7, 0.8, 1.0))
             coordinates_x_h = []
@@ -172,14 +187,20 @@ class Experiment(Creature):
                 coordinates_y_p.append(predator.pos_y)
                 marker_predator = predator.marker
                 color_predator = predator.color
-            
+
+            for predator in self.predators:
+                coordinates_x_r.append(rock.pos_x)
+                coordinates_y_r.append(rock.pos_y)
+                marker_predator = rock.marker
+                color_predator = rock.color
+
 
             # Achteraf nog aparte creature lijsten maken zodat je aparte markers en groottes kan kiezen
             self.ax1.scatter(coordinates_x_h, coordinates_y_h, c=color_herring, alpha=0.5, marker=marker_herring, s=10)
             self.ax1.scatter(coordinates_x_p, coordinates_y_p, c=color_predator, alpha=0.5, marker=marker_predator, s=150)
             plt.title(f'Simulation of herring school with {self.nr_herring} herring and {self.nr_predators} predator(s)')
             plt.draw()
-            plt.pause(0.01) 
+            plt.pause(0.01)
             self.ax1.cla()
 
     def run(self):
@@ -197,5 +218,5 @@ class Experiment(Creature):
             self.ax1.axes.get_yaxis().set_visible(False)
 
 if __name__ == "__main__":
-    my_experiment = Experiment(100, 100, 5)
+    my_experiment = Experiment(100, 100, 5, 10)
     my_experiment.run()
