@@ -77,8 +77,6 @@ class Herring(Creature):
 
     def step(self, other):
         # When a creature crosses a boundary it returns the other way around (torus)
-        self.pos_x %= 1
-        self.pos_y %= 1
         super().step(other)
 
     def __repr__(self):
@@ -97,8 +95,7 @@ class Predator(Creature):
     def step(self):
 
         # When a creature crosses a boundary it returns the other way around (torus)
-        # self.pos_x %= 1
-        # self.pos_y %= 1
+
         super().step()
 
 class Experiment(Creature):
@@ -200,5 +197,5 @@ class Experiment(Creature):
             self.ax1.axes.get_yaxis().set_visible(False)
 
 if __name__ == "__main__":
-    my_experiment = Experiment(100, 100, 1)
+    my_experiment = Experiment(1000, 100, 1)
     my_experiment.run()
