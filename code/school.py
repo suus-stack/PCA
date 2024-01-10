@@ -37,6 +37,7 @@ import matplotlib.pyplot as plt
 import math
 import random
 import numpy as np
+from matplotlib.lines import Line2D
 
 class Creature():
 
@@ -63,8 +64,11 @@ class Creature():
         self.angle = angle
 
         # determine the avreage speed
-        self.speed_p = 0.4
-        self.speed_h = 0.4
+        self.speed_p = 0.5
+        self.speed_h = 0.5
+
+        self.extra_speed_h = 5
+        self.extra_speed_p = 6
 
 
     def distance(self, other):
@@ -223,7 +227,7 @@ class Creature():
 
                 # the closer the predator is to the herring the fasterit will move
                 distance_to_herring = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_herring))
-                predator_speed = self.speed_p + ((self.perception_length/3) / abs(distance_to_herring)) + random.uniform(-0.05, 0.05)
+                predator_speed = self.speed_p + (((self.perception_length- distance_to_herring)/distance_to_herring)*  self.extra_speed_p) + random.uniform(-0.05, 0.05)
 
             # ff there is no herring within the perception lenght the speed stays normal
             else:
@@ -273,7 +277,7 @@ class Creature():
 
                 # the closer the herring is to the predator the faster it will move
                 distance_to_predator = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_predator))
-                herring_speed = self.speed_h + ((self.perception_length/3) / abs(distance_to_predator)) + random.uniform(-0.05, 0.05)
+                herring_speed = self.speed_h + (((self.perception_length- distance_to_predator)/distance_to_predator)*  self.extra_speed_h) + random.uniform(-0.05, 0.05)
 
             # if there is no predator is within the perception lenght the speeds stays normal
             else:
@@ -595,7 +599,7 @@ class Experiment(Creature):
         for _ in range(self.nr_herring):
 
             # determine the perception lenght (average + sd)
-            perception_lenghth_h = 10 + random.uniform(-1, 1)
+            perception_lenghth_h = 15 + random.uniform(-1, 1)
 
             # choose a random position and angle
             pos_x_h = random.uniform(0,100)
@@ -628,7 +632,7 @@ class Experiment(Creature):
         for _ in range(self.nr_predators):
 
             # determine the perception lenght (average + sd)
-            perception_lenghth_p = 10 + random.uniform(-1, 1)
+            perception_lenghth_p = 20 + random.uniform(-1, 1)
 
             # choose a random position and angle
             pos_x_p = random.uniform(0,100)
@@ -752,6 +756,16 @@ class Experiment(Creature):
         self.ax1.scatter(coordinates_x_p, coordinates_y_p, c=color_predator, alpha=0.5, marker=marker_predator, s=150)
         self.ax1.scatter(coordinates_x_r, coordinates_y_r, c=color_rocks, alpha=0.5, marker=marker_rocks, s=50)
 
+        # make a legend
+        legend_experiment = [
+            Line2D([0], [0], marker = 'D', color = 'w', markerfacecolor = (1, 0, 0, 0.7), markersize = 12, label = 'Predator'),
+            Line2D([0], [0], marker = 'o', color = 'w', markerfacecolor = (0, 0, 1, 0.7), markersize = 6, label = 'Herring'),
+            Line2D([0], [0], marker = 's', color = 'w', markerfacecolor = (0.5, 0.5, 0.5, 0.7), markersize = 10, label = 'Rock')
+        ]
+
+        # add a legend
+        plt.legend(handles = legend_experiment, loc='upper left', bbox_to_anchor = (1, 1))
+
         # add a title
         plt.title(f'Simulation of herring school with {self.nr_herring} herring and {self.nr_predators} predator(s)')
 
@@ -792,8 +806,10 @@ class Experiment(Creature):
         self.ax1.axes.get_xaxis().set_visible(False)
         self.ax1.axes.get_yaxis().set_visible(False)
 
+
+
 if __name__ == "__main__":
 
     # make an experiment and run it
-    my_experiment = Experiment(200, 20, 1, 10)
+    my_experiment = Experiment(400, 20, 1, 10)
     my_experiment.run()
