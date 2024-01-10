@@ -63,12 +63,17 @@ class Creature():
         self.pos_y = pos_y
         self.angle = angle
 
-        # determine the avreage speed
+        # determine the avreage speed in normal conditions
         self.speed_p = 0.5
         self.speed_h = 0.5
 
-        self.extra_speed_h = 5
-        self.extra_speed_p = 6
+        # determine the maximal speed
+        self.speed_max_p = 4
+        self.speed_max_h = 3.5
+
+        # determine the difference between the normal and maximal speed
+        self.extra_speed_p = self.speed_max_p - self.speed_p
+        self.extra_speed_h = self.speed_max_h -self.speed_h
 
 
     def distance(self, other):
@@ -216,6 +221,7 @@ class Creature():
         # The location of the predator does not depend on another creature (yet)
         if other == None:
 
+
             # make list with the current positions of the herring
             list_position_herring = self.make_list_positions(information_herring)
 
@@ -227,13 +233,13 @@ class Creature():
 
                 # the closer the predator is to the herring the fasterit will move
                 distance_to_herring = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_herring))
-                predator_speed = self.speed_p + (((self.perception_length- distance_to_herring)/distance_to_herring)*  self.extra_speed_p) + random.uniform(-0.05, 0.05)
+                predator_speed = self.speed_p + (((self.perception_length- distance_to_herring)/self.perception_length)*  self.extra_speed_p) + random.uniform(-0.05, 0.05)
 
             # ff there is no herring within the perception lenght the speed stays normal
             else:
                 predator_speed = self.speed_p + random.uniform(-0.05, 0.05)
 
-
+            print(predator_speed)
             # determine the movement in the x and y direction
             dx = math.cos(self.angle) * predator_speed
             dy = math.sin(self.angle) * predator_speed
@@ -277,7 +283,7 @@ class Creature():
 
                 # the closer the herring is to the predator the faster it will move
                 distance_to_predator = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_predator))
-                herring_speed = self.speed_h + (((self.perception_length- distance_to_predator)/distance_to_predator)*  self.extra_speed_h) + random.uniform(-0.05, 0.05)
+                herring_speed = self.speed_h + (((self.perception_length- distance_to_predator)/self.perception_length)*  self.extra_speed_h) + random.uniform(-0.05, 0.05)
 
             # if there is no predator is within the perception lenght the speeds stays normal
             else:
