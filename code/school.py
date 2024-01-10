@@ -62,10 +62,11 @@ class Creature():
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.angle = angle
-        self.speed_p = 0.5
-        self.speed_fast_p = 1.5
-        self.speed_h = 0.5
-        self.speed_fast_h = 1.5
+
+        # determine the avreage speed
+        self.speed_p = 0.4
+        self.speed_h = 0.4
+
 
     def distance(self, other):
         """ Function that calculates the Euclidean distance between two creatures
@@ -112,6 +113,31 @@ class Creature():
 
         return abs(distance) <= radius
 
+    def is_within_radius2(self, object_1, object_2):
+        """Function that determines if two objects are within a specified radius
+         of one another.
+
+        Parameters:
+        -----------
+        object_1: list
+            a list representing the coordinates of object 1
+        onject_2: list
+            A tuple representing the coordinates of object 2
+        radius: float
+            The radius within to points are considerd (too) close
+
+        Returns:
+        --------
+        bool
+            True if object 1 is within the specified radius of object 2
+        """
+
+        object_1 = np.array(object_1)
+        object_2 = np.array(object_2)
+        distance = np.linalg.norm(object_1 - object_2)
+
+        return distance
+
     @classmethod
     def make_list_rock_position(cls, rock_position):
         """Function that makes a list of all the rock positions
@@ -126,20 +152,13 @@ class Creature():
         """
         cls.all_rock_positions.append(rock_position)
 
-    def group_predator_data(self, input_list):
-        output_list = []
-        current_sublist = []
+    def find_closest_herring(self, list_position_herring):
+        closest_herring = min(list_position_herring, key=lambda herring: np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(herring)))
+        return closest_herring
 
-        for item in input_list:
-            if item == "Predator":
-                current_sublist = []
-            else:
-                current_sublist.append(item)
-                if len(current_sublist) == 2:
-                    output_list.append(current_sublist)
-
-        return output_list
-
+    def find_closest_predator(self, list_position_predator):
+        closest_predator = min(list_position_predator, key=lambda predator: np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(predator)))
+        return closest_predator
 
     def step(self, position_predator=None, position_herring = None, other=None):
         """
@@ -167,8 +186,12 @@ class Creature():
                 list_position_herring.append([h.pos_x, h.pos_y])
 
 
-            if any(self.is_within_radius([self.pos_x, self.pos_y], position_single_herring, self.perception_length) for position_single_herring in list_position_herring):
-                predator_speed = self.speed_fast_p + random.uniform(-0.02, 0.02)
+            closest_herring = self.find_closest_herring(list_position_herring)
+
+            if self.is_within_radius([self.pos_x, self.pos_y], closest_herring, self.perception_length):
+                distance_to_herring = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_herring))
+                predator_speed = self.speed_p + ((self.perception_length/3) / abs(distance_to_herring)) + random.uniform(-0.05, 0.05)
+                print('ps', predator_speed)
             else:
                 predator_speed = self.speed_p + random.uniform(-0.05, 0.05)
 
@@ -210,10 +233,15 @@ class Creature():
                 list_position_predator.append([p.pos_x, p.pos_y])
 
 
-            if any(self.is_within_radius([self.pos_x, self.pos_y], position_single_predator, self.perception_length) for position_single_predator in list_position_predator):
-                herring_speed = self.speed_fast_h + random.uniform(-0.21, 0.02)
+            closest_predator = self.find_closest_predator(list_position_predator)
+
+            if self.is_within_radius([self.pos_x, self.pos_y], closest_predator, self.perception_length):
+                distance_to_predator = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_predator))
+                herring_speed = self.speed_h + ((self.perception_length/3) / abs(distance_to_predator)) + random.uniform(-0.05, 0.05)
+                print('hs', herring_speed)
             else:
                 herring_speed = self.speed_h + random.uniform(-0.05, 0.05)
+
 
             # determine the movement in the x and y direction
             dx = math.cos(self.angle) * herring_speed
@@ -766,5 +794,5 @@ class Experiment(Creature):
 if __name__ == "__main__":
 
     # make an experiment and run it
-    my_experiment = Experiment(200, 10, 1, 10)
+    my_experiment = Experiment(200, 30, 1, 10)
     my_experiment.run()
