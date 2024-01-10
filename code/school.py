@@ -278,13 +278,23 @@ class Creature():
             # determine which preadator is closest to the herring
             closest_predator = self.find_closest_predator(list_position_predator)
 
-            # if the predator is within the perception length of a herring the speed will change
+            # if the predator is within the perception length of a herring the speed will change for harring
+            #TO BE DONE MAKE FUNCIOTN
             if self.is_within_radius([self.pos_x, self.pos_y], closest_predator, self.perception_length):
 
                 # the closer the herring is to the predator the faster it will move
                 distance_to_predator = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_predator))
                 herring_speed = self.speed_h + (((self.perception_length- distance_to_predator)/self.perception_length)*  self.extra_speed_h) + random.uniform(-0.05, 0.05)
 
+                # Kies een nieuwe willekeurige hoek voor de haring
+                self.angle = random.uniform(0, 2 * math.pi)
+
+                # bereken nieuwe positie
+                dx = math.cos(self.angle) * herring_speed
+                dy = math.sin(self.angle) * herring_speed
+                new_position_x = self.pos_x + dx
+                new_position_y = self.pos_y + dy
+                
             # if there is no predator is within the perception lenght the speeds stays normal
             else:
                 herring_speed = self.speed_h + random.uniform(-0.05, 0.05)
@@ -323,11 +333,6 @@ class Creature():
         self.pos_x %= 100
         self.pos_y %= 100
 
-    def interact(self):
-        pass
-
-    def escape(self):
-        pass
 
 class Herring(Creature):
     def __init__(self, pos_x, pos_y, angle, perception_length):
