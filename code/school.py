@@ -23,7 +23,7 @@
 # ze kunnen dezelfde positie op het grid hebben (transparency hoog)
 
 """
-Authors:      Suze Frikke, Luca Pouw
+Authors:      Suze Frikke, Luca Pouw, Eva Nieuwenhuis
 University:   UvA
 Course:       Project computational science
 Student id's:
@@ -40,9 +40,8 @@ import numpy as np
 
 class Creature():
 
-    # lists to add the positions of the rocks, herring and predators
+    # lists to add the positions of the rocks
     all_rock_positions = []
-
 
     def __init__(self, pos_x, pos_y, angle):
         """Function that initialize a creature with a specified position and angle.
@@ -113,31 +112,6 @@ class Creature():
 
         return abs(distance) <= radius
 
-    def is_within_radius2(self, object_1, object_2):
-        """Function that determines if two objects are within a specified radius
-         of one another.
-
-        Parameters:
-        -----------
-        object_1: list
-            a list representing the coordinates of object 1
-        onject_2: list
-            A tuple representing the coordinates of object 2
-        radius: float
-            The radius within to points are considerd (too) close
-
-        Returns:
-        --------
-        bool
-            True if object 1 is within the specified radius of object 2
-        """
-
-        object_1 = np.array(object_1)
-        object_2 = np.array(object_2)
-        distance = np.linalg.norm(object_1 - object_2)
-
-        return distance
-
     @classmethod
     def make_list_rock_position(cls, rock_position):
         """Function that makes a list of all the rock positions
@@ -153,45 +127,105 @@ class Creature():
         cls.all_rock_positions.append(rock_position)
 
     def find_closest_herring(self, list_position_herring):
+        """ Function determines which herring is closest to the observed creature
+
+        Parameters:
+        -----------
+        self: Creature
+            The creature that is currently observed
+
+        list_position_herring: list
+            List with the position of all the herring
+
+        Returns:
+        --------
+        closest_herring: Herring
+            The herring that is closest to the observed creature
+        """
+
         closest_herring = min(list_position_herring, key=lambda herring: np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(herring)))
         return closest_herring
 
     def find_closest_predator(self, list_position_predator):
+        """ Function determines which predator is closest to the observed creature
+
+        Parameters:
+        -----------
+        self: Creature
+            The creature that is currently observed
+
+        list_position_predator: list
+            List with the position of all the predators
+
+        Returns:
+        --------
+        closest_herring: Predator
+            The predator that is closest to the observed creature
+        """
+
         closest_predator = min(list_position_predator, key=lambda predator: np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(predator)))
         return closest_predator
 
-    def step(self, position_predator=None, position_herring = None, other=None):
+    def make_list_positions(self, position_creature):
+        """ Function that makes a list with all the creature positions
+
+        Parameters:
+        -----------
+        position_creature: list
+            List with all the information about the creature
+
+        Returns:
+        --------
+        closest_herring: list
+            List whith only the position of every creature
+        """
+        list_position_creature =[]
+
+        # loop over all the creatures and add their positions to the list
+        for c in position_creature:
+            list_position_creature.append([c.pos_x, c.pos_y])
+
+        return list_position_creature
+
+    def step(self, information_predator, information_herring, other=None):
         """
         The step function updates the coordinates of a creature, ensuring the
         movement of creatures in the simulation. It ensures that creatures go
-        in a different direction when they come close to a rock
+        in a different direction when they come close to a rock. The speed of
+        the herring and predators will also chance when they come near eachother.
 
         Parameters:
         -----------
         self: Creature
             The creature currently observed
 
+        information_predator: list
+            List with the information of every predator
+
+        information_herring: list
+            List with the information of every herring
+
         other: Creature or None
             An potential other creature the currenly observed creature interacts with
         """
 
-
-
         # The location of the predator does not depend on another creature (yet)
         if other == None:
 
+            # make list with the current positions of the herring
+            list_position_herring = self.make_list_positions(information_herring)
 
-            list_position_herring = []
-            for h in position_herring:
-                list_position_herring.append([h.pos_x, h.pos_y])
-
-
+            # determine which herring is closest to the predator
             closest_herring = self.find_closest_herring(list_position_herring)
 
+            # if the a herring is within the perception length of the predator the speed will change
             if self.is_within_radius([self.pos_x, self.pos_y], closest_herring, self.perception_length):
+
+                # the closer the predator is to the herring the fasterit will move
                 distance_to_herring = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_herring))
                 predator_speed = self.speed_p + ((self.perception_length/3) / abs(distance_to_herring)) + random.uniform(-0.05, 0.05)
-                print('ps', predator_speed)
+
+            # ff there is no herring within the perception lenght the speed stays normal
             else:
                 predator_speed = self.speed_p + random.uniform(-0.05, 0.05)
 
@@ -228,17 +262,20 @@ class Creature():
         # The location of the herring depends on its closest neighbour
         else:
 
-            list_position_predator = []
-            for p in position_predator:
-                list_position_predator.append([p.pos_x, p.pos_y])
+            # make list with the current positions of the predator
+            list_position_predator = self.make_list_positions(information_predator)
 
-
+            # determine which preadator is closest to the herring
             closest_predator = self.find_closest_predator(list_position_predator)
 
+            # if the predator is within the perception length of a herring the speed will change
             if self.is_within_radius([self.pos_x, self.pos_y], closest_predator, self.perception_length):
+
+                # the closer the herring is to the predator the faster it will move
                 distance_to_predator = np.linalg.norm(np.array([self.pos_x, self.pos_y]) - np.array(closest_predator))
                 herring_speed = self.speed_h + ((self.perception_length/3) / abs(distance_to_predator)) + random.uniform(-0.05, 0.05)
-                print('hs', herring_speed)
+
+            # if there is no predator is within the perception lenght the speeds stays normal
             else:
                 herring_speed = self.speed_h + random.uniform(-0.05, 0.05)
 
@@ -307,22 +344,24 @@ class Herring(Creature):
         self.color = 'blue'
         self.marker = 'o'
 
-        # ensure that in the creature class a list with the postions of the
-        # herring is made
-
-        Experiment.make_list_herring_position(self.position)
-
-    def step(self, position_predator, position_herring, other):
+    def step(self, information_predator, information_herring, other):
         """Function that ensures the herring moves
 
         Parameters:
         -----------
         self: Herring
             The herring currently observed
+
+        information_predator: list
+            List with the information of every predator
+
+        information_herring: list
+            List with the information of every herring
+
         other: Creature
             Another creature the herring potentially interacts with
         """
-        super().step(position_predator, position_herring, other)
+        super().step(information_predator, information_herring, other)
 
     def __repr__(self):
         """Function that gives a string representation of a herring
@@ -341,7 +380,6 @@ class Herring(Creature):
         return f'Herring: {self.pos_x}, {self.pos_y}'
 
 class Predator(Creature):
-    predator_positions = []
 
     def __init__(self, pos_x, pos_y, angle, perception_length):
         """Function that initialize a predator with a specified position, angle
@@ -366,29 +404,23 @@ class Predator(Creature):
         self.color = 'red'
         self.marker = 'D'
 
-        # ensure that in the creature class a list with the postions of the
-        # predators is made
-        Experiment.make_list_predator_position(self.position)
 
-        # Update class variable with initial position
-        Predator.predator_positions.append(self.position)
-
-    def update_position(self, new_position):
-        self.position = new_position
-        # Update class variable with the new position
-        Predator.predator_positions.append(new_position)
-
-    def step(self, position_predator, position_herring):
+    def step(self, information_predator, information_herring):
         """Function that ensures the predator moves
 
         Parameters:
         -----------
         self: Predator
             The predator currently observed
-        other: Creature
-            Another creature the predator potentially interacts with
+
+        information_predator: list
+            List with the information of every predator
+
+        information_herring: list
+            List with the information of every herring
+
         """
-        super().step(position_predator, position_herring)
+        super().step(information_predator, information_herring)
 
     def __repr__(self):
         """Function that gives a string representation of a predator
@@ -449,8 +481,7 @@ class Rock(Creature):
         return f'Rock: {self.pos_x}, {self.pos_y}'
 
 class Experiment(Creature):
-    all_herring_positions = []
-    all_predator_positions = []
+
 
     def __init__(self, iterations, nr_herring, nr_predators, nr_rocks, visualize=True):
         """Initialize an experiment (simulation) with specified parameters.
@@ -488,7 +519,7 @@ class Experiment(Creature):
         self.add_herring(nr_herring)
 
 
-        # visualize the experiment simulation if the statemet is True
+        # visualize the experiment simulation if the statement is True
         if self.visualize == True:
             self.setup_plot()
 
@@ -563,8 +594,8 @@ class Experiment(Creature):
         # make a specified number of herrings
         for _ in range(self.nr_herring):
 
+            # determine the perception lenght (average + sd)
             perception_lenghth_h = 10 + random.uniform(-1, 1)
-
 
             # choose a random position and angle
             pos_x_h = random.uniform(0,100)
@@ -596,8 +627,8 @@ class Experiment(Creature):
         # make a specified number of predators
         for _ in range(self.nr_predators):
 
+            # determine the perception lenght (average + sd)
             perception_lenghth_p = 10 + random.uniform(-1, 1)
-
 
             # choose a random position and angle
             pos_x_p = random.uniform(0,100)
@@ -614,34 +645,6 @@ class Experiment(Creature):
             predator = Predator(pos_x_p, pos_y_p, angle_p, perception_length=perception_lenghth_p)
             self.predators.append(predator)
 
-    @classmethod
-    def make_list_herring_position(cls, herring_position):
-        """Function that makes a list of all the herring positions
-
-        Parameters:
-        -----------
-        cls: type
-            The class.
-
-        rock_position: list
-            A list representing the coordinates of a herring
-        """
-        cls.all_herring_positions.append(herring_position)
-
-    @classmethod
-    def make_list_predator_position(cls, predator_position):
-        """Function that makes a list of all the predator positions
-
-        Parameters:
-        -----------
-        cls: type
-            The class.
-
-        rock_position: list
-            A list representing the coordinates of a predator
-        """
-        cls.all_predator_positions.append(predator_position)
-
 
     def step(self):
         """Advance the simulation by one time step. It ensures the herring and
@@ -654,10 +657,9 @@ class Experiment(Creature):
            The experiment currently simulated
 
        """
-
-        position_herring = self.herring
-        position_predator = self.predators
-
+        # collect the information over the herrings and predators that are present
+        information_herring = self.herring
+        information_predator = self.predators
 
         # move every herring based on the position of other herring
         for herring1 in self.herring:
@@ -679,13 +681,12 @@ class Experiment(Creature):
                         min_distance = distance
                         closest_neighbour = herring2
 
-            # misschien gemiddelde x en gemiddelde y van meerdere neighbours
             # the herring moves in the direction of the closest herring
-            herring1.step(position_predator, position_herring, closest_neighbour)
+            herring1.step(information_predator, information_herring, closest_neighbour)
 
         # move the every predator
         for predator in self.predators:
-            predator.step(position_predator, position_herring)
+            predator.step(information_predator, information_herring)
 
     def draw(self):
         """
@@ -794,5 +795,5 @@ class Experiment(Creature):
 if __name__ == "__main__":
 
     # make an experiment and run it
-    my_experiment = Experiment(200, 30, 1, 10)
+    my_experiment = Experiment(200, 20, 1, 10)
     my_experiment.run()
