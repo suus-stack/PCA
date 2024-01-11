@@ -49,12 +49,13 @@ COHESION_DISTANCE = 80
 PERCEPTION_LENGHT_HERRING = 40
 
 # predator values
-PREDATOR_RADIUS = 8
+PREDATOR_RADIUS = 8     #size of predator on screen
 PREDATOR_SPEED = 2
 PREDATOR_SPEED_MAX = 4
 PERCEPTION_LENGHT_PREDATOR = 100
 
 # rock values
+#size of rock
 ROCK_LENGHT = 10
 
 
@@ -72,7 +73,7 @@ class Herring(pygame.sprite.Sprite):
         # make a form of the predator
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
 
-        # add the position of the predator to a vector
+        # add the position of the herring to a vector
         self.position = pygame.Vector2(x_pos, y_pos)
 
 
@@ -80,32 +81,33 @@ class Herring(pygame.sprite.Sprite):
         dx = random.uniform(-1, 1)
         dy = random.uniform(-1, 1)
 
-        # make sure the speed will be in the correct direction
+        # make sure the speed will be in the correct direction (positive)
         self.speed = pygame.Vector2(dx, dy).normalize() * HERRING_SPEED
 
     def rule_vector(self, neighbour_herring_separation, total_separation_vector, neighbour_herring_alignment, total_alignment_vector, neighbour_herring_cohesion, total_cohesion_vector):
         """ Function that calculates the total vector of the seperation, alignment
         and cohesion rule """
 
-        # check if the seperation rule needs to be used
+        # check if the seperation rule needs to be used to normalize the vector
         if neighbour_herring_separation > 0:
 
             # normalize the vector
             total_separation_vector = total_separation_vector  / neighbour_herring_separation
 
-        # check if the alignment rule needs to be used
+        # check if the alignment rule needs to be used to normalize the vector
         if neighbour_herring_alignment > 0:
 
             # normalize the vector
             total_alignment_vector = total_alignment_vector / neighbour_herring_alignment
 
-        # check if the cohesion rule needs to be used
+        # check if the cohesion rule needs to be used then normalize the vecterol
         if neighbour_herring_cohesion > 0:
 
             # normalise the vector
             total_cohesion_vector = total_cohesion_vector / neighbour_herring_cohesion
 
-        # calculate total_vector
+        # calculate total_vector this is the direction of new position
+        # TOBEDONE omschrijben naar newdirection?
         total_vector = total_separation_vector + total_alignment_vector + total_cohesion_vector
 
         return total_vector
@@ -173,7 +175,6 @@ class Herring(pygame.sprite.Sprite):
             # determine the distance to the predator
             distance_to_predator = self.position.distance_to(predator.position)
 
-
             # determine if the predetor is close ehough to sense it
             if distance_to_predator < PERCEPTION_LENGHT_HERRING:
 
@@ -190,7 +191,7 @@ class Herring(pygame.sprite.Sprite):
             # normalize the vector
             total_predator_avoidance_vector = total_predator_avoidance_vector  / neighbour_predator
 
-            # multiply by three to ensure moving away from predator is more important the the
+            # multiply by three to ensure moving away from predator is more important than the
             # three swimming rules
             self.speed +=  total_predator_avoidance_vector * 3.0
 
