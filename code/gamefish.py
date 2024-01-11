@@ -503,6 +503,10 @@ class Rock(pygame.sprite.Sprite):
 
         # add the position of the rock to a vector
         self.position = pygame.Vector2(x_pos, y_pos)
+    
+    def distance_to(self, other_position):
+        return math.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
+
 
 class Experiment(pygame.sprite.Sprite):
     def __init__(self, herring_nr, predator_nr, rock_nr, simulation_duration):
@@ -547,6 +551,26 @@ class Experiment(pygame.sprite.Sprite):
         for _ in range(self.rock_nr):
             rock_i = Rock(random.randint(0, WIDTH), random.randint(0, HEIGHT))
             all_rocks.add(rock_i)
+
+                #Calculate Euclidean distances between rocks
+        distances = []
+        for rockA in all_rocks:
+            for rockB in all_rocks:
+                if rockA != rockB:  # Ensure we're not calculating distance to itself
+                    distance_rock = rockB.distance_to(rockA.position)
+                    #print(f"Distance between {rockA.position} and {rockB.position}: {distance_rock}")
+                    distances.append(distance_rock)
+
+                    #TOBEDONE onderzoekje distancerocks
+                    if distance_rock < 60:
+                        num_extra_rocks = int((60 - distance_rock) / 10) #ten is size rocks
+                        for i in range(1, num_extra_rocks + 1):
+                            ratio = i / (num_extra_rocks + 1)
+                            new_x = int(rockA.position[0] + ratio * (rockB.position[0] - rockA.position[0]))
+                            new_y = int(rockA.position[1] + ratio * (rockB.position[1] - rockA.position[1]))
+                            new_rock = Rock(new_x, new_y)
+                            all_rocks.add(new_rock)
+                            distances.append((new_x, new_y))
 
         return all_rocks
 
@@ -677,5 +701,5 @@ class Experiment(pygame.sprite.Sprite):
 if __name__ == "__main__":
     # Experiment(50, 1, 10, 20)
 
-    experiment_1 = Experiment(10, 2, 10, 20)
+    experiment_1 = Experiment(10, 2, 20, 5)
     number_killed_herring = experiment_1.run()
