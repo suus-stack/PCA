@@ -1,29 +1,10 @@
 
-# Eerste simulatie is random laten bewegen
-# implement the two basic principles of escape of and attraction
-
-# stap 1: eerst dat de visjes binnen een bepaalde afstand van elkaar blijven
-# niet meer dan
-
-# aanpak 1: via coordinaten systeem en dan verschillende snelheid
-# aanpak 2: moore neighbourhood
-
-# data:
-# geo
-# percepetion length
-# find realistic values for these parameters
 # make a parameter not constant (maybe change over the day nightitme they see less)
 # small amount of randomness into perception length (random fluctuation =)
 # oval body, circle shape, connecting two ponds
 # agents cannot move out agent based models support boundaries (opzoeken en onderbouwen)
 # is strategy still valid in different sizes of pools
 
-
-# 1. zorgen dat de vissen een bepaalde afstand tot elkaar bewaren
-# 2. gedragsregels voor vissen implementeren
-# ze kunnen dezelfde positie op het grid hebben (transparency hoog)
-
-# import packages
 import pygame
 import sys
 import random
@@ -34,7 +15,7 @@ import matplotlib.pyplot as plt
 
 """
 Authors:      Suze Frikke, Luca Pouw, Eva Nieuwenhuis
-University:   UvA
+University:   Universiteit van Amsterdam (UvA)
 Course:       Project computational science
 Student id's:
 Description: Agent-based moddel to simulate herring school movement dynamics when
@@ -42,82 +23,55 @@ confronted with predators.
 """
 
 class Config:
-    """ Class that stores the values of all the constants in the experiment.
-    Random ness is added later in the Predator and Herring class"""
+    """ Class that stores the values of all the constants in the experiment. Makes it easy to adapt
+    parameter values to change experimental outcomes."""
 
-    # determine the size of the surfase investigated
     WIDTH = 500
     HEIGHT = 500
-
-    # determine the number of frames per second
     FRAMES_PER_SECOND = 30
-
-    # herring values
     HERRING_RADIUS = 4
 
-    # distance in which neighbours have to be to influence the direction of a herring
+    # Distance in which neighbours have to be to influenced by the direction of a herring
     SEPARATION_DISTANCE = 20
     ALIGNMENT_DISTANCE = 40
     COHESION_DISTANCE = 40
 
-    # normal average speed of a herring
     HERRING_SPEED = 3
-
-    # maximal speed of a herring
     HERRING_SPEED_MAX = 6
 
-    # lenght at which a herring can sense a predator
+    # Length at which a herring can sense a predator
     PERCEPTION_LENGHT_HERRING = 40
 
-    # distance from wich a predator can kill a fish
+    # Distance at wich a predator can kill a herring
     KILL_DISTANCE = 5
-
-    # predator values
     PREDATOR_RADIUS = 6
-
-    # normal average speed predator
     PREDATOR_SPEED = 2
-
-    # maximum speed predator
     PREDATOR_SPEED_MAX = 6
-
-    # the lenght at wich a predator can sense a herring
     PERCEPTION_LENGHT_PREDATOR = 100
-
-    # rock values
     ROCK_LENGHT = 10
 
 class Herring(pygame.sprite.Sprite):
 
-    # make variable that keeps track on the number of killed herring
+    # Keeping track of killed herring
     total_herring = 50
 
 
     def __init__(self, x_pos, y_pos):
-        """Function that initialize a herring with its own image, specified position and
-        random determined velocity. The velocity is a vector that also indicated the direction
-        of the herring movement
-
-        Parameters:
-        -----------
-        self: Herring
-            The herring being initialized.
-        x_pos: float
-            The x-coordinate of the herring position.
-        y_pos: float
-            The y-coordinate of the herring position.
+        """Function that initializes a herring with its own image, specified position and
+        random determined velocity. The velocity is a vector that also indicates the direction
+        of the herring movement.
         """
 
         super().__init__()
 
-        # create the surface of the herring and add it to the display
+        # Create the surface of the herring and add it to the display
         self.image = pygame.Surface((Config.HERRING_RADIUS * 2, Config.HERRING_RADIUS * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (0,0, 255), (Config.HERRING_RADIUS, Config.HERRING_RADIUS), Config.HERRING_RADIUS)
+        pygame.draw.circle(self.image, (0, 0, 255), (Config.HERRING_RADIUS, Config.HERRING_RADIUS), Config.HERRING_RADIUS)
 
-        # make a form of the predator
-        self.rect = self.image.get_rect(center=( x_pos, y_pos))
+        # Rectangle for predator
+        self.rect = self.image.get_rect(center=(x_pos, y_pos))
 
-        # add the position of the predator to a vector
+        # Add the position of the predator to a vector
         self.position = pygame.Vector2(x_pos, y_pos)
 
         # determine dx and dy
