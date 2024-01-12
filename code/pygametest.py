@@ -543,5 +543,5 @@ class Experiment(pygame.sprite.Sprite):
 
 # Run the main function
 if __name__ == "__main__":
-    experiment_1 = Experiment(10, 1, 10, 20)
+    experiment_1 = Experiment(10, 1, 10, 60)
     experiment_1.run()
