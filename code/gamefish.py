@@ -809,10 +809,16 @@ class Experiment(pygame.sprite.Sprite):
         self: Experiment
             The experiment being simulated.
 
+        all_rocks: pygame.sprite.Group
+            Group containing all rock positions.
+
+        enable_clusetering: bool, optional
+            Whether to use the clustering of rocks. -> Default is True.
+
         Returns:
-        -----------
-        all_predators: pygame.sprite.Group
-            Group containing all predator entities.
+        ----------
+        all_rocks: pygame.sprite.Group
+            Updated group containing all rock entities.
         """
 
         #make a lsit to add the distance to
@@ -846,6 +852,9 @@ class Experiment(pygame.sprite.Sprite):
                             # add the rock to the rock population
                             new_rock = Rock(new_x, new_y)
                             all_rocks.add(new_rock)
+                    
+                    
+
 
 
     def add_rocks_experiment(self):
@@ -1103,7 +1112,8 @@ class Experiment(pygame.sprite.Sprite):
 
 # Run the main function
 if __name__ == "__main__":
-    experiment_1 = Experiment(40, 20, 0, 60, True)
+    #Experiment(Nfish, Npredators, Nrocks, rockclustering)
+    experiment_1 = Experiment(40, 20, 10, 20, True)
     number_killed_herring = experiment_1.run()
 
     # # determine the influence of the number of rock on killing of fish
