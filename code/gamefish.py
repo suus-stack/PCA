@@ -1,19 +1,8 @@
-
-# make a parameter not constant (maybe change over the day nightitme they see less)
+#make a parameter not constant (maybe change over the day nightitme they see less)
 # small amount of randomness into perception length (random fluctuation =)
 # oval body, circle shape, connecting two ponds
 # agents cannot move out agent based models support boundaries (opzoeken en onderbouwen)
 # is strategy still valid in different sizes of pools
-
-#import packages
-import pygame
-import sys
-import random
-import math
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-
 """
 Authors:      Suze Frikke, Luca Pouw, Eva Nieuwenhuis
 University:   UvA
@@ -38,10 +27,25 @@ accelerate when a predator is near. The predator cannot move through a rock an h
 to go around it or away from it. To the speed of the predators is some value between
 1 SD away from the average added to create variation.
 
-In the beginning, the herring, predators and rocks get a random position. It is possible
-to connect nearby rocks by introducing more rocks.
-.
+In the default function the herring, predators and rocks get a random position in
+yhe beginnging. The simulation is runned for the specified number of seconds. It is
+possible to connect nearby rocks by introducing more and to place the herring not
+random but in one big school. The alignment distance, cohesion distance and seperation
+distance can also be change in order to determine their influence.
+ - Experiment(nr herring, nr predator, nr rocks, duraction, connect rocks, start as
+ school, alignment distance, cohesion distance, seperation distance)
+
 """
+
+#import packages
+import pygame
+import random
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
 
 class Config:
     """ Class that stores the values of all the constants in the experiment.
@@ -58,9 +62,9 @@ class Config:
     HERRING_RADIUS = 4
 
     # distance in which neighbours have to be to influence the direction of a herring
-    SEPARATION_DISTANCE = 20
-    ALIGNMENT_DISTANCE = 50
-    COHESION_DISTANCE = 50
+    SEPARATION_DISTANCE = 10
+    ALIGNMENT_DISTANCE =20
+    COHESION_DISTANCE = 20
 
     # normal average speed of a herring
     HERRING_SPEED = 3
@@ -370,7 +374,7 @@ class Herring(pygame.sprite.Sprite):
 
             # multiply by two to ensure moving away from predator is more important the the
             # three swimming rules
-            self.velocity += total_predator_avoidance_vector * 2.0
+            self.velocity += total_predator_avoidance_vector * 4
 
         # normalize velocity and add variation
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.4, 0.4))
@@ -797,13 +801,13 @@ class Rock(pygame.sprite.Sprite):
         distance_rocks: float
             The ecludian distance between two rocks.
         """
-        distance_rocks =math.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
+        distance_rocks = np.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
 
         return distance_rocks
 
 
 class Experiment(pygame.sprite.Sprite):
-    def __init__(self, herring_nr, predator_nr, rock_nr, simulation_duration, extra_rocks = True):
+    def __init__(self, herring_nr = 100, predator_nr = 1, rock_nr = 10, simulation_duration = 20, extra_rocks = False, start_school = False, alignment_distance = 40, cohesion_distance = 40, seperation_distance = 20):
         """Initialize an experiment (simulation) with specified parameters.
 
         Parameters:
@@ -818,14 +822,34 @@ class Experiment(pygame.sprite.Sprite):
             The number of rocks in the experiment.
         simulation_duration: Int
             The number of seconds the experiment is simulated.
-        extra_rocks: bool
+        extra_rocks: Bool
             If true areas between close rocks ar filled with more rocks.
+        start_school: Bool
+            If true the herring ar not randomly placed but in a school
+        alignment_distance: Float
+            The distance that determines which neighbour herring are used for the
+            alignment rule
+        cohesion_distance: Float
+            The distance that determines which neighbour herring are used for the
+            cohesion rule
+        seperation_distance: Float
+            The distance that determines which neighbour herring are used for the
+            seperation rule
+
         """
+        # set the experiment parameters to the specified values
         self.herring_nr = herring_nr
         self.predator_nr = predator_nr
         self.rock_nr = rock_nr
         self.simulation_duration = simulation_duration
         self.extra_rocks = extra_rocks
+        self.start_school = start_school
+
+        # change the rule constant to the specified value
+        Config.ALIGNMENT_DISTANCE = alignment_distance
+        Config.COHESION_DISTANCE = cohesion_distance
+        Config.SEPARATION_DISTANCE = seperation_distance
+
 
     def distance_two_positions(self, position_1, position_2):
         """ Function that calculates the ecludian distance between two positions
@@ -842,7 +866,7 @@ class Experiment(pygame.sprite.Sprite):
         distance_objects: float
             The ecludian distance between two objects.
         """
-        distance_objects = math.sqrt((position_1[0] - position_2[0])**2 + (position_1[1] - position_2[1])**2)
+        distance_objects = np.sqrt((position_1[0] - position_2[0])**2 + (position_1[1] - position_2[1])**2)
 
         return distance_objects
 
@@ -942,22 +966,46 @@ class Experiment(pygame.sprite.Sprite):
         # give all the herring a position and add them to the group
         for _ in range(self.herring_nr):
 
-            # give the herring a position
-            pos_x = random.randint(0, Config.WIDTH)
-            pos_y = random.randint(0, Config.HEIGHT)
-            position_herring = [pos_x, pos_y]
+            # determine if the herring schould start in a school
+            if self.start_school == True:
 
-            # make sure the position of a herring is not (partialy) under a rock or the
-            # same as that of an other herring
-            # Value is 10 because that is the lenght of a rock
-            while any(self.distance_two_positions(rock.position, position_herring) < 5 for rock in all_rocks) and any(herring.position == position_herring for herring in all_herring):
+                # give the herring a position
                 pos_x = random.randint(0, Config.WIDTH)
                 pos_y = random.randint(0, Config.HEIGHT)
                 position_herring = [pos_x, pos_y]
 
-            # add herring to the herring population
-            herring_i = Herring(pos_x, pos_y)
-            all_herring.add(herring_i)
+
+                # make sure the position of a herring is not (partialy) under a rock, the
+                # same as that of an other herring or to far drom the other herring
+                # Value is 10 because that is the lenght of a rock
+                while any(self.distance_two_positions(rock.position, position_herring) < 10 for rock in all_rocks) or any(herring.position == position_herring for herring in all_herring) or any(self.distance_two_positions(herring.position, position_herring) > 100 for herring in all_herring):
+                    pos_x = random.randint(0, Config.WIDTH)
+                    pos_y = random.randint(0, Config.HEIGHT)
+                    position_herring = [pos_x, pos_y]
+
+
+                # add herring to the herring population
+                herring_i = Herring(pos_x, pos_y)
+                all_herring.add(herring_i)
+
+            else:
+                # give the herring a position
+                pos_x = random.randint(0, Config.WIDTH)
+                pos_y = random.randint(0, Config.HEIGHT)
+                position_herring = [pos_x, pos_y]
+
+
+                # make sure the position of a herring is not (partialy) under a rock or the
+                # same as that of an other herring
+                # Value is 10 because that is the lenght of a rock
+                while any(self.distance_two_positions(rock.position, position_herring) < 10 for rock in all_rocks) or any(herring.position == position_herring for herring in all_herring):
+                    pos_x = random.randint(0, Config.WIDTH)
+                    pos_y = random.randint(0, Config.HEIGHT)
+                    position_herring = [pos_x, pos_y]
+
+                # add herring to the herring population
+                herring_i = Herring(pos_x, pos_y)
+                all_herring.add(herring_i)
 
         return all_herring
 
@@ -986,10 +1034,10 @@ class Experiment(pygame.sprite.Sprite):
             pos_y = random.randint(0, Config.HEIGHT)
             position_predator = [pos_x, pos_y]
 
-            # make sure the position of a predator is not (partialy) under a rock or the
-            # same as that of a herring or other paredator
+            # make sure the position of a predator is not (partialy) under a rock,
+            # in kil distance of a herring or the same ast that of an other paredator
             # Value is 10 because that is the lenght of a rock
-            while any(self.distance_two_positions(rock.position, position_predator) < 10 for rock in all_rocks) and any(predator.position == position_predator for predator in all_predators) and any(herring.position == position_predator for herring in all_herring):
+            while any(self.distance_two_positions(rock.position, position_predator) < 10 for rock in all_rocks) or any(self.distance_two_positions(herring.position, position_predator) < Config.KILL_DISTANCE for herring in all_herring) or any(predator.position == position_predator for predator in all_predators):
                 pos_x = random.randint(0, Config.WIDTH)
                 pos_y = random.randint(0, Config.HEIGHT)
                 position_predator  = [pos_x, pos_y]
@@ -999,7 +1047,6 @@ class Experiment(pygame.sprite.Sprite):
             all_predators.add(predator_i)
 
         return all_predators
-
 
 
     def make_legend(self, font_style, screen):
@@ -1121,9 +1168,8 @@ class Experiment(pygame.sprite.Sprite):
             pygame.display.flip()
 
             # keep track of the number of killed herring
-            # killed_herring_count = Herring.killed_herring
+            killed_herring_count = Herring.killed_herring
             # print(f"Number of killed herring: {killed_herring_count}")
-
 
             # determine the time that has elapsed
             time_elapsed = time.time() - start_time
@@ -1142,46 +1188,219 @@ class Experiment(pygame.sprite.Sprite):
         # return the number of killed herring
         return killed_herring_count
 
+def influence_predator_number(max_number_predators, number_simulations):
+    """
+    Function that makes a violin plot of the distribution of the killed herring for
+    different number of predators in an environment with and without rocks. The
+    starting number of herring is set to 100. ........
+
+    Parameters:
+    -----------
+    max_number_predators: Int
+        The maximum number of predators that is investigated
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # make empty dataframe with three columns
+    column_names = ['Nr predators', 'Killed herring', 'Rocks']
+    df = pd.DataFrame(columns=column_names)
+
+    # loop over the number of predators
+    for number_predators in range(1, max_number_predators+1):
+        print('Nr predators', number_predators)
+
+        # do a number of simulation without rocks
+        for simulation in range(number_simulations):
+            print('Simulation without rocks', simulation)
+
+            # set up a experiment, run it and determin the number of killed herring
+            experiment = Experiment(100, number_predators, 0, 10, True)
+            number_killed_herring = experiment.run()
+
+            # make a new row with the found values and add it to the dataframe
+            new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+            df = pd.concat([df, new_row], ignore_index=True)
+
+        # do a number of simulations with rocks
+        for simulation in range(number_simulations):
+            print('Simulation with rocks', simulation)
+
+            # set up a experiment, run it and determin the number of killed herring
+            experiment = Experiment(100, number_predators, 20, 10, True)
+            number_killed_herring = experiment.run()
+
+            # make a new row with the found values and add it to the datafram
+            new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+            df = pd.concat([df, new_row], ignore_index=True)
+
+    # make a violin plot
+    sns.violinplot(data=df, x= 'Nr predators', y= 'Killed herring', hue= 'Rocks', split=True, gap=.1, inner="quart")
+
+    # make sure the y-axis does not go below zero because it is not possible
+    # that a negative nober of herring is killed
+    plt.ylim(bottom=0)
+
+    # give the plot a title
+    plt.title('Distribution of the killed herring for different number of predators in an environment with and without rocks')
+
+    plt.show()
+
+
+def influence_rocks(number_simulations):
+    """
+    Function that makes a plot of the average killed herring + 1 SD errorbars
+    in an environment with differnt numbers of rocks. The starting number of
+    herring is set to 100 and theat of the predators to 1. ........
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # simulate the simulation with different number of rocks
+    for number_rock in range(0, 1, 5):
+        print('nr rock', number_rock)
+        list_rock_number.append(number_rock)
+
+        list_killed_herring = []
+
+        # repeat the simulation a number of times
+        for simulation in range(number_simulations):
+            print('simulation', simulation)
+            killed_rabbits = Experiment(10, rocks_or_not, number_hunter)
+            number_killed_herring = experiment.run()
+            list_killed_herring.append(number_killed_herring)
+
+        # calculate the mean and the standard deviation and add it to the list
+        mean_killed = np.mean(list_killed_herring)
+        list_mean_killed.append(mean_killed)
+        std_killed = np.std(list_killed_herring)
+        list_std_killed.append(std_killed)
+
+    # make a plot of the average number of rilled herring vs the number of rocks
+    plot = plt.errorbar(list_rock_number, list_mean_killed, yerr=list_std_killed, fmt='o', color='orange', markerfacecolor='red', label='avarage killed herring + 1 SD')
+
+    # make plot clear
+    plt.xlabel('Number or rocks')
+    plt.ylabel('Average killed herring')
+    plt.title('The average killed herring + 1 SD errorbars in a environment with differnt numbers of rocks')
+
+    # make sure the y-axis does not go below zero because it is not possible t
+    # hat a negative nober of herring is killed
+    plt.ylim(bottom=0)
+
+    # add legend
+    plt.legend()
+
+    plt.show()
+
+
+def influence_schooling(number_simulations):
+    """
+    Function that makes a violinplot of the distribution of the killed herring
+    for schooling and lonely herring in an environment with and without rocks.
+    The starting number of herring is set to 100 and theat of the predators to
+    1. ........
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # make empty dataframe with three columns
+    column_names = ['Schooling', 'Killed herring', 'Rocks']
+    df = pd.DataFrame(columns=column_names)
+
+    # do a number of simulation without rocks and schooling
+    # for simulation in range(number_simulations):
+    #     print('Simulation without rocks and scholling', simulation)
+    #
+    #     # set up a experiment, run it and determin the number of killed herring
+    #     experiment = Experiment(100, 1, 10, 10, True, True)
+    #     number_killed_herring = experiment.run()
+    #
+    #     # make a new row with the found values and add it to the dataframe
+    #     new_row = pd.DataFrame([{'Schooling': 'no', 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+    #     df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a number of simulations with rocks and without schooling
+    for simulation in range(number_simulations):
+        print('Simulation with rocks and without schoolimg', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(100, 1, 20, 30, True, False, 0, 0, 5)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the datafram
+        new_row = pd.DataFrame([{'Schooling': 'no', 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+    #
+    # # do a number of simulation without rocks
+    # for simulation in range(number_simulations):
+    #     print('Simulation without rocks and with schooling', simulation)
+    #
+    #     # set up a experiment, run it and determin the number of killed herring
+    #     experiment = Experiment(100, 1, 10, 10, True, True)
+    #     number_killed_herring = experiment.run()
+    #
+    #     # make a new row with the found values and add it to the dataframe
+    #     new_row = pd.DataFrame([{'Schooling': 'yes', 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+    #     df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a number of simulations with rocks
+    for simulation in range(number_simulations):
+        print('Simulation with rocks and schooling', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(100, 1, 20, 30, True, False, 0, 0, 5)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the datafram
+        new_row = pd.DataFrame([{'Schooling': 'yes', 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # make a violin plot
+    sns.violinplot(data=df, x= 'Schooling', y= 'Killed herring', hue= 'Rocks', split=True, gap=.1, inner="quart")
+
+    # give title
+    plt.title('Distribution of the killed herring for schooling and lonely herring in an environment with and without rocks')
+
+    # make sure the y-axis does not go below zero because it is not possible t
+    # hat a negative nober of herring is killed
+    plt.ylim(bottom=0)
+
+    plt.show()
 
 # Run the main function
 if __name__ == "__main__":
-    # experiment_1 = Experiment(10, 40, 0, 60, True)
-    # number_killed_herring = experiment_1.run()
+    """
+    The parameters that have to be given:
+    1: The number of herring in the simulation (int). default set to one hunderd.
+    2: The number of predators in the simulation (int). Default set to one.
+    3: The number of rocks in the simulation (int). default set to ten.
+    4: The duration of the simulation in seconds (int). Defaut set to twenty.
+    5: If clossely placed rocks should be connected via more rocks (Bool). Default
+    set to False.
+    6: If the herring should start as one big school instead of randomly placed
+    (bool). Defaut set to False.
+    7: The alignment distance (float). Default set to 40.
+    8: The cohestion distance (float). Default set to 40.
+    9: The seperation distance (float). Default set to 15.
 
-    # determine the influence of the number of rock on killing of fish
-    # list_mean_killed = []
-    # list_std_killed = []
-    # list_rock_number = []
-    #
-    # # simulate the simulation with different number of rocks
-    # for number_rock in range(0, 51, 5):
-    #     print('nr rock', number_rock)
-    #     list_rock_number.append(number_rock)
-    #
-    #     list_killed_herring = []
-    #
-    #     # repeat the simulation a number of times
-    #     for simulation in range(30):
-    #         print('simulation', simulation)
-    #         experiment = Experiment(100, 1, number_rock, 10, False)
-    #         number_killed_herring = experiment.run()
-    #         list_killed_herring.append(number_killed_herring)
-    #
-    #     # calculate the mean and the standard deviation and add it to the list
-    #     mean_killed = np.mean(list_killed_herring)
-    #     list_mean_killed.append(mean_killed)
-    #     std_killed = np.std(list_killed_herring)
-    #     list_std_killed.append(std_killed)
-    #
-    # # make a plot of the average number of rilled herring vs the number of rocks
-    # plt.errorbar(list_rock_number, list_mean_killed, yerr=list_std_killed, fmt='o', color='orange', markerfacecolor='red', label='avarage killed herring + 1 SD')
-    #
-    # # make plot clear
-    # plt.xlabel('Number or rocks')
-    # plt.ylabel('Average killed herring')
-    # plt.title('The average killed herring + 1 SD errorbars at differnt numbers of rocks')
-    #
-    # # add legend
-    # plt.legend()
-    #
-    # plt.show()
+    """
+    # this experiment is to show how the simulation looks like
+    experiment_example = Experiment(100, 2, 1, 60, True, False)
+    experiment_example.run()
+
+
+    # determine the influence of rocks on the predator killing rate
+    influence_rocks(10)
+
+    # determin the invluence of more predators
+    influence_predator_number(6, 10)
+
+    #determine the influence of schooling
+    influence_schooling(40)
