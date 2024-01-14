@@ -49,7 +49,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-
+import pandas as pd
+from scipy.stats import shapiro
+from scipy import stats
 
 class Config:
     """ Class that stores the values of all the constants in the experiment.
@@ -57,11 +59,11 @@ class Config:
 
     """ symulation parameters"""
     # the size of the surface investigated
-    WIDTH = 700
-    HEIGHT = 700
+    WIDTH = 600
+    HEIGHT = 600
 
     # the number of frames per second
-    FRAMES_PER_SECOND = 30
+    FRAMES_PER_SECOND = 10
 
     """herring parameters"""
     # radius of the circle indicationg a herring in a simulation
@@ -79,10 +81,13 @@ class Config:
     HERRING_SPEED_MAX = 6
 
     # lenght at which a herring can sense a predator
-    PERCEPTION_LENGHT_HERRING = 10
+    PERCEPTION_LENGHT_HERRING = 20
 
     # distance from wich a predator can kill a herring
     KILL_DISTANCE = 5
+
+    # the time a herring can swim at a high speed
+    HERRING_HIGH_SPEED_TIME = 60
 
     """predator parameter"""
     # radius of the circle indicationg a predator in a simulation
@@ -96,6 +101,9 @@ class Config:
 
     # the lenght at wich a predator can sense a herring
     PERCEPTION_LENGHT_PREDATOR = 40
+
+    # the time a predator can swim at a high speed
+    PREDATOR_HIGH_SPEED_TIME = 60
 
     """rock parameters"""
     # lenght of the square indicationg a rock in a simulation
@@ -124,7 +132,7 @@ class Herring(pygame.sprite.Sprite):
 
         # create the surface of the herring and add it to the display
         self.image = pygame.Surface((Config.HERRING_RADIUS * 2, Config.HERRING_RADIUS * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (0, 0, 255, 200), (Config.HERRING_RADIUS, Config.HERRING_RADIUS), Config.HERRING_RADIUS)
+        pygame.draw.circle(self.image, (0, 0, 255), (Config.HERRING_RADIUS, Config.HERRING_RADIUS), Config.HERRING_RADIUS)
 
         # make a form for the herring
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
@@ -138,6 +146,9 @@ class Herring(pygame.sprite.Sprite):
 
         # make sure the velocity will be with the correct speed and add variation
         self.velocity = pygame.Vector2(dx, dy).normalize() * (Config.HERRING_SPEED + random.uniform(-0.4, 0.4))
+
+        # The number of frames a high speed
+        self.high_speed_frames = 0
 
 
     def separation_herring(self, all_herring):
@@ -239,7 +250,7 @@ class Herring(pygame.sprite.Sprite):
 
                     # add direction of the neighbour to the alignment vector
                     """ bij de andere twee regels deel je dooor de distance om het effect van haringen die dichtbij zijn meer te laten wegen.
-                    Hier ook doen??. Maakt schooling proceslangzamer. In eerste instantie niet gedaan omdat alignment niet naar positie kijkt"""
+                    Hier ook doen???. In eerste instantie niet gedaan omdat alignment niet naar positie kijkt"""
                     # average_alignment_vector += (herring.velocity / distance_two_herring)
                     total_alignment_vector += herring.velocity
 
@@ -390,7 +401,7 @@ class Herring(pygame.sprite.Sprite):
 
             # multiply by two point five to ensure moving away from predator is more
             # important the the three shooling rules
-            self.velocity += average_predator_avoidance_vector * 2.5
+            self.velocity += average_predator_avoidance_vector *2.5
 
         # normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.4, 0.4))
@@ -455,20 +466,77 @@ class Herring(pygame.sprite.Sprite):
         all_predators: pygame.sprite.Group
             Group containing all predator entities.
         """
+        speed_h = Config.HERRING_SPEED
 
         # check if there are predators
         if all_predators:
+
             # determine the distance to the clostest predator
             closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
 
-            # chance velocity if closest predtor is inside perception distance
+            # chance velocity if closest predator is inside perception distance
             if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
 
-                speed_h = Config.HERRING_SPEED
+                # deermine if the herring wants to swim faster than the maximum
+                # speed it can have for long time
+                if (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING)) < (Config.HERRING_SPEED_MAX - 1.5):
 
-                # normalize velocity and multiply by speed to which some variation is
-                # added. If the predator is closer the speed higer
-                self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+                    # deterine how long the herring is swimming fast and if it can
+                    # swim fast for longer
+                    if self.high_speed_frames <= Config.HERRING_HIGH_SPEED_TIME:
+
+                        # normalize velocity and multiply by speed to which some variation is
+                        # added. If the predator is closer the speed higer
+                        self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+                        # add one to number of frames at high speed
+                        self.high_speed_frames += 1
+
+                    else:
+                        # multiply velocity with maximum speed that herring can have for long time
+                        self.velocity = self.velocity.normalize() * (speed_h + ((Config.HERRING_SPEED_MAX-1.5) -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+                else:
+                    # normalize velocity and multiply by speed to which some variation is
+                    # added. If the predator is closer the speed higer
+                    self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+                    # set the teller of high speed frames to zero
+                    self.high_speed_frames = 0
+
+            else:
+                # set the teller of high speed frames to zero
+                self.high_speed_frames = 0
+
+    """ Dezelfde functie maar dan dat een herring voor oneindig lang heel snel kan zwemmen. In de
+    functie hierboven kan de herring maar voor een bepaalde tijd (Config.HERRING_HIGH_SPEED_TIME)
+    heel hard zwemmen. Voordeel van die hieronder is dat de code korter is en dus ook sneller.
+    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
+    # def accelerate_to_avoid_perdator(self, all_predators):
+    #     """Function that ensures the herring will accelerate when a predator is within
+    #     its perception lenght. The closer the predator is the faster the herrig will move
+    #
+    #     Parameters:
+    #     -----------
+    #     self: Herring
+    #         The herring currently updated.
+    #     all_predators: pygame.sprite.Group
+    #         Group containing all predator entities.
+    #     """
+    #
+    #     # check if there are predators
+    #     if all_predators:
+    #         # determine the distance to the clostest predator
+    #         closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
+    #
+    #         # chance velocity if closest predtor is inside perception distance
+    #         if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
+    #
+    #             speed_h = Config.HERRING_SPEED
+    #
+    #             # normalize velocity and multiply by speed to which some variation is
+    #             # added. If the predator is closer the speed higer
+    #             self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
 
 
     def kill_herring(self, all_herring, all_predators):
@@ -492,7 +560,6 @@ class Herring(pygame.sprite.Sprite):
 
             # if the predator is close enough kill the herring
             if distance_to_herring < Config.KILL_DISTANCE:
-                """Killing met een bepaalde probaility doen??"""
                 all_herring.remove(self)
                 Herring.killed_herring += 1
 
@@ -559,7 +626,7 @@ class Predator(pygame.sprite.Sprite):
 
         # create the surface of the predator and add it to the display
         self.image = pygame.Surface((Config.PREDATOR_RADIUS * 2, Config.PREDATOR_RADIUS * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (255,0, 0, 200), (Config.PREDATOR_RADIUS, Config.PREDATOR_RADIUS), Config.PREDATOR_RADIUS)
+        pygame.draw.circle(self.image, (255,0, 0), (Config.PREDATOR_RADIUS, Config.PREDATOR_RADIUS), Config.PREDATOR_RADIUS)
 
         # make the form of the predator
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
@@ -573,6 +640,8 @@ class Predator(pygame.sprite.Sprite):
 
         # normalize velocity and multiply by speed to which some variation is added
         self.velocity = pygame.Vector2(dx, dy).normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4))
+
+        self.high_speed_frames = 0
 
     def collision_avoidance(self, all_predators):
         """ Function that makes sure predators donnot fully collide
@@ -734,18 +803,75 @@ class Predator(pygame.sprite.Sprite):
         all_herring: Pygame.sprite.Group
             Group containing all herring entities.
         """
+        speed_p = Config.PREDATOR_SPEED
 
         # check if there are herring
         if all_herring:
             # determine the distance to the clostest herring
             closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
 
-            # chance velocity if closest herring is inside perception distance
+            # change velocity if closest herring is inside the perception distance
             if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
-                speed_p = Config.PREDATOR_SPEED
 
-                # the closer the herring is the faster the predator will move and adds# variation
-                self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+                # determine if the predator wants to swim faster than the maximum speed
+                #it can have for long time
+                if (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR)) < (Config.PREDATOR_SPEED_MAX - 1.5):
+
+                    # deterine how long the predator is swimming fast and if it can swim
+                    # fast any longer
+                    if self.high_speed_frames <= Config.PREDATOR_HIGH_SPEED_TIME:
+
+                        # normalize velocity and multiply by speed to which some variation is
+                        # added. If the herring is closer the speed higer
+                        self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
+                        # add one to number of frames at high speed
+                        self.high_speed_frames += 1
+
+                    else:
+                        # multiply velocity with maximum speed that predator can have for long time
+                        self.velocity = self.velocity.normalize() * (speed_p + ((Config.PREDATOR_SPEED_MAX-1.5)-Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+                else:
+                    # normalize velocity and multiply by speed to which some variation is
+                    # added. If the herring is closer the speed higer
+                    self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
+                    # set the teller of high speed frames to zero
+                    self.high_speed_frames = 0
+
+            else:
+                # set the teller of high speed frames to zero
+                self.high_speed_frames = 0
+
+    """ Dezelfde functie maar dan dat een predator voor oneindig lang heel snel kan zwemmen. In de
+    functie hierboven kan de predator maar voor een bepaalde tijd (Config.PREDATOR_HIGH_SPEED_TIME)
+    heel hard zwemmen.Voordeel van die hieronder is dat de code korter is en dus ook sneller.
+    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
+    # def accelerate_to_attack_herrig(self, all_herring):
+    #     """Function that ensures the predator will accelerate when a herring is within
+    #     its perception lenght. The closer the herring is the faster the predator
+    #     will move.
+    #
+    #     Parameters:
+    #     -----------
+    #     self: Predator
+    #         The predator currently updated.
+    #     all_herring: Pygame.sprite.Group
+    #         Group containing all herring entities.
+    #     """
+    #
+    #     # check if there are herring
+    #     if all_herring:
+    #         # determine the distance to the clostest herring
+    #         closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
+    #
+    #         # chance velocity if closest herring is inside perception distance
+    #         if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
+    #             speed_p = Config.PREDATOR_SPEED
+    #
+    #             # the closer the herring is the faster the predator will move and adds# variation
+    #             self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
 
     def update(self, all_herring, all_predators, all_rocks):
         """ Function to update the position of a predator. The new position is
@@ -1287,9 +1413,15 @@ def influence_rocks(number_simulations):
     number_simulations: Int
         The number of simulations per experiment kind
     """
+    # make a list for the number of rocks
+    list_rock_number =[]
+
+    # make a list for the average killed herrings and the standard deviation
+    list_mean_killed =[]
+    list_std_killed = []
 
     # simulate the simulation with different number of rocks
-    for number_rock in range(0, 1, 5):
+    for number_rock in range(0, 10, 100):
         print('nr rock', number_rock)
         list_rock_number.append(number_rock)
 
@@ -1298,7 +1430,9 @@ def influence_rocks(number_simulations):
         # repeat the simulation a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            killed_rabbits = Experiment(10, rocks_or_not, number_hunter)
+            experiment = Experiment(10, number_rock, 1, 30, True, True, 40, 40, 15)
+
+            # determine the nuber of killed herring and all it to a list
             number_killed_herring = experiment.run()
             list_killed_herring.append(number_killed_herring)
 
@@ -1325,6 +1459,222 @@ def influence_rocks(number_simulations):
 
     plt.show()
 
+def influence_alignment_distance(number_simulations):
+    """
+    Function that makes a plot of the average killed herring + 1 SD errorbars
+    for different values of the alignment distance. The starting number of
+    herring is set to 100 and theat of the predators to 1. ........
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+    # make a list for the alignmnet distance
+    list_alignment_distance = []
+
+    # make a list for the average killed herring and for the standard deviation
+    list_mean_killed =[]
+    list_std_killed = []
+
+    # simulate the simulation with different alignment distances
+    for alignment_distance in range(5, 40, 5):
+        print('alignment distance', alignment_distance)
+        list_alignment_distance.append(alignment_distance)
+
+        list_killed_herring = []
+
+        # repeat the simulation a number of times
+        for simulation in range(number_simulations):
+            print('simulation', simulation)
+            experiment = Experiment(100, 1, 20, 20,  True, True, alignment_distance, 10, 5)
+
+            # determine the nuber of killed herring and all it to a list
+            number_killed_herring = experiment.run()
+            list_killed_herring.append(number_killed_herring)
+
+        # calculate the mean and the standard deviation and add it to the list
+        mean_killed = np.mean(list_killed_herring)
+        list_mean_killed.append(mean_killed)
+        std_killed = np.std(list_killed_herring)
+        list_std_killed.append(std_killed)
+
+    # make a plot of the average number of rilled herring vs the number of rocks
+    plot = plt.errorbar(list_alignment_distance, list_mean_killed, yerr=list_std_killed, fmt='o', color='purple', markerfacecolor='blue', label='avarage killed herring + 1 SD')
+
+    # make plot clear
+    plt.xlabel('Alignment distance')
+    plt.ylabel('Average killed herring')
+    plt.title('The average killed herring + 1 SD errorbars at different alignment distances ')
+
+    # make sure the y-axis does not go below zero because it is not possible t
+    # hat a negative nober of herring is killed
+    plt.ylim(bottom=0)
+
+    # add legend
+    plt.legend()
+
+    plt.show()
+
+
+def influence_school_size(number_simulations):
+    """
+    Function that makes a violinplot of the distribution of the killed herring
+    for two sizes of fish schools in an environment with and without rocks.
+    The starting number of  predators to 1. ........
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # make empty dataframe with three columns
+    column_names = ['School size', 'Killed herring', 'Rocks']
+    df = pd.DataFrame(columns=column_names)
+
+    # do a number of simulation without rocks and with 100 herring
+    for simulation in range(number_simulations):
+        print('Simulation without rocks and with 100 herring', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(100, 1, 0, 20, True, True, 40, 40, 15)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the dataframe
+        new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a number of simulations with rocks and with 100 herring
+    for simulation in range(number_simulations):
+        print('Simulation with rocks and with 100 herring', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(100, 1, 20, 20, True, True, 40, 40, 15)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the datafram
+        new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a number of simulation without rocks and with 200 herring
+    for simulation in range(number_simulations):
+        print('Simulation without rocks and with 200 herring', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(250, 1, 0, 20, True, True, 40, 40, 15)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the dataframe
+        new_row = pd.DataFrame([{'School size': 250, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a number of simulations with rocks and with 200 herring
+    for simulation in range(number_simulations):
+        print('Simulation with rocks and and with 200 herring', simulation)
+
+        # set up a experiment, run it and determin the number of killed herring
+        experiment = Experiment(250, 1, 20, 20, True, True, 40, 40, 15)
+        number_killed_herring = experiment.run()
+
+        # make a new row with the found values and add it to the datafram
+        new_row = pd.DataFrame([{ 'School size': 250, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # do a statistical test
+    # significant_test_school_size(df)
+
+    # determine the colors for the
+    colors_box = {'yes': 'peachpuff', 'no': 'lavender'}
+    colors_strip = {'yes': 'red' , 'no': 'blue'}
+
+    # make a figure in which both the boxplot an stripplot are plotted
+    plt.figure(figsize=(10, 6))
+
+    # Create the boxplot of all the datapoints
+    boxplot = sns.boxplot(x='School size', y='Killed herring', hue='Rocks', data=df, palette=colors_box, width=0.8, dodge=True)
+
+    # make a stripplot of all the datapoints
+    stripplot = sns.stripplot(x='School size', y='Killed herring', hue='Rocks', data=df, dodge=True, palette=colors_strip)
+
+    # make a legend
+    handles, labels = stripplot.get_legend_handles_labels()
+    plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
+    # give title
+    plt.title('Distribution of the killed herring for schooling and lonely herring in an environment with and without rocks')
+
+    # make sure the y-axis does not go below zero because it is not possible t
+    # hat a negative nober of herring is killed
+    plt.ylim(bottom=0)
+
+    plt.show()
+
+    significant_test_school_size(df)
+
+
+def significant_test_school_size(df):
+    """Function that determines if there is a significant difference in killed
+    herring between a large and small school. It is tested in an envionment with
+    and without rocks
+
+    Parameters:
+    -----------
+    df: Dataframe
+        Datafframe with the values obtaint from the simulated experiments
+    """
+    print(df)
+    df['Killed herring'] = pd.to_numeric(df['Killed herring'], errors='coerce')
+    print(df)
+
+    # extract the killing values for the small and larg school in environment with rocks
+    values_small_school_rocks = df.loc[(df['School size'] == 100) & (df['Rocks'] == 'yes'), 'Killed herring']
+    values_large_school_rocks = df.loc[(df['School size'] == 250) & (df['Rocks'] == 'yes'), 'Killed herring']
+
+
+
+    # Remove NaN values
+    # values_small_school_rocks = values_small_school_rocks.dropna()
+    # values_large_school_rocks = values_large_school_rocks.dropna()
+    #
+    # print(values_large_school_rocks, values_small_school_rocks)
+
+    # determine if the data is normally distributed
+    statistic_small_school_rocks, p_value_small_school_rocks = shapiro(values_small_school_rocks)
+    statistic_large_school_rocks, p_value_large_school_rocks = shapiro(values_large_school_rocks)
+
+    # check if both data is normally distributed to determine the statistic test
+    if  p_value_large_school_rocks >= 0.05 and  p_value_small_school_rocks >= 0.05:
+
+        # both data normally distributed: do a two-sided independet t-test
+        t_statistic, p_value = stats.ttest_ind(values_small_school_rocks, values_large_school_rocks)
+        print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
+
+    else:
+        # data not normally distributed: do a two sided Mann-whitney U test
+        mw_statistic, p_value = stats.mannwhitneyu(values_small_school_rocks, values_large_school_rocks)
+        print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
+
+    # extract the killing values for the small and larg school in environment
+    # without rocks
+    values_small_school_no_rocks = df.loc[(df['School size'] == 100) & (df['Rocks'] == 'no'), 'Killed herring']
+    values_large_school_no_rocks = df.loc[(df['School size'] == 250) & (df['Rocks'] == 'no'), 'Killed herring']
+
+    # determine if the data is normally distributed
+    statistic_small_school_no_rocks, p_value_small_school_no_rocks = shapiro(values_small_school_no_rocks)
+    statistic_large_school_no_rocks, p_value_large_school_no_rocks = shapiro(values_large_school_no_rocks)
+
+    # check if both data is normally distributed to determine the statistic test
+    if  p_value_large_school_no_rocks >= 0.05 and  p_value_small_school_no_rocks >= 0.05:
+
+        # both data normally distributed: do a two-sided independet t-test
+        t_statistic, p_value = stats.ttest_ind(values_small_school_no_rocks, values_large_school_no_rocks)
+        print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
+
+    else:
+        # data not normally distributed: do a two sided Mann-whitney U test
+        mw_statistic, p_value = stats.mannwhitneyu(values_small_school_no_rocks, values_large_school_no_rocks)
+        print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
+
 
 
 # Run the main function
@@ -1344,13 +1694,20 @@ if __name__ == "__main__":
     9: The separation distance (float). Default set to 15.
 
     """
+
     # this experiment is to show how the simulation looks like
-    experiment_example = Experiment(100, 2, 1, 60, True, False)
-    experiment_example.run()
+    # experiment_example = Experiment(100, 1, 0, 60, True, False, 40, 40, 15)
+    # experiment_example.run()
 
 
     # determine the influence of rocks on the predator killing rate
-    # influence_rocks(10)
-    #
+    # influence_rocks(2)
+
     # # determin the invluence of more predators
-    # influence_predator_number(6, 10)
+    # influence_predator_number(6, 2)
+
+    # determine the influence of the scoolsize
+    influence_school_size(20)
+
+    # determine the influence of the alignment distance
+    # influence_alignment_distance(2)
