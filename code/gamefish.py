@@ -16,7 +16,7 @@ plain movement of a herring (boid) is based on the three rules:
 
 It is possible to introduce rocks and predators in the experiment, which both
 influencethe movement of a herring. The herring will always move away from the
-predator and willalso accelerate when a predator is near. The herring cannot move
+predator and will also accelerate when a predator is near. The herring cannot move
 through a rock and has to go around it or away from it. To the speed of a herring
 is some value between 1 SD away from the average speed added, to create variation.
 
@@ -1538,11 +1538,11 @@ def influence_school_size(number_simulations):
         print('Simulation without rocks and with 100 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(100, 1, 0, 20, True, True, 40, 40, 15)
+        experiment = Experiment(80, 1, 0, 20, True, True, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the dataframe
-        new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+        new_row = pd.DataFrame([{'School size': 80, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # do a number of simulations with rocks and with 100 herring
@@ -1550,11 +1550,11 @@ def influence_school_size(number_simulations):
         print('Simulation with rocks and with 100 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(100, 1, 20, 20, True, True, 40, 40, 15)
+        experiment = Experiment(80, 1, 20, 20, True, True, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the datafram
-        new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        new_row = pd.DataFrame([{'School size': 80, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # do a number of simulation without rocks and with 200 herring
@@ -1562,11 +1562,11 @@ def influence_school_size(number_simulations):
         print('Simulation without rocks and with 200 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(250, 1, 0, 20, True, True, 40, 40, 15)
+        experiment = Experiment(500, 1, 20, 0, True, True, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the dataframe
-        new_row = pd.DataFrame([{'School size': 250, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
+        new_row = pd.DataFrame([{'School size': 500, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # do a number of simulations with rocks and with 200 herring
@@ -1574,11 +1574,11 @@ def influence_school_size(number_simulations):
         print('Simulation with rocks and and with 200 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(250, 1, 20, 20, True, True, 40, 40, 15)
+        experiment = Experiment(500, 1, 20, 20, True, True, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the datafram
-        new_row = pd.DataFrame([{ 'School size': 250, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
+        new_row = pd.DataFrame([{ 'School size': 500, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # do a statistical test
@@ -1622,21 +1622,13 @@ def significant_test_school_size(df):
     df: Dataframe
         Datafframe with the values obtaint from the simulated experiments
     """
-    print(df)
+
     df['Killed herring'] = pd.to_numeric(df['Killed herring'], errors='coerce')
-    print(df)
 
     # extract the killing values for the small and larg school in environment with rocks
-    values_small_school_rocks = df.loc[(df['School size'] == 100) & (df['Rocks'] == 'yes'), 'Killed herring']
-    values_large_school_rocks = df.loc[(df['School size'] == 250) & (df['Rocks'] == 'yes'), 'Killed herring']
+    values_small_school_rocks = df.loc[(df['School size'] == 80) & (df['Rocks'] == 'yes'), 'Killed herring']
+    values_large_school_rocks = df.loc[(df['School size'] == 500) & (df['Rocks'] == 'yes'), 'Killed herring']
 
-
-
-    # Remove NaN values
-    # values_small_school_rocks = values_small_school_rocks.dropna()
-    # values_large_school_rocks = values_large_school_rocks.dropna()
-    #
-    # print(values_large_school_rocks, values_small_school_rocks)
 
     # determine if the data is normally distributed
     statistic_small_school_rocks, p_value_small_school_rocks = shapiro(values_small_school_rocks)
@@ -1656,8 +1648,8 @@ def significant_test_school_size(df):
 
     # extract the killing values for the small and larg school in environment
     # without rocks
-    values_small_school_no_rocks = df.loc[(df['School size'] == 100) & (df['Rocks'] == 'no'), 'Killed herring']
-    values_large_school_no_rocks = df.loc[(df['School size'] == 250) & (df['Rocks'] == 'no'), 'Killed herring']
+    values_small_school_no_rocks = df.loc[(df['School size'] == 80) & (df['Rocks'] == 'no'), 'Killed herring']
+    values_large_school_no_rocks = df.loc[(df['School size'] == 500) & (df['Rocks'] == 'no'), 'Killed herring']
 
     # determine if the data is normally distributed
     statistic_small_school_no_rocks, p_value_small_school_no_rocks = shapiro(values_small_school_no_rocks)
@@ -1707,7 +1699,7 @@ if __name__ == "__main__":
     # influence_predator_number(6, 2)
 
     # determine the influence of the scoolsize
-    influence_school_size(20)
+    influence_school_size(10)
 
     # determine the influence of the alignment distance
     # influence_alignment_distance(2)
