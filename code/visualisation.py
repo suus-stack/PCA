@@ -281,8 +281,9 @@ def influence_school_size(number_simulations):
     # make a legend
     handles, labels = stripplot.get_legend_handles_labels()
     plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
+
     # give title
-    plt.title('Distribution of the killed herring for big and smallschool of herring in an environment with and without rocks')
+    plt.title('Distribution of the killed herring in a big and small herring school in an environment with and without rocks')
 
     # make sure the y-axis does not go below zero because it is not possible t
     # hat a negative nober of herring is killed
@@ -395,6 +396,7 @@ def influence_perception_lenght_predator(number_simulations):
     ax.set_ylabel('killed herring/ perception lenght')
     ax.set_title('Average killed herring + 1 SD errorbars when the perception lenght of the predator changes')
 
+    # add a legend
     plt.legend()
     plt.show()
 
