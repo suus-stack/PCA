@@ -1,4 +1,28 @@
-""" Function that make plots """
+"""
+Authors:      Suze Frikkee, Luca Pouw, Eva Nieuwenhuis
+University:   UvA
+Course:       Project computational science
+Student id's: 14773279 , 15159337, 13717405
+
+Description: In this code functions are given that are used to make the shown
+plots. The data form the plots is created by running the experiment (simulation)
+an number of times. The plots show the influence of different factors on the
+killing rate of the herrings.
+"""
+
+# import packages
+import pygame
+import random
+import time
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+import pandas as pd
+from itertools import combinations
+from gamefish import *
+from scipy.stats import shapiro
+from scipy import stats
 
 def influence_predator_number(max_number_predators, number_simulations):
     """
@@ -87,7 +111,7 @@ def influence_rocks(number_simulations):
         # repeat the simulation a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            experiment = Experiment(10, number_rock, 1, 30, True, True, 40, 40, 15)
+            experiment = Experiment(10, number_rock, 1, 30, True, True, False, 40, 40, 15)
 
             # determine the nuber of killed herring and all it to a list
             number_killed_herring = experiment.run()
@@ -144,7 +168,7 @@ def influence_alignment_distance(number_simulations):
         # repeat the simulation a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            experiment = Experiment(100, 1, 20, 20,  True, True, alignment_distance, 10, 5)
+            experiment = Experiment(100, 1, 20, 20, True, True, False, alignment_distance, 10, 5)
 
             # determine the nuber of killed herring and all it to a list
             number_killed_herring = experiment.run()
@@ -195,7 +219,7 @@ def influence_school_size(number_simulations):
         print('Simulation without rocks and with 100 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(80, 1, 0, 20, True, True, 40, 40, 15)
+        experiment = Experiment(80, 1, 0, 20, True, True, False,40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the dataframe
@@ -207,7 +231,7 @@ def influence_school_size(number_simulations):
         print('Simulation with rocks and with 100 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(80, 1, 20, 20, True, True, 40, 40, 15)
+        experiment = Experiment(80, 1, 20, 20, True, True, False, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the datafram
@@ -219,7 +243,7 @@ def influence_school_size(number_simulations):
         print('Simulation without rocks and with 200 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(500, 1, 20, 0, True, True, 40, 40, 15)
+        experiment = Experiment(300, 1, 0, 20, True, True, False, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the dataframe
@@ -231,7 +255,7 @@ def influence_school_size(number_simulations):
         print('Simulation with rocks and and with 200 herring', simulation)
 
         # set up a experiment, run it and determin the number of killed herring
-        experiment = Experiment(500, 1, 20, 20, True, True, 40, 40, 15)
+        experiment = Experiment(300, 1, 20, 20, True, True, False, 40, 40, 15)
         number_killed_herring = experiment.run()
 
         # make a new row with the found values and add it to the datafram
@@ -258,7 +282,7 @@ def influence_school_size(number_simulations):
     handles, labels = stripplot.get_legend_handles_labels()
     plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
     # give title
-    plt.title('Distribution of the killed herring for schooling and lonely herring in an environment with and without rocks')
+    plt.title('Distribution of the killed herring for big and smallschool of herring in an environment with and without rocks')
 
     # make sure the y-axis does not go below zero because it is not possible t
     # hat a negative nober of herring is killed
@@ -325,6 +349,55 @@ def significant_test_school_size(df):
         print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
 
 
+def influence_perception_lenght_predator(number_simulations):
+    """
+    Function that makes a plot of the average killed herring + 1 SD errorbars whereby
+    the perception lenght of the predator changes over the time. In the environment are
+    rocks and 1 predator.
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # make a empty data array
+    data_array_killed_herring = np.empty((number_simulations, 24))
+
+    # simulate a number of experimens
+    for simulation in range(0, number_simulations):
+        print('nr simulation', simulation)
+
+        # run an experiment and add the list with killed herring to the data array
+        experiment = Experiment(100, 1, 0, 192, True, False, True)
+        list_killed_herring, list_predator_perception_lenght = experiment.run()
+        print(list_killed_herring)
+        data_array_killed_herring[simulation, :] = list_killed_herring
+
+
+    # calculate mean and standard deviation for each column
+    mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
+    std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
+
+    # determine the xvalues
+    time_values = list(range(len(list_predator_perception_lenght)))
+
+    # make a plot
+    fig, ax = plt.subplots()
+
+    # plot the killed herring and perception lenght over the time
+    ax.errorbar(time_values, mean_killed_herring_array, yerr= std_killed_herring_array, fmt='o', label=' average killed herring + 1 SD', color='purple', markerfacecolor='blue')
+    sns.lineplot(x= time_values, y= list_predator_perception_lenght, label='perception leght', color= 'pink')
+
+    # give plot title and axis labels
+    ax.set_xticks(time_values)
+    ax.set_xlabel('Time')
+    ax.set_ylabel('killed herring/ perception lenght')
+    ax.set_title('Average killed herring + 1 SD errorbars when the perception lenght of the predator changes')
+
+    plt.legend()
+    plt.show()
+
 
 # Run the main function
 if __name__ == "__main__":
@@ -337,26 +410,26 @@ if __name__ == "__main__":
     5: If clossely placed rocks should be connected via more rocks (Bool). Default
     set to False.
     6: If the herring should start as one big school instead of randomly placed
-    (bool). Defaut set to False.
-    7: The alignment distance (float). Default set to 40.
-    8: The cohestion distance (float). Default set to 40.
-    9: The separation distance (float). Default set to 15.
+    (bool). Default set to False.
+    7: If the perception lenght of the predator changes over the time (bool).
+    Default set to False.
+    8: The alignment distance (float). Default set to 40.
+    9: The cohestion distance (float). Default set to 40.
+    10: The separation distance (float). Default set to 15.
 
     """
 
-    # this experiment is to show how the simulation looks like
-    # experiment_example = Experiment(100, 1, 0, 60, True, False, 40, 40, 15)
-    # experiment_example.run()
-
-
-    # determine the influence of rocks on the predator killing rate
+    # # determine the influence of rocks on the predator killing rate
     # influence_rocks(2)
-
+    #
     # # determin the invluence of more predators
     # influence_predator_number(6, 2)
-
-    # determine the influence of the scoolsize
-    influence_school_size(10)
+    #
+    # # determine the influence of the scoolsize
+    # influence_school_size(3)
 
     # determine the influence of the alignment distance
-    # influence_alignment_distance(2)
+    influence_alignment_distance(2)
+
+    # determine the influence of a change in the perception lenght
+    influence_perception_lenght_predator(5)
