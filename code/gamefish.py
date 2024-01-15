@@ -1367,10 +1367,10 @@ class Experiment(pygame.sprite.Sprite):
                 frame_to_seconds = frames / Config.FRAMES_PER_SECOND
 
                 # determine the elapsed time in a 480 seconds cycle
-                elapsed_time = frame_to_seconds % 192
+                elapsed_time = frame_to_seconds % 240
 
                 # check if the perception lenght of predator should decrease
-                if elapsed_time <= 96 and round(elapsed_time, 4) % 8 == 0:
+                if elapsed_time <= 120 and round(elapsed_time, 4) % 10 == 0:
 
                     # add perception lenght to the list an chance it
                     list_predator_perception_lenght.append(Config.PERCEPTION_LENGHT_PREDATOR)
@@ -1384,7 +1384,7 @@ class Experiment(pygame.sprite.Sprite):
 
 
                 # check if the perception lenght of predator should increase
-                if elapsed_time > 96 and round(elapsed_time, 4) % 8 == 0:
+                if elapsed_time > 120 and round(elapsed_time, 4) % 10 == 0:
 
                     # add perception lenght to the list an chance it
                     list_predator_perception_lenght.append(Config.PERCEPTION_LENGHT_PREDATOR)
@@ -1448,7 +1448,7 @@ if __name__ == "__main__":
             print('nr simulation', simulation)
 
             # run an experiment and add the list with killed herring to the data array
-            experiment = Experiment(100, 1, 0, 192, True, False, True)
+            experiment = Experiment(100, 1, 30, 240, True, False, True)
             list_killed_herring, list_predator_perception_lenght = experiment.run()
             print(list_killed_herring)
             data_array_killed_herring[simulation, :] = list_killed_herring
