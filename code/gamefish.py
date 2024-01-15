@@ -64,7 +64,7 @@ class Config:
     HEIGHT = 600
 
     # the number of frames per second
-    FRAMES_PER_SECOND = 10
+    FRAMES_PER_SECOND = 20
 
     """herring parameters"""
     # radius of the circle indicationg a herring in a simulation
@@ -456,67 +456,10 @@ class Herring(pygame.sprite.Sprite):
         # normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.4, 0.4))
 
-    def accelerate_to_avoid_perdator(self, all_predators):
-        """Function that ensures the herring will accelerate when a predator is within
-        its perception lenght. The closer the predator is the faster the herrig will move
-
-        Parameters:
-        -----------
-        self: Herring
-            The herring currently updated.
-        all_predators: pygame.sprite.Group
-            Group containing all predator entities.
-        """
-        speed_h = Config.HERRING_SPEED
-
-        # check if there are predators
-        if all_predators:
-
-            # determine the distance to the clostest predator
-            closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
-
-            # chance velocity if closest predator is inside perception distance
-            if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
-
-                # deermine if the herring wants to swim faster than the maximum
-                # speed it can have for long time
-                if (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING)) < (Config.HERRING_SPEED_MAX - 1.5):
-
-                    # deterine how long the herring is swimming fast and if it can
-                    # swim fast for longer
-                    if self.high_speed_frames <= Config.HERRING_HIGH_SPEED_TIME:
-
-                        # normalize velocity and multiply by speed to which some variation is
-                        # added. If the predator is closer the speed higer
-                        self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
-
-                        # add one to number of frames at high speed
-                        self.high_speed_frames += 1
-
-                    else:
-                        # multiply velocity with maximum speed that herring can have for long time
-                        self.velocity = self.velocity.normalize() * (speed_h + ((Config.HERRING_SPEED_MAX-1.5) -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
-
-                else:
-                    # normalize velocity and multiply by speed to which some variation is
-                    # added. If the predator is closer the speed higer
-                    self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
-
-                    # set the teller of high speed frames to zero
-                    self.high_speed_frames = 0
-
-            else:
-                # set the teller of high speed frames to zero
-                self.high_speed_frames = 0
-
-    """ Dezelfde functie maar dan dat een herring voor oneindig lang heel snel kan zwemmen. In de
-    functie hierboven kan de herring maar voor een bepaalde tijd (Config.HERRING_HIGH_SPEED_TIME)
-    heel hard zwemmen. Voordeel van die hieronder is dat de code korter is en dus ook sneller.
-    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
     # def accelerate_to_avoid_perdator(self, all_predators):
     #     """Function that ensures the herring will accelerate when a predator is within
     #     its perception lenght. The closer the predator is the faster the herrig will move
-    #
+
     #     Parameters:
     #     -----------
     #     self: Herring
@@ -524,20 +467,77 @@ class Herring(pygame.sprite.Sprite):
     #     all_predators: pygame.sprite.Group
     #         Group containing all predator entities.
     #     """
-    #
+    #     speed_h = Config.HERRING_SPEED
+
     #     # check if there are predators
     #     if all_predators:
+
     #         # determine the distance to the clostest predator
     #         closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
-    #
-    #         # chance velocity if closest predtor is inside perception distance
+
+    #         # chance velocity if closest predator is inside perception distance
     #         if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
-    #
-    #             speed_h = Config.HERRING_SPEED
-    #
-    #             # normalize velocity and multiply by speed to which some variation is
-    #             # added. If the predator is closer the speed higer
-    #             self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+    #             # deermine if the herring wants to swim faster than the maximum
+    #             # speed it can have for long time
+    #             if (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING)) < (Config.HERRING_SPEED_MAX - 1.5):
+
+    #                 # deterine how long the herring is swimming fast and if it can
+    #                 # swim fast for longer
+    #                 if self.high_speed_frames <= Config.HERRING_HIGH_SPEED_TIME:
+
+    #                     # normalize velocity and multiply by speed to which some variation is
+    #                     # added. If the predator is closer the speed higer
+    #                     self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+    #                     # add one to number of frames at high speed
+    #                     self.high_speed_frames += 1
+
+    #                 else:
+    #                     # multiply velocity with maximum speed that herring can have for long time
+    #                     self.velocity = self.velocity.normalize() * (speed_h + ((Config.HERRING_SPEED_MAX-1.5) -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+    #             else:
+    #                 # normalize velocity and multiply by speed to which some variation is
+    #                 # added. If the predator is closer the speed higer
+    #                 self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
+    #                 # set the teller of high speed frames to zero
+    #                 self.high_speed_frames = 0
+
+    #         else:
+    #             # set the teller of high speed frames to zero
+    #             self.high_speed_frames = 0
+
+    """ Dezelfde functie maar dan dat een herring voor oneindig lang heel snel kan zwemmen. In de
+    functie hierboven kan de herring maar voor een bepaalde tijd (Config.HERRING_HIGH_SPEED_TIME)
+    heel hard zwemmen. Voordeel van die hieronder is dat de code korter is en dus ook sneller.
+    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
+    def accelerate_to_avoid_perdator(self, all_predators):
+        """Function that ensures the herring will accelerate when a predator is within
+        its perception lenght. The closer the predator is the faster the herrig will move
+    
+        Parameters:
+        -----------
+        self: Herring
+            The herring currently updated.
+        all_predators: pygame.sprite.Group
+            Group containing all predator entities.
+        """
+    
+        # check if there are predators
+        if all_predators:
+            # determine the distance to the clostest predator
+            closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
+    
+            # chance velocity if closest predtor is inside perception distance
+            if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
+    
+                speed_h = Config.HERRING_SPEED
+    
+                # normalize velocity and multiply by speed to which some variation is
+                # added. If the predator is closer the speed higer
+                self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
 
 
     def kill_herring(self, all_herring, all_predators):
@@ -692,7 +692,7 @@ class Predator(pygame.sprite.Sprite):
             self.velocity += average_collision_avoidance_vector
 
         # normalize velocity and multiply by speed to which some variation is added
-        self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4))
+        self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-2, 2))
 
     def attack_herring(self, all_herring):
         """ Function that ensures a predator will attack a herring when the herring
@@ -792,67 +792,11 @@ class Predator(pygame.sprite.Sprite):
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.4, 0.4))
 
 
-    def accelerate_to_attack_herrig(self, all_herring):
-        """Function that ensures the predator will accelerate when a herring is within
-        its perception lenght. The closer the herring is the faster the predator
-        will move.
-
-        Parameters:
-        -----------
-        self: Predator
-            The predator currently updated.
-        all_herring: Pygame.sprite.Group
-            Group containing all herring entities.
-        """
-        speed_p = Config.PREDATOR_SPEED
-
-        # check if there are herring
-        if all_herring:
-            # determine the distance to the clostest herring
-            closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
-
-            # change velocity if closest herring is inside the perception distance
-            if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
-
-                # determine if the predator wants to swim faster than the maximum speed
-                #it can have for long time
-                if (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR)) < (Config.PREDATOR_SPEED_MAX - 1.5):
-
-                    # deterine how long the predator is swimming fast and if it can swim
-                    # fast any longer
-                    if self.high_speed_frames <= Config.PREDATOR_HIGH_SPEED_TIME:
-
-                        # normalize velocity and multiply by speed to which some variation is
-                        # added. If the herring is closer the speed higer
-                        self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
-
-                        # add one to number of frames at high speed
-                        self.high_speed_frames += 1
-
-                    else:
-                        # multiply velocity with maximum speed that predator can have for long time
-                        self.velocity = self.velocity.normalize() * (speed_p + ((Config.PREDATOR_SPEED_MAX-1.5)-Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
-                else:
-                    # normalize velocity and multiply by speed to which some variation is
-                    # added. If the herring is closer the speed higer
-                    self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
-
-                    # set the teller of high speed frames to zero
-                    self.high_speed_frames = 0
-
-            else:
-                # set the teller of high speed frames to zero
-                self.high_speed_frames = 0
-
-    """ Dezelfde functie maar dan dat een predator voor oneindig lang heel snel kan zwemmen. In de
-    functie hierboven kan de predator maar voor een bepaalde tijd (Config.PREDATOR_HIGH_SPEED_TIME)
-    heel hard zwemmen.Voordeel van die hieronder is dat de code korter is en dus ook sneller.
-    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
     # def accelerate_to_attack_herrig(self, all_herring):
     #     """Function that ensures the predator will accelerate when a herring is within
     #     its perception lenght. The closer the herring is the faster the predator
     #     will move.
-    #
+
     #     Parameters:
     #     -----------
     #     self: Predator
@@ -860,18 +804,74 @@ class Predator(pygame.sprite.Sprite):
     #     all_herring: Pygame.sprite.Group
     #         Group containing all herring entities.
     #     """
-    #
+    #     speed_p = Config.PREDATOR_SPEED
+
     #     # check if there are herring
     #     if all_herring:
     #         # determine the distance to the clostest herring
     #         closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
-    #
-    #         # chance velocity if closest herring is inside perception distance
+
+    #         # change velocity if closest herring is inside the perception distance
     #         if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
-    #             speed_p = Config.PREDATOR_SPEED
-    #
-    #             # the closer the herring is the faster the predator will move and adds# variation
-    #             self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
+    #             # determine if the predator wants to swim faster than the maximum speed
+    #             #it can have for long time
+    #             if (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR)) < (Config.PREDATOR_SPEED_MAX - 1.5):
+
+    #                 # deterine how long the predator is swimming fast and if it can swim
+    #                 # fast any longer
+    #                 if self.high_speed_frames <= Config.PREDATOR_HIGH_SPEED_TIME:
+
+    #                     # normalize velocity and multiply by speed to which some variation is
+    #                     # added. If the herring is closer the speed higer
+    #                     self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
+    #                     # add one to number of frames at high speed
+    #                     self.high_speed_frames += 1
+
+    #                 else:
+    #                     # multiply velocity with maximum speed that predator can have for long time
+    #                     self.velocity = self.velocity.normalize() * (speed_p + ((Config.PREDATOR_SPEED_MAX-1.5)-Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+    #             else:
+    #                 # normalize velocity and multiply by speed to which some variation is
+    #                 # added. If the herring is closer the speed higer
+    #                 self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX -Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+
+    #                 # set the teller of high speed frames to zero
+    #                 self.high_speed_frames = 0
+
+    #         else:
+    #             # set the teller of high speed frames to zero
+    #             self.high_speed_frames = 0
+
+    """ Dezelfde functie maar dan dat een predator voor oneindig lang heel snel kan zwemmen. In de
+    functie hierboven kan de predator maar voor een bepaalde tijd (Config.PREDATOR_HIGH_SPEED_TIME)
+    heel hard zwemmen.Voordeel van die hieronder is dat de code korter is en dus ook sneller.
+    Voordeel van die hierboven is dat realistischer is. Wat is beter/handiger ???"""
+    def accelerate_to_attack_herrig(self, all_herring):
+        """Function that ensures the predator will accelerate when a herring is within
+        its perception lenght. The closer the herring is the faster the predator
+        will move.
+    
+        Parameters:
+        -----------
+        self: Predator
+            The predator currently updated.
+        all_herring: Pygame.sprite.Group
+            Group containing all herring entities.
+        """
+    
+        # check if there are herring
+        if all_herring:
+            # determine the distance to the clostest herring
+            closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
+    
+            # chance velocity if closest herring is inside perception distance
+            if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
+                speed_p = Config.PREDATOR_SPEED
+    
+                # the closer the herring is the faster the predator will move and adds# variation
+                self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
 
 
     def update(self, all_herring, all_predators, all_rocks):
@@ -1042,45 +1042,46 @@ class Experiment(pygame.sprite.Sprite):
         #make a lsit to add the distance to
         distances = []
 
-        distances = []
-        rock_combinations = combinations(all_rocks, 2)
+        # pairwise loop
+        for rockA in all_rocks:
+            for rockB in all_rocks:
+                if rockA != rockB:
 
-        for rockA, rockB in rock_combinations:
-            # Calculate Euclidean distances between rocks
-            distance_rock = rockB.distance_to(rockA.position)
+                    # calculate Euclidean distances between rocks
+                    distance_rock = rockB.distance_to(rockA.position)
 
-            # Make clusters for rocks that are too close
-            if distance_rock < 60:
-                
-                # Determine the number of extra rocks needed to fill the gap
-                num_extra_rocks = int((60 - distance_rock) / 10)
+                    # make clusters
+                    if distance_rock < 60:
 
-                # Fill the distance with extra rocks
-                for i in range(1, num_extra_rocks + 1):
-                    ratio = i / (num_extra_rocks + 1)
-                    new_x = int(rockA.position[0] + ratio * (rockB.position[0] - rockA.position[0]))
-                    new_y = int(rockA.position[1] + ratio * (rockB.position[1] - rockA.position[1]))
-                    distances.append((new_x, new_y))
+                        num_extra_rocks = int((60 - distance_rock) / 10)          
 
-                    # Add the rock to the rock population
-                    new_rock = Rock(new_x, new_y)
-                    all_rocks.add(new_rock)
+                        #fill the distance
+                        for i in range(1, num_extra_rocks + 1):
+                            ratio = i / (num_extra_rocks + 1)
+                            new_x = int(rockA.position[0] + ratio * (rockB.position[0] - rockA.position[0]))
+                            new_y = int(rockA.position[1] + ratio * (rockB.position[1] - rockA.position[1]))
+                            distances.append((new_x, new_y))
 
-                # Create 'clusters' of rocks
-                for n in range(num_extra_rocks):
-                    random_ratio = random.uniform(0, 1)
+                            # add the rock to the rock population
+                            new_rock = Rock(new_x, new_y)
+                            all_rocks.add(new_rock)
 
-                    # Determine new positions based on the orientation of rocks
-                    if rockA.position[1] == rockB.position[1]:
-                        new_x = int(rockA.position[0] + random_ratio * (rockB.position[0] - rockA.position[0]))
-                        new_y = int(rockB.position[1] + random_ratio * (rockB.position[1] - rockA.position[1]))
-                    else:
-                        new_x = int(rockB.position[0] + random_ratio * (rockB.position[0] - rockA.position[0]))
-                        new_y = int(rockA.position[1] + random_ratio * (rockB.position[1] - rockA.position[1]))
+                        #make 'clusters'
+                        for n in range(num_extra_rocks):
+                            random_ratio = random.uniform(0, 1)
+                            if rockA.position[1] == rockB.position[1]:
+                                new_x = int(rockB.position[0] + random_ratio * (rockB.position[0] - rockA.position[0]))
+                                new_y = int(rockA.position[1] + random_ratio * (rockB.position[1] - rockA.position[1]))
 
-                    # Add the rock to the rock population with a specific color (RED)
-                    new_rock = Rock(new_x, new_y)
-                    all_rocks.add(new_rock)
+                                new_rock = Rock(new_x, new_y)
+                                all_rocks.add(new_rock)
+                            
+                            else:
+                                new_x = int(rockA.position[0] + random_ratio * (rockB.position[0] - rockA.position[0]))
+                                new_y = int(rockB.position[1] + random_ratio * (rockB.position[1] - rockA.position[1]))
+
+                                new_rock = Rock(new_x, new_y)
+                                all_rocks.add(new_rock)
 
 
     def add_rocks_experiment(self):
@@ -1349,7 +1350,6 @@ class Experiment(pygame.sprite.Sprite):
 
         # if the while loop is stoped quite the game
         pygame.quit()
-
 
 
 if __name__ == "__main__":
