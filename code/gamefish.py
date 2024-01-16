@@ -25,23 +25,23 @@ class Config:
     FRAMES_PER_SECOND = 20
 
     # Parameters herring
-    HERRING_RADIUS = 3
+    HERRING_SIZE = 3
     SEPARATION_DISTANCE = 10
     ALIGNMENT_DISTANCE = 20
     COHESION_DISTANCE = 20
     HERRING_SPEED = 1.24
     HERRING_SPEED_MAX = 18.44
-    PERCEPTION_LENGHT_HERRING = 32
+    PERCEPTION_LENGTH_HERRING = 32
     KILL_DISTANCE = 3.6
 
     # Parameters predator
-    PREDATOR_RADIUS = 4
+    PREDATOR_SIZE = 4
     PREDATOR_SPEED = 3.6
     PREDATOR_SPEED_MAX = 24.4
-    PERCEPTION_LENGHT_PREDATOR = 100
+    PERCEPTION_LENGTH_PREDATOR = 100
 
     # parameters rock
-    ROCK_LENGHT = 10
+    ROCK_LENGTH = 10
 
 class Herring(pygame.sprite.Sprite):
 
@@ -62,8 +62,8 @@ class Herring(pygame.sprite.Sprite):
         """
         super().__init__()
         # Creating the visualization of the herring and adding to the display
-        self.image = pygame.Surface((Config.HERRING_RADIUS * 2, Config.HERRING_RADIUS * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (0, 0, 255), (Config.HERRING_RADIUS, Config.HERRING_RADIUS), Config.HERRING_RADIUS)
+        self.image = pygame.Surface((Config.HERRING_SIZE * 2, Config.HERRING_SIZE * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (0, 0, 255, 180), (Config.HERRING_SIZE, Config.HERRING_SIZE), Config.HERRING_SIZE)
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
 
         # Add the position of the herrring to a vector
@@ -96,7 +96,7 @@ class Herring(pygame.sprite.Sprite):
         cohesion_vector = pygame.Vector2(0, 0)
         neighbour_herring_cohesion = 0
 
-        # Finding the herring within the seperation distance
+        # Finding the herring within the separation distance
         for herring in all_herring:
             distance_two_herring = self.position.distance_to(herring.position)
 
@@ -118,6 +118,7 @@ class Herring(pygame.sprite.Sprite):
         # Calculate average separation vector, alignment vector and cohesion vector
         if neighbour_herring_separation > 0:
             separation_vector = separation_vector / neighbour_herring_separation
+            self.position += separation_vector
 
         if neighbour_herring_alignment > 0:
             alignment_vector = alignment_vector / neighbour_herring_alignment
@@ -134,7 +135,7 @@ class Herring(pygame.sprite.Sprite):
 
     def avoid_predator(self, all_predators, all_herring):
         """ Function that ensures that a herring avoids the predator if the predator
-        is within the perception lenght of the herring. The closer the predator the
+        is within the perception length of the herring. The closer the predator the
         more it will influence the direction of the herring. If the predator is within
         the kill distance the herring will get killed.
 
@@ -154,7 +155,7 @@ class Herring(pygame.sprite.Sprite):
         for predator in all_predators:
             distance_to_predator = self.position.distance_to(predator.position)
 
-            if distance_to_predator < Config.PERCEPTION_LENGHT_HERRING and distance_to_predator != 0:
+            if distance_to_predator < Config.PERCEPTION_LENGTH_HERRING and distance_to_predator != 0:
                 # Determine the avoidance vector and add it to total vector
                 predator_avoidance_vector += (self.position - predator.position) / distance_to_predator
                 neighbour_predator +=1
@@ -207,7 +208,7 @@ class Herring(pygame.sprite.Sprite):
 
     def accelerate_to_avoid_perdator(self, all_predators):
         """Function that ensures the herring will accelerate when a predator is within
-        its perception lenght. The closer the predator is the faster the herrig will move
+        its perception length. The closer the predator is the faster the herrig will move
 
         Parameters:
         -----------
@@ -220,11 +221,11 @@ class Herring(pygame.sprite.Sprite):
         if all_predators:
             closest_predator_distance = min(self.position.distance_to(predator.position) for predator in all_predators)
 
-            if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
+            if closest_predator_distance < Config.PERCEPTION_LENGTH_HERRING:
                 speed_h = Config.HERRING_SPEED
 
                 # Normalize velocity and multiply by the changed speed to which some variation is added.
-                self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.05, 0.05)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+                self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.05, 0.05)) * ((Config.PERCEPTION_LENGTH_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGTH_HERRING))
 
     def update(self, all_herring, all_predators, all_rocks):
         """Function to update the position of a herring. The new position is dependent
@@ -276,8 +277,8 @@ class Predator(pygame.sprite.Sprite):
         """
         super().__init__()
         # Creating the visualization of the predator and adding to the display
-        self.image = pygame.Surface((Config.PREDATOR_RADIUS * 2, Config.PREDATOR_RADIUS * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (255,0, 0), (Config.PREDATOR_RADIUS, Config.PREDATOR_RADIUS), Config.PREDATOR_RADIUS)
+        self.image = pygame.Surface((Config.PREDATOR_SIZE * 2, Config.PREDATOR_SIZE * 2), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, (255,0, 0), (Config.PREDATOR_SIZE, Config.PREDATOR_SIZE), Config.PREDATOR_SIZE)
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
 
         # Add the position of the predator to a vector
@@ -299,11 +300,11 @@ class Predator(pygame.sprite.Sprite):
         collision_avoidance_vector = pygame.Vector2(0, 0)
         close_predator = 0
 
-        # Finding the predators within 0.5 * the perception lenght
+        # Finding the predators within 0.5 * the perception length
         for predator in all_predators:
             distance_between_predator = self.position.distance_to(predator.position)
 
-            if predator != self and distance_between_predator !=0 and distance_between_predator < (Config.PERCEPTION_LENGHT_PREDATOR/ 2):
+            if predator != self and distance_between_predator !=0 and distance_between_predator < (Config.PERCEPTION_LENGTH_PREDATOR/ 2):
 
                     # Make a collision avoidance vector and add it to total vector
                     collision_avoidance_vector += (self.position - predator.position) / distance_between_predator
@@ -319,7 +320,7 @@ class Predator(pygame.sprite.Sprite):
 
     def attack_herring(self, all_herring):
         """ Function that ensures a predator will attack the closest herring when
-        this herring is within its perception lenght.
+        this herring is within its perception length.
 
         Parameters:
         -----------
@@ -331,11 +332,11 @@ class Predator(pygame.sprite.Sprite):
         closest_herring = None
         closest_distance = float('inf')
 
-        # Determine the closest herring within the perception lenght
+        # Determine the closest herring within the perception length
         for herring in all_herring:
             distance_to_herring = self.position.distance_to(herring.position)
 
-            if (0 < distance_to_herring < Config.PERCEPTION_LENGHT_PREDATOR and distance_to_herring < closest_distance):
+            if (0 < distance_to_herring < Config.PERCEPTION_LENGTH_PREDATOR and distance_to_herring < closest_distance):
                 closest_herring = herring
                 closest_distance = distance_to_herring
 
@@ -384,7 +385,7 @@ class Predator(pygame.sprite.Sprite):
 
     def accelerate_to_attack_herrig(self, all_herring):
         """Function that ensures the predator will accelerate when a herring is within
-        its perception lenght. The closer the herring is the faster the predator
+        its perception length. The closer the herring is the faster the predator
         will move.
 
         Parameters:
@@ -399,11 +400,11 @@ class Predator(pygame.sprite.Sprite):
         if all_herring:
             closest_herring_distance = min(self.position.distance_to(herring.position) for herring in all_herring)
 
-            if closest_herring_distance < Config.PERCEPTION_LENGHT_PREDATOR:
+            if closest_herring_distance < Config.PERCEPTION_LENGTH_PREDATOR:
                 speed_p = Config.PREDATOR_SPEED
 
                 # Normalize velocity and multiply by changed speed to which some variation is added
-                self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8)) * ((Config.PERCEPTION_LENGHT_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGHT_PREDATOR))
+                self.velocity = self.velocity.normalize() * (speed_p + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8)) * ((Config.PERCEPTION_LENGTH_PREDATOR-closest_herring_distance) / Config.PERCEPTION_LENGTH_PREDATOR))
 
     def update(self, all_herring, all_predators, all_rocks):
         """ Function to update the position of a predator. The new position is
@@ -453,8 +454,8 @@ class Rock(pygame.sprite.Sprite):
         """
         super().__init__()
         # Creating the visualization of the rock and adding to the display
-        self.image = pygame.Surface((Config.ROCK_LENGHT * 2, Config.ROCK_LENGHT * 2), pygame.SRCALPHA)
-        pygame.draw.rect(self.image, (125, 125, 125), (0, 0, Config.ROCK_LENGHT, Config.ROCK_LENGHT))
+        self.image = pygame.Surface((Config.ROCK_LENGTH * 2, Config.ROCK_LENGTH * 2), pygame.SRCALPHA)
+        pygame.draw.rect(self.image, (125, 125, 125), (0, 0, Config.ROCK_LENGTH, Config.ROCK_LENGTH))
         self.rect = self.image.get_rect(center=(x_pos, y_pos))
 
         # Add the position of the rock to a vector
@@ -498,7 +499,7 @@ class Experiment(pygame.sprite.Sprite):
         start_school: Bool
             If true the herring ar not randomly placed but in a school
         perception_change: Bool
-            If true perception lenght of predator changes over the time
+            If true perception length of predator changes over the time
         alignment_distance: Float
             The distance that determines which neighbour herring are used for the
             alignment rule
@@ -694,7 +695,7 @@ class Experiment(pygame.sprite.Sprite):
             pos_y = random.randint(0, Config.HEIGHT)
             position_predator = [pos_x, pos_y]
 
-            while any(self.distance_two_positions(rock.position, position_predator) < 10 for rock in all_rocks) or any(self.distance_two_positions(herring.position, position_predator) < Config.PERCEPTION_LENGHT_PREDATOR for herring in all_herring) or any(predator.position == position_predator for predator in all_predators):
+            while any(self.distance_two_positions(rock.position, position_predator) < 10 for rock in all_rocks) or any(self.distance_two_positions(herring.position, position_predator) < Config.PERCEPTION_LENGTH_PREDATOR for herring in all_herring) or any(predator.position == position_predator for predator in all_predators):
                 pos_x = random.randint(0, Config.WIDTH)
                 pos_y = random.randint(0, Config.HEIGHT)
                 position_predator  = [pos_x, pos_y]
@@ -718,31 +719,31 @@ class Experiment(pygame.sprite.Sprite):
             The screen on which the legend is shown.
         """
         # Make a white background for the legend
-        legend_background_rect = pygame.Rect(2, Config.HEIGHT-495, 80, 50)
+        legend_background_rect = pygame.Rect(2, Config.HEIGHT-595, 80, 50)
         pygame.draw.rect(screen, 'white', legend_background_rect)
 
         # Add text to write herring in blue
         herring_legend_text = font_style.render("Herring", True, 'blue')
         herring_legend_rect = herring_legend_text.get_rect()
-        herring_legend_rect.topleft = (5, Config.HEIGHT - 490)
+        herring_legend_rect.topleft = (5, Config.HEIGHT - 590)
         screen.blit(herring_legend_text, herring_legend_rect)
 
         # Add text to write predator in red
         predator_legend_text = font_style.render("Predator", True, 'red')
         predator_legend_rect = predator_legend_text.get_rect()
-        predator_legend_rect.topleft = (5, Config.HEIGHT - 475)
+        predator_legend_rect.topleft = (5, Config.HEIGHT - 575)
         screen.blit(predator_legend_text, predator_legend_rect)
 
         # Add text to write rock in gray
         rock_legend_text = font_style.render("Rock", True, 'gray')
         rock_legend_rect = rock_legend_text.get_rect()
-        rock_legend_rect.topleft = (5, Config.HEIGHT - 460)
+        rock_legend_rect.topleft = (5, Config.HEIGHT - 560)
         screen.blit(rock_legend_text, rock_legend_rect)
 
         return screen
 
-    def predator_perception_change(self, showed_frames, list_predator_perception_lenght, list_killed_herring_count):
-        """ Function that changes the predator perception lenghtbover the time.
+    def predator_perception_change(self, showed_frames, list_predator_perception_length, list_killed_herring_count):
+        """ Function that changes the predator perception lengthbover the time.
 
         Parameters:
         -----------
@@ -750,16 +751,16 @@ class Experiment(pygame.sprite.Sprite):
             The experiment being simulated.
         showed_frames: Int
             The number of frames that is shown.
-        list_predator_perception_lenght: List
-            List with the perception lenght of the predator on every measure
+        list_predator_perception_length: List
+            List with the perception length of the predator on every measure
             timepoint.
         list_killed_herring: List
             List with the number of killed herring between every timepoint.
 
         Returns:
         -----------
-        list_predator_perception_lenght: List
-            List with the perception lenght of the predator on every measure
+        list_predator_perception_length: List
+            List with the perception length of the predator on every measure
             timepoint.
         list_killed_herring: List
             List with the number of killed herring between every timepoint.
@@ -768,22 +769,22 @@ class Experiment(pygame.sprite.Sprite):
         frame_to_seconds = showed_frames / Config.FRAMES_PER_SECOND
         elapsed_time = frame_to_seconds % 240
 
-        # Check if the perception lenght of predator should decrease
+        # Check if the perception length of predator should decrease
         if elapsed_time < 120 and round(elapsed_time, 4) % 10 == 0:
-            print(Config.PERCEPTION_LENGHT_PREDATOR)
-            list_predator_perception_lenght.append(Config.PERCEPTION_LENGHT_PREDATOR)
-            Config.PERCEPTION_LENGHT_PREDATOR -= 2
+            print(Config.PERCEPTION_LENGTH_PREDATOR)
+            list_predator_perception_length.append(Config.PERCEPTION_LENGTH_PREDATOR)
+            Config.PERCEPTION_LENGTH_PREDATOR -= 2
 
             # Determine th number of killed herring
             killed_herring_count = Herring.killed_herring
             list_killed_herring_count.append(killed_herring_count)
             Herring.killed_herring = 0
 
-        # Check if the perception lenght of predator should increase
+        # Check if the perception length of predator should increase
         if elapsed_time >= 120 and round(elapsed_time, 4) % 10 == 0:
-            print(Config.PERCEPTION_LENGHT_PREDATOR)
-            list_predator_perception_lenght.append(Config.PERCEPTION_LENGHT_PREDATOR)
-            Config.PERCEPTION_LENGHT_PREDATOR += 2
+            print(Config.PERCEPTION_LENGTH_PREDATOR)
+            list_predator_perception_length.append(Config.PERCEPTION_LENGTH_PREDATOR)
+            Config.PERCEPTION_LENGTH_PREDATOR += 2
 
             # Determine the number of killed herring
             killed_herring_count = Herring.killed_herring
@@ -791,7 +792,7 @@ class Experiment(pygame.sprite.Sprite):
             Herring.killed_herring = 0
             print(elapsed_time, 'hi')
 
-        return(list_predator_perception_lenght, list_killed_herring_count)
+        return(list_predator_perception_length, list_killed_herring_count)
 
     def run(self):
         """ Function that runs an experiment
@@ -804,14 +805,14 @@ class Experiment(pygame.sprite.Sprite):
         pygame.font.init()
         pygame.init()
 
-        # Set the number of killed herring and perception lenght to the begin value
+        # Set the number of killed herring and perception length to the begin value
         Herring.killed_herring = 0
-        Config.PERCEPTION_LENGHT_PREDATOR = 100
+        Config.PERCEPTION_LENGTH_PREDATOR = 100
 
         # If needed make extra lists
         if self.perception_change == True:
             list_killed_herring_count = []
-            list_predator_perception_lenght = []
+            list_predator_perception_length = []
 
         # Make the rocks, herring and predator group
         all_rocks = self.add_rocks_experiment()
@@ -856,9 +857,9 @@ class Experiment(pygame.sprite.Sprite):
             # keep track of the number of killed herring
             killed_herring_count = Herring.killed_herring
 
-            # Determine if perception lenght should maybe change
+            # Determine if perception length should maybe change
             if self.perception_change == True:
-                list_predator_perception_lenght, list_killed_herring_count = self.predator_perception_change(showed_frames, list_predator_perception_lenght, list_killed_herring_count)
+                list_predator_perception_length, list_killed_herring_count = self.predator_perception_change(showed_frames, list_predator_perception_length, list_killed_herring_count)
 
             # Stop the simultion after the specified time
             if showed_frames >= total_frames:
@@ -869,9 +870,9 @@ class Experiment(pygame.sprite.Sprite):
         # If the while loop is stoped quite the game
         pygame.quit()
 
-        # return killed herring and if needed the perception lenght of the predator
+        # return killed herring and if needed the perception length of the predator
         if self.perception_change == True:
-            return list_killed_herring_count, list_predator_perception_lenght
+            return list_killed_herring_count, list_predator_perception_length
         else:
             return killed_herring_count
 
@@ -884,11 +885,11 @@ if __name__ == "__main__":
     4: The duration of the simulation in seconds (int). Defaut set to twenty.
     5: Closeby rocks should be connected via more rocks (Bool). Default set to False.
     6: Herring start as one school instead of randomly (bool). Default set to False.
-    7: Predator perception lenght changes over the time (bool). Default set to False.
+    7: Predator perception length changes over the time (bool). Default set to False.
     8: The alignment distance (float). Default set to 40.
     9: The cohestion distance (float). Default set to 40.
     10: The separation distance (float). Default set to 15.
     """
     doctest.testmod()
-    experiment_example = Experiment(100, 10, 20, 200, True, True, False)
+    experiment_example = Experiment(100, 10, 20, 200, True, True, False, 20,20,5)
     killed_herring = experiment_example.run()
