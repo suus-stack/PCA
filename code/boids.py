@@ -12,7 +12,7 @@ class Experiment():
         self.nr_herring = nr_herring
         self.attraction_to_center = 0.006 # negative=repulsion, positive is attraction 
         self.alignment_distance = 3000 
-        self.min_distance = 0.4
+        self.min_distance = 50
         self.formation_flying_distance = 10 #alignment
         self.formation_flying_strength = 0.5 #alignment
         self.iterations = 100
@@ -37,16 +37,17 @@ class Experiment():
         return velocities 
 
     def center_movement(self, positions, velocities):
-        """Center of the mass attraction, like the need to get to the group"""
+        """Center of the mass attraction, like the need to get to the group."""
+
         center = np.mean(positions, 1) # 1 because along the horizontal axis
         # Calculating direction vectors from each position to the center
         # By adding a new axis the shape of center changes from (2,) to (2,1)
         direction_to_center = positions - center[:, np.newaxis] 
-        
+
         velocities -= direction_to_center * self.attraction_to_center 
         positions += velocities
-        positions[0] %= 2000
-        positions[1] %= 2000
+        positions[0] %= 500
+        positions[1] %= 500
         
     
     def normalize(self, vector):
@@ -78,13 +79,13 @@ class Experiment():
 
         velocities -= np.sum(alignment_herring, 1) 
         positions += velocities
-        positions[0] %= 2000
-        positions[1] %= 2000
+        positions[0] %= 500
+        positions[1] %= 500
 
     def alignment(self, positions, velocities):
+        """aligning velocities"""
 
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
-        
         squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
         velocity_differences = velocities[:, np.newaxis, :] - velocities[:, :, np.newaxis]
        
@@ -98,34 +99,41 @@ class Experiment():
     def collision_avoidance(self, positions, velocities):
         """..."""
 
-        # Creating a 2 x N x N matrix of the distances between each herring
-        # distances = normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
+        #Creating a 2 x N x N matrix of the distances between each herring
         distances = positions[:, np.newaxis, :] - positions[:, :, np.newaxis] # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
-        print('squared_distances', squared_distances)
+        # print('squared_distances', squared_distances)
+
         # making sure that the impact of herring far away is not taken into account 
         # far_away = squared_distances > self.min_distance
         far_away = squared_distances > self.min_distance
+        # print('far away', far_away)
 
         close_herring = np.copy(distances)
         # X-direction
         close_herring[0, :, :][far_away] = 0
         # Y-direction
         close_herring[1, :, :][far_away] = 0
-    
-        # Swimming away from the close herring    ### how to get the distance to 0.4 # need to find the adjustment vectors
-        velocities -= np.sum(close_herring, 1)
+
+        # print('close_herring', close_herring)
+        adjustment = np.copy(close_herring)
+        non_zero_mask = close_herring != 0
+        adjustment[non_zero_mask] -= self.min_distance * 0.1
+        # print('adjustment', adjustment)
+        # adjustment = self.min_distance - close_herring
+        # adjustment = positions - self.min_distance
+        # print('adjustment', adjustment) 
         
         # Update all individual positions
-        positions += velocities
-        positions[0] %= 2000
-        positions[1] %= 2000
+        positions += np.sum(adjustment, 1) 
+        positions[0] %= 500
+        positions[1] %= 500
 
 
     def visualize(self, positions, ax1):
         # nu nog gehardcode, nog dynamisch maken
-        ax1.axis([0, 2000, 0, 2000])
-        ax1.scatter(positions[0, :], positions[1, :], c='blue', alpha=0.5, marker='o', s=10)
+        ax1.axis([0, 500, 0, 500])
+        ax1.scatter(positions[0, :], positions[1, :], c='blue', alpha=0.5, marker='o', s=20)
         plt.draw()
         plt.pause(0.01)
         ax1.cla()
@@ -164,14 +172,12 @@ class Experiment():
                 self.cohesion(positions2, velocities2)
                 self.visualize(positions, ax1)
 
-
-
 # USAGE
 upper_lim_flock = np.array([0, 100])
 lower_lim_flock = np.array([0, 100])
 upper_lim_veloc = np.array([10, 20])
 lower_lim_veloc = np.array([0, -20])
-nr_herring = 10
+nr_herring = 20
 
 if __name__ == '__main__':
     simulation = Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring)
