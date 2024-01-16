@@ -17,14 +17,14 @@ class Experiment():
 
         self.nr_herring = nr_herring
         self.nr_predators = nr_predators
-        self.attraction_to_center = 0.006 # negative=repulsion, positive is attraction 
-        self.alignment_distance = 3000 
+        self.attraction_to_center = 0.0008 # negative=repulsion, positive is attraction 
+        # self.alignment_distance = 3000 
         self.min_distance = 100
         self.formation_flying_distance = 10 #alignment
-        self.formation_flying_strength = 0.2 #alignment
+        self.formation_flying_strength = 0.5 #alignment
         self.iterations = 100
         self.second_flock = True
-        self.perception_length = 0.02
+        self.perception_length = 0.002
         self.velocity_predator = 80
 
     def initialize_flock(self):
@@ -72,20 +72,21 @@ class Experiment():
 
     def cohesion(self, positions, velocities):
         """Align positions."""
+
         # eigenlijk is de perception length het verschil tussen min_distance en alignment_distance
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
-        # print('squared distances', squared_distances)
-        # print('avg squared distance', np.mean(squared_distances))
-        too_close = squared_distances < self.min_distance
-        too_far = squared_distances > self.alignment_distance
-
+        # perceived = squared_distances <= self.perception_length
+        # fish does not see these surrounding fish because outside of perception length 
+        not_perceived = squared_distances > self.perception_length
+        print('squared dist', squared_distances)
         # Creating an alignment matrix with the herring that are import for the direction 
         alignment_herring = np.copy(distances)
-        alignment_herring[0, :, :][too_close] = 0
-        alignment_herring[1, :, :][too_close] = 0
-        alignment_herring[0, :, :][too_far] = 0
-        alignment_herring[1, :, :][too_far] = 0
+        alignment_herring[0, :, :][not_perceived] = 0
+        alignment_herring[1, :, :][not_perceived] = 0
+        # alignment_herring[0, :, :][too_far] = 0
+        # alignment_herring[1, :, :][too_far] = 0
+        print('alignment', alignment_herring)
 
         velocities -= np.sum(alignment_herring, 1) 
         positions += velocities
@@ -124,8 +125,8 @@ class Experiment():
 
         adjustment = np.copy(close_herring)
         non_zero_mask = close_herring != 0
-        adjustment[non_zero_mask] -= self.min_distance * 10
-        
+        adjustment[non_zero_mask] -= self.min_distance / self.min_distance 
+
         # Update all individual positions
         positions += np.sum(adjustment, 1) 
         positions[0] %= 500
