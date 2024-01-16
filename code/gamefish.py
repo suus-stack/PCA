@@ -16,6 +16,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 from itertools import combinations
+import doctest
+
 
 class Config:
     """ Class that stores the values of all the constants in the experiment"""
@@ -181,7 +183,6 @@ class Herring(pygame.sprite.Sprite):
                 neighbour_predator +=1
 
             if distance_to_predator < Config.KILL_DISTANCE:
-                print("#########KILLLLLLLKILLLLLKILLLLL########")
                 all_herring.remove(self)
                 Herring.killed_herring += 1
 
@@ -245,7 +246,7 @@ class Herring(pygame.sprite.Sprite):
 
             if closest_predator_distance < Config.PERCEPTION_LENGHT_HERRING:
                 speed_h = Config.HERRING_SPEED
-                print((Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
+
                 # Normalize velocity and multiply by the changed speed to which some variation is added.
                 self.velocity = self.velocity.normalize() * (speed_h + (Config.HERRING_SPEED_MAX -Config.HERRING_SPEED + random.uniform(-0.4, 0.4)) * ((Config.PERCEPTION_LENGHT_HERRING-closest_predator_distance) / Config.PERCEPTION_LENGHT_HERRING))
 
@@ -344,6 +345,41 @@ class Predator(pygame.sprite.Sprite):
         # Normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-2, 2))
 
+    # def attack_herring(self, all_herring):
+    #     """ Function that ensures a predator will attack a herring when the herring
+    #     is within its perception lenght. The closer the herring the more influence
+    #     it has on the direction of the predator
+    #
+    #     Parameters:
+    #     -----------
+    #     self: Predator
+    #         The predator currently updated.
+    #     all_herring: pygame.sprite.Group
+    #         Group containing all herring entities.
+    #     """
+    #     closest_herring = None
+    #     closest_distance = float('inf')
+    #
+    #     # Iterate through all herrings
+    #     for herring in all_herring:
+    #         distance_to_herring = self.position.distance_to(herring.position)
+    #
+    #         if (0 < distance_to_herring < Config.PERCEPTION_LENGHT_PREDATOR and distance_to_herring < closest_distance):
+    #             print(distance_to_herring)
+    #             # Update closest_herring and closest_distance
+    #             closest_herring = herring
+    #             closest_distance = distance_to_herring
+    #
+    #             # Determine the attack vector and add it to the total vector
+    #             direction_to_herring = (herring.position - self.position) / distance_to_herring
+    #
+    #     print(closest_herring)
+    #     if closest_herring != None:
+    #         self.velocity +=  direction_to_herring
+    #
+    #     # Normalize velocity and multiply by speed to which some variation is added
+    #     self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4))
+
     def attack_herring(self, all_herring):
         """ Function that ensures a predator will attack a herring when the herring
         is within its perception lenght. The closer the herring the more influence
@@ -356,28 +392,29 @@ class Predator(pygame.sprite.Sprite):
         all_herring: pygame.sprite.Group
             Group containing all herring entities.
         """
-        closest_herring = None
-        closest_distance = float('inf')
+        total_herring_attack_vector = pygame.Vector2(0, 0)
+        average_herring_attack_vector = pygame.Vector2(0, 0)
+        neighbour_herring = 0
 
-        # Iterate through all herrings
+        # Finding the herrings within the perception lenght
         for herring in all_herring:
             distance_to_herring = self.position.distance_to(herring.position)
 
-            if (0 < distance_to_herring < Config.PERCEPTION_LENGHT_PREDATOR and distance_to_herring < closest_distance):
-                print(distance_to_herring)
-                # Update closest_herring and closest_distance
-                closest_herring = herring
-                closest_distance = distance_to_herring
+            if distance_to_herring < Config.PERCEPTION_LENGHT_PREDATOR and distance_to_herring != 0:
 
                 # Determine the attack vector and add it to the total vector
-                direction_to_herring = (herring.position - self.position) / distance_to_herring
+                direction_to_herring = ( herring.position - self.position ) / distance_to_herring
+                total_herring_attack_vector += direction_to_herring
+                neighbour_herring +=1
 
-        print(closest_herring)
-        if closest_herring != None:
-            self.velocity +=  direction_to_herring
+        # Determine the average attack vector
+        if neighbour_herring > 0:
+            average_herring_attack_vector = total_herring_attack_vector  / neighbour_herring
+            self.velocity +=  average_herring_attack_vector* 2
 
         # Normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.4, 0.4))
+
 
     def avoid_rock(self, all_rocks):
         """ Function that ensures the predator will swim around or away from a rock
@@ -569,6 +606,14 @@ class Experiment(pygame.sprite.Sprite):
         -----------
         distance_objects: float
             The ecludian distance between two objects.
+
+        Examples:
+        >>> obj = Experiment()
+        >>> obj.distance_two_positions((0, 0), (3, 4))
+        5.0
+
+        >>> obj.distance_two_positions((0, 0), (0, 0))
+        0.0
         """
         distance_objects = np.sqrt((position_1[0] - position_2[0])**2 + (position_1[1] - position_2[1])**2)
         return distance_objects
@@ -922,6 +967,7 @@ if __name__ == "__main__":
     9: The cohestion distance (float). Default set to 40.
     10: The separation distance (float). Default set to 15.
     """
-    experiment_example = Experiment(10, 1, 20, 200, True, True, False)
+    doctest.testmod()
+    experiment_example = Experiment(100, 1, 20, 200, True, True, False)
     killed_herring = experiment_example.run()
     print(killed_herring)
