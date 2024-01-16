@@ -19,9 +19,9 @@ class Experiment():
         self.nr_predators = nr_predators
         self.attraction_to_center = 0.006 # negative=repulsion, positive is attraction 
         self.alignment_distance = 3000 
-        self.min_distance = 0.4
+        self.min_distance = 100
         self.formation_flying_distance = 10 #alignment
-        self.formation_flying_strength = 0.5 #alignment
+        self.formation_flying_strength = 0.2 #alignment
         self.iterations = 100
         self.second_flock = True
         self.perception_length = 0.02
@@ -112,12 +112,9 @@ class Experiment():
         #Creating a 2 x N x N matrix of the distances between each herring
         distances = positions[:, np.newaxis, :] - positions[:, :, np.newaxis] # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
-        # print('squared_distances', squared_distances)
 
         # making sure that the impact of herring far away is not taken into account 
-        # far_away = squared_distances > self.min_distance
         far_away = squared_distances > self.min_distance
-        # print('far away', far_away)
 
         close_herring = np.copy(distances)
         # X-direction
@@ -125,14 +122,9 @@ class Experiment():
         # Y-direction
         close_herring[1, :, :][far_away] = 0
 
-        # print('close_herring', close_herring)
         adjustment = np.copy(close_herring)
         non_zero_mask = close_herring != 0
-        adjustment[non_zero_mask] -= self.min_distance * 0.1
-        # print('adjustment', adjustment)
-        # adjustment = self.min_distance - close_herring
-        # adjustment = positions - self.min_distance
-        # print('adjustment', adjustment) 
+        adjustment[non_zero_mask] -= self.min_distance * 10
         
         # Update all individual positions
         positions += np.sum(adjustment, 1) 
@@ -153,7 +145,6 @@ class Experiment():
 
             predator_pos += np.array([x_coord_closest, y_coord_closest]) * self.velocity_predator
             #Changing velocity if fish is closer.
-            print(predator_pos)
 
         return predator_pos
 
@@ -210,7 +201,7 @@ upper_lim_veloc = np.array([10, 20])
 lower_lim_veloc = np.array([0, -20])
 upper_lim_predator = np.array([50, 100])
 lower_lim_predator = np.array([50, 100])
-nr_herring = 5
+nr_herring = 20
 nr_predators = 1
 perception_predator = 5
 
