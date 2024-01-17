@@ -1,5 +1,15 @@
+"""
+Authors:      Suze Frikkee, Luca Pouw, Eva Nieuwenhuis
+University:   UvA
+Course:       Project computational science
+Student id's: 14773279 , 15159337, 13717405
+Description:  Agent-based model to simulate herring school movement dynamics.
+"""
+
 import numpy as np
 from  matplotlib import pyplot as plt
+import doctest
+import unittest
 
 class Experiment():
     def __init__(self, lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators,  lower_lim_predator, upper_lim_predator, perception_predator):
@@ -117,6 +127,12 @@ class Experiment():
             The experiment being simulated.
         vector: Vector
             The vector that has to be normalized.
+
+        Example:
+        --------
+        >>> instance = Experiment(0, 1, 0, 1, 10, 5, 0, 1, 0.5)
+        >>> instance.normalize(np.array([3, 4]))
+        array([0.6, 0.8])
         """
         magnitude = np.linalg.norm(vector)
 
@@ -334,5 +350,6 @@ nr_predators = 1
 perception_predator = 5
 
 if __name__ == '__main__':
+    doctest.testmod()
     simulation = Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators, lower_lim_predator, upper_lim_predator, perception_predator)
     simulation.run()
