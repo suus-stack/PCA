@@ -27,6 +27,7 @@ class Experiment():
 
         self.nr_herring = nr_herring
         self.nr_predators = nr_predators
+        self.nr_stones = nr_stones
         self.attraction_to_center = 0.0008 # negative=repulsion, positive is attraction
         # self.alignment_distance = 3000
         self.min_distance = 100
@@ -35,7 +36,8 @@ class Experiment():
         self.iterations = 100
         self.second_flock = True
         self.perception_length = 0.002
-        self.velocity_predator = 80
+        self.velocity_predator = 2
+        
 
     def initialize_flock(self):
         """ Function makes an array with the random start positions of the herring.
@@ -193,15 +195,21 @@ class Experiment():
         predator_pos[0] %= 500
         predator_pos[1] %= 500
         return predator_pos, current_direction
+    
+    def stone_initialization(self):
+        stone_positions = np.random.rand(2, self.nr_stones) * 500
+
+        return stone_positions
 
 
-    def visualize(self, positions, predator_pos, ax1):
+    def visualize(self, positions, predator_pos,stone_positions, ax1):
         """ Function to vizualize the herring and predators on the plot."""
 
         # nu nog gehardcode, nog dynamisch maken
         ax1.axis([0, 500, 0, 500])
         ax1.scatter(positions[0, :], positions[1, :], c='blue', alpha=0.5, marker='o', s=20)
         ax1.scatter(predator_pos[0], predator_pos[1], c='red', alpha=0.5, marker='o', s=20)
+        ax1.scatter(stone_positions[0], stone_positions[1], c= 'grey', alpha = 0.5, marker = 's', s=20)
         plt.draw()
         plt.pause(0.01)
         ax1.cla()
@@ -229,13 +237,14 @@ class Experiment():
         velocities2 = self.initialize_velocities()
         predator_pos = self.initialize_predator()
         current_direction = self.initialize_direction_predator()
+        stone_positions = self.stone_initialization()
 
         for _ in range(self.iterations):
             self.collision_avoidance(positions, velocities)
             self.alignment(positions, velocities)
             self.center_movement(positions, velocities)
             self.cohesion(positions, velocities)
-            self.visualize(positions, predator_pos, ax1)
+            self.visualize(positions, predator_pos,stone_positions, ax1)
             self.velocitie_predator(predator_pos, positions, current_direction)
 
             if self.second_flock:
@@ -243,7 +252,7 @@ class Experiment():
                 self.alignment(positions2, velocities2)
                 self.center_movement(positions2, velocities2)
                 self.cohesion(positions2, velocities2)
-                self.visualize(positions,predator_pos, ax1)
+                self.visualize(positions,predator_pos,stone_positions, ax1)
 
 
 # USAGE
@@ -255,7 +264,8 @@ upper_lim_predator = np.array([0, 100])
 lower_lim_predator = np.array([0, 100])
 nr_herring = 20
 nr_predators = 3
-perception_predator = 0
+nr_stones = 10
+perception_predator = 2
 
 if __name__ == '__main__':
     doctest.testmod()
