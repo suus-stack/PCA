@@ -41,72 +41,31 @@ class Experiment():
         """ Function makes an array with the random start positions of the herring.
         If you want the x-values to vary between 100 and 200 and the y-values to be
         between 900 and 1100, you use: lower_lim = np.array([100, 900]) and upper_lim
-        = np.array([200, 1100]).
+        = np.array([200, 1100]). The function returns an array of size (2, N), where N is
+        the number of herring, with the initialized positions of the flock."""
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-
-        Returns:
-        -----------
-        flock: Array
-            An array with the initialized positions of al flocks.
-        """
-        # self.width = upper_lim - lower_lim
         flock = self.lower_lim_flock[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_flock[:, np.newaxis]
 
         return flock
 
     def initialize_predator(self):
-        """Function makes an array with the random start positions of the predator.
+        """Function returns an array with the random start positions of the predator."""
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-
-        Returns:
-        -----------
-        flock: Array
-            An array with the initialized positions of al flocks.
-        """
         predator = self.lower_lim_predator[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_predator[:, np.newaxis]
 
         return predator
 
     def initialize_velocities(self):
-        """ Function makes an array with the random initialized velocities of the
-        herring.
+        """ Function returns an array of size (2, N), where N is the number of herring,
+        with the random initialized velocities of the herring."""
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-
-        Returns:
-        -----------
-        velocities: Array
-            An array with the initialized velocities of al herring.
-        """
-        # width = upper_lim - lower_lim
         velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_veloc[:, np.newaxis]
 
         return velocities
 
     def center_movement(self, positions, velocities):
-        """ Function that applies center of the mass attraction, the need to get
-        to the group.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        velocities: Array
-            An array with the velocities of the herring.
-        """
+        """ This function applies the center of the mass attraction, the need to get
+        to the group. The function adapts the velocities of the herring accordingly."""
 
         center = np.mean(positions, 1) # 1 because along the horizontal axis
         # Calculating direction vectors from each position to the center
@@ -119,23 +78,8 @@ class Experiment():
         positions[1] %= 500
 
     def normalize(self, vector):
-        """Function that normalizes a vector.
+        """Function that normalizes a vector."""
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        vector: Vector
-            The vector that has to be normalized.
-
-        Example:
-        --------
-        >>> instance = Experiment(0, 1, 0, 1, 10, 5, 0, 1, 0.5)
-        >>> instance.normalize(np.array([3, 4]))
-        array([0.6, 0.8])
-        >>> instance.normalize(np.array([0.5, 0.2]))
-        array([0.92847669, 0.37139068])
-        """
         magnitude = np.linalg.norm(vector)
 
         if magnitude > 0:
@@ -146,17 +90,8 @@ class Experiment():
             return vector
 
     def cohesion(self, positions, velocities):
-        """Function that aligns the positions of the herring.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        velocities: Array
-            An array with the velocities of the herring.
-        """
+        """Function that aligns the positions of the herring and adapts the velocities accordingly,
+        whereafter they are added to the positions."""
 
         # eigenlijk is de perception length het verschil tussen min_distance en alignment_distance
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
@@ -179,17 +114,7 @@ class Experiment():
         positions[1] %= 500
 
     def alignment(self, positions, velocities):
-        """ Function that aligns the velocities of the herring.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        velocities: Array
-            An array with the velocities of the herring.
-        """
+        """ Function that aligns the velocities of the herring."""
 
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
@@ -203,17 +128,7 @@ class Experiment():
 
 
     def collision_avoidance(self, positions, velocities):
-        """ Function that makes sure the herring do not collide.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        velocities: Array
-            An array with the velocitiess of the predators.
-        """
+        """ Function that makes sure the herring do not collide."""
 
         #Creating a 2 x N x N matrix of the distances between each herring
         distances = positions[:, np.newaxis, :] - positions[:, :, np.newaxis] # all pairwise distances in x and y direction
@@ -239,17 +154,7 @@ class Experiment():
 
     def velocitie_predator(self, predator_pos, positions):
         """ Function that changes the position of the predators, possibly based
-        on nearby herring.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        predator_pos: Array
-            An array with the positions of the predators.
-        """
+        on nearby herring."""
 
         distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis]) # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0)
@@ -269,19 +174,8 @@ class Experiment():
 
 
     def visualize(self, positions, predator_pos, ax1):
-        """ Function to vizualize the herring and predators on the plot.
+        """ Function to vizualize the herring and predators on the plot."""
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        predator_pos: Array
-            An array with the positions of the predators.
-        ax1: Plot
-            The plot on which the objects have to be visualized.
-        """
         # nu nog gehardcode, nog dynamisch maken
         ax1.axis([0, 500, 0, 500])
         ax1.scatter(positions[0, :], positions[1, :], c='blue', alpha=0.5, marker='o', s=20)
@@ -292,13 +186,7 @@ class Experiment():
 
 
     def setup_plot(self):
-        """ Function that sets up the plot.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        """
+        """ Function that sets up the plot."""
         fig, ax1 = plt.subplots(1)
         ax1.set_aspect('equal')
         ax1.set_facecolor((0.7, 0.8, 1.0))
@@ -308,13 +196,7 @@ class Experiment():
         return ax1
 
     def run(self):
-        """ Function that runs an experiment.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        """
+        """ Function that runs an experiment."""
 
         ax1 = self.setup_plot()
 
