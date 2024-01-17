@@ -8,6 +8,7 @@ Description:  Agent-based model to simulate herring school movement dynamics.
 
 import numpy as np
 from  matplotlib import pyplot as plt
+import random
 
 
 class Experiment():
@@ -32,7 +33,7 @@ class Experiment():
         self.min_distance = 20
         self.formation_flying_distance = 10 #alignment
         self.formation_flying_strength = 0.8 #alignment
-        self.iterations = 400
+        self.iterations = 4
         self.second_flock = True
         self.perception_length_herring = 0.002
         self.velocity_predator = 2
@@ -140,8 +141,7 @@ class Experiment():
         velocity_differences_if_close[0, :, :][excluded_from_formation] = 0
         velocity_differences_if_close[1, :, :][excluded_from_formation] = 0
 
-        velocities -= np.mean(velocity_differences_if_close, 1) * self.formation_flying_strength
-
+        velocities -= np.mean(velocity_differences_if_close, 1) * self.formation_flying_strength 
 
     def collision_avoidance(self, positions, velocities):
             """ Function that makes sure the herring do not collide."""
@@ -165,10 +165,14 @@ class Experiment():
             # Update all individual positions
             velocities += np.sum(adjustment, 1)
             positions += velocities
+            print('positions before', positions)
+            self.add_randomness(positions)
+            print('positions after', positions)
             positions[0] %= 500
             positions[1] %= 500
 
-
+    def add_randomness(self, positions):
+        return positions + random.uniform(-100, 100)
 
     def velocitie_predator(self, predator_pos, positions, current_direction):
         distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis])  # all pairwise distances in x and y direction
