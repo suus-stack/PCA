@@ -189,6 +189,9 @@ class Experiment():
                 print(predator_pos, current_direction,self.velocity_predator )
         print('end of current_direction')
         print(predator_pos)
+
+        predator_pos[0] %= 500
+        predator_pos[1] %= 500
         return predator_pos, current_direction
 
 
