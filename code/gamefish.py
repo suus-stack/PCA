@@ -10,12 +10,10 @@ predators.
 
 import pygame
 import random
-import time
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from itertools import combinations
+import seaborn as snss
 import doctest
 
 class Config:
@@ -26,7 +24,7 @@ class Config:
 
     # Parameters herring
     HERRING_SIZE = 3
-    SEPARATION_DISTANCE = 10
+    SEPARATION_DISTANCE = 5
     ALIGNMENT_DISTANCE = 20
     COHESION_DISTANCE = 20
     HERRING_SPEED = 1.24
@@ -40,7 +38,7 @@ class Config:
     PREDATOR_SPEED_MAX = 24.4
     PERCEPTION_LENGTH_PREDATOR = 100
 
-    # parameters rock
+    # Parameters rock
     ROCK_LENGTH = 10
 
 class Herring(pygame.sprite.Sprite):
@@ -63,10 +61,10 @@ class Herring(pygame.sprite.Sprite):
         super().__init__()
         # Creating the visualization of the herring and adding to the display
         self.image = pygame.Surface((Config.HERRING_SIZE * 2, Config.HERRING_SIZE * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, (0, 0, 255, 180), (Config.HERRING_SIZE, Config.HERRING_SIZE), Config.HERRING_SIZE)
+        pygame.draw.circle(self.image, (0, 0, 255, 140), (Config.HERRING_SIZE, Config.HERRING_SIZE), Config.HERRING_SIZE)
         self.rect = self.image.get_rect(center=( x_pos, y_pos))
 
-        # Add the position of the herrring to a vector
+        # Add the position of the herring to a vector
         self.position = pygame.Vector2(x_pos, y_pos)
 
         # Pick velocity and multiply it with the correct speed
@@ -126,11 +124,10 @@ class Herring(pygame.sprite.Sprite):
         if neighbour_herring_cohesion > 0:
             cohesion_vector = cohesion_vector / neighbour_herring_cohesion
 
-        # Determine total vector of all the rules
-        total_vector_rules = separation_vector + alignment_vector + cohesion_vector
+        # Determine total vector of all the rules and add it to the velocity
+        self.velocity += (separation_vector + alignment_vector + cohesion_vector)
 
         # Normalize velocity and multiply by speed to which some variation is added
-        self.velocity += total_vector_rules
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def avoid_predator(self, all_predators, all_herring):
@@ -167,8 +164,7 @@ class Herring(pygame.sprite.Sprite):
 
         # Calculate the avreage predator avoidance vector
         if neighbour_predator > 0:
-            predator_avoidance_vector = predator_avoidance_vector / neighbour_predator
-            self.velocity += predator_avoidance_vector
+            self.velocity += (predator_avoidance_vector / neighbour_predator)
 
         # Normalizing velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
@@ -294,7 +290,7 @@ class Predator(pygame.sprite.Sprite):
         -----------
         self: Predator
             The predator currently updated.
-        all_predators: pygame.sprite.Group
+        all_predators: Pygame.sprite.Group
             Group containing all predator entities.
         """
         collision_avoidance_vector = pygame.Vector2(0, 0)
@@ -312,8 +308,7 @@ class Predator(pygame.sprite.Sprite):
 
         # Calculate the average collision avoidance vector
         if close_predator > 0:
-            collision_avoidance_vector = collision_avoidance_vector / close_predator
-            self.velocity += collision_avoidance_vector
+            self.velocity += (collision_avoidance_vector / close_predator)
 
         # Normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
@@ -326,7 +321,7 @@ class Predator(pygame.sprite.Sprite):
         -----------
         self: Predator
             The predator currently updated.
-        all_herring: pygame.sprite.Group
+        all_herring: Pygame.sprite.Group
             Group containing all herring entities.
         """
         closest_herring = None
@@ -357,7 +352,7 @@ class Predator(pygame.sprite.Sprite):
         -----------
         self: Predator
             The predator currently updated.
-        all_rocks: pygame.sprite.Group
+        all_rocks: Pygame.sprite.Group
             Group containing all rock entities.
         """
         rock_avoidance_vector = pygame.Vector2(0, 0)
@@ -415,11 +410,11 @@ class Predator(pygame.sprite.Sprite):
         -----------
         self: Predators
             The predator currently updated.
-        all_predators: pygame.sprite.Group
+        all_predators: Pygame.sprite.Group
             Group containing all predator entities.
-        all_herring: pygame.sprite.Group
+        all_herring: Pygame.sprite.Group
             Group containing all herring entities.
-        all_rocks: pygame.sprite.Group
+        all_rocks: Pygame.sprite.Group
             Group containing all rock entities.
         """
         # Determine influence of the environment
@@ -891,5 +886,5 @@ if __name__ == "__main__":
     10: The separation distance (float). Default set to 15.
     """
     doctest.testmod()
-    experiment_example = Experiment(100, 10, 20, 200, True, True, False, 20,20,5)
+    experiment_example = Experiment(150, 1, 20, 200, True, True, False, 20, 20, 5)
     killed_herring = experiment_example.run()
