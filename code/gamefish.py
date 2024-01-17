@@ -71,7 +71,7 @@ class Herring(pygame.sprite.Sprite):
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def boids_rules_herring(self, all_herring):
-        """ Function that implements:
+        """ Function to adapt the herring velocity to implement the flocking rules:
         - The separation rule, stating that a herring does not get closer to an
         other herring than some minimum distance.
         - The alignment rule, stating that the herring heads in the direction of
@@ -131,10 +131,10 @@ class Herring(pygame.sprite.Sprite):
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def avoid_predator(self, all_predators, all_herring):
-        """ Function that ensures that a herring avoids the predator if the predator
-        is within the perception length of the herring. The closer the predator the
-        more it will influence the direction of the herring. If the predator is within
-        the kill distance the herring will get killed.
+        """Function to adapt the herring velocity to avoid the predators within the
+        perception length of the herring. The closer the predator the more it will
+        influence the direction of the herring. If the predator is within the kill
+        distance the herring will get killed.
 
         Parameters:
         -----------
@@ -169,9 +169,9 @@ class Herring(pygame.sprite.Sprite):
         # Normalizing velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
-    def avoid_rock(self, all_rocks):
-        """ Function that ensures the herring does not swim through a rock but will
-        swim around or away from a rock
+    def avoid_rock(self, all_rocks)  :
+        """Function to adapt the herring velocity to avoid the closeby rocks.
+
 
         Parameters:
         -----------
@@ -284,7 +284,7 @@ class Predator(pygame.sprite.Sprite):
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
 
     def collision_avoidance(self, all_predators):
-        """ Function that makes sure predators donnot fully collide
+        """Function to adapt the predator velocity to avoid collision.
 
         Parameters:
         -----------
@@ -314,8 +314,7 @@ class Predator(pygame.sprite.Sprite):
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
 
     def attack_herring(self, all_herring):
-        """ Function that ensures a predator will attack the closest herring when
-        this herring is within its perception length.
+        """ Function to adapt the predator velocity to attack the closest herring.
 
         Parameters:
         -----------
@@ -346,7 +345,7 @@ class Predator(pygame.sprite.Sprite):
 
 
     def avoid_rock(self, all_rocks):
-        """ Function that ensures the predator will swim around or away from a rock
+        """Function to adapt the herring velocity to avoid the closeby rocks.
 
         Parameters:
         -----------
