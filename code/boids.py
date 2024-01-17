@@ -93,6 +93,12 @@ class Experiment():
         velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_veloc[:, np.newaxis]
 
         return velocities
+    
+    def initialize_direction_predator(self):
+        velocities_predator = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
+        # print('initialization')
+        # print(velocities_predator)
+        return velocities_predator
 
     def center_movement(self, positions, velocities):
         """ Function that applies center of the mass attraction, the need to get
@@ -237,24 +243,13 @@ class Experiment():
         positions[0] %= 500
         positions[1] %= 500
 
-    def velocitie_predator(self, predator_pos, positions):
-        """ Function that changes the position of the predators, possibly based
-        on nearby herring.
 
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Array
-            An array with the positions of the herring.
-        predator_pos: Array
-            An array with the positions of the predators.
-        """
-
-        distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis]) # all pairwise distances in x and y direction
+    def velocitie_predator(self, predator_pos, positions, current_direction):
+        distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis])  # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0)
         closest = np.argmin(squared_distances)
-
+        print('start current direction')
+        print(predator_pos)
         # Copy the distances matrix
         close_herring = np.copy(distances)
         if closest < self.perception_predator:
@@ -263,9 +258,23 @@ class Experiment():
             y_coord_closest = close_herring[1, :, :][:, closest]
 
             predator_pos += np.array([x_coord_closest, y_coord_closest]) * self.velocity_predator
-            #Changing velocity if fish is closer.
-
-        return predator_pos
+            # Changing velocity if fish is closer.
+            current_direction = np.array([x_coord_closest, y_coord_closest])  # Update current direction
+            print('following')
+        else:
+            # Occasionally make a turn by generating a random direction
+            if np.random.rand() < 0.3:  
+                velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
+                predator_pos += velocities
+                current_direction = velocities  # Update current direction
+                print('chancing')
+            else:
+                predator_pos += current_direction * self.velocity_predator
+                print('maintaining:')
+                print(predator_pos, current_direction,self.velocity_predator )
+        print('end of current_direction')
+        print(predator_pos)
+        return predator_pos, current_direction
 
 
     def visualize(self, positions, predator_pos, ax1):
@@ -324,6 +333,7 @@ class Experiment():
         positions2 = self.initialize_flock()
         velocities2 = self.initialize_velocities()
         predator_pos = self.initialize_predator()
+        current_direction = self.initialize_direction_predator()
 
         for _ in range(self.iterations):
             self.collision_avoidance(positions, velocities)
@@ -331,7 +341,7 @@ class Experiment():
             self.center_movement(positions, velocities)
             self.cohesion(positions, velocities)
             self.visualize(positions, predator_pos, ax1)
-            self.velocitie_predator(predator_pos, positions)
+            self.velocitie_predator(predator_pos, positions, current_direction)
 
             if self.second_flock:
                 self.collision_avoidance(positions2, velocities2)
@@ -340,16 +350,17 @@ class Experiment():
                 self.cohesion(positions2, velocities2)
                 self.visualize(positions,predator_pos, ax1)
 
+
 # USAGE
 upper_lim_flock = np.array([0, 100])
 lower_lim_flock = np.array([0, 100])
 upper_lim_veloc = np.array([10, 20])
 lower_lim_veloc = np.array([0, -20])
-upper_lim_predator = np.array([50, 100])
-lower_lim_predator = np.array([50, 100])
+upper_lim_predator = np.array([0, 100])
+lower_lim_predator = np.array([0, 100])
 nr_herring = 20
-nr_predators = 1
-perception_predator = 5
+nr_predators = 3
+perception_predator = 0
 
 if __name__ == '__main__':
     doctest.testmod()
