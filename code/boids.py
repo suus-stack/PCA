@@ -133,6 +133,8 @@ class Experiment():
         >>> instance = Experiment(0, 1, 0, 1, 10, 5, 0, 1, 0.5)
         >>> instance.normalize(np.array([3, 4]))
         array([0.6, 0.8])
+        >>> instance.normalize(np.array([0.5, 0.2]))
+        array([0.92847669, 0.37139068])
         """
         magnitude = np.linalg.norm(vector)
 

@@ -470,6 +470,15 @@ class Rock(pygame.sprite.Sprite):
         -----------
         distance_rocks: float
             The ecludian distance between two rocks.
+
+        Examples:
+        --------
+        >>> rock = Rock(0, 0)
+        >>> rock.distance_to((3, 4))
+        5.0
+        >>> rock = Rock(1, 2)
+        >>> rock.distance_to((1, 2))
+        0.0
         """
         return np.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
 
