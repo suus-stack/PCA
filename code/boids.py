@@ -8,8 +8,7 @@ Description:  Agent-based model to simulate herring school movement dynamics.
 
 import numpy as np
 from  matplotlib import pyplot as plt
-import doctest
-import unittest
+
 
 class Experiment():
     def __init__(self, lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators,  lower_lim_predator, upper_lim_predator, perception_predator):
@@ -27,15 +26,15 @@ class Experiment():
 
         self.nr_herring = nr_herring
         self.nr_predators = nr_predators
+        self.speed_herring = None
         self.nr_stones = nr_stones
         self.attraction_to_center = 0.0008 # negative=repulsion, positive is attraction
-        # self.alignment_distance = 3000
-        self.min_distance = 100
+        self.min_distance = 20
         self.formation_flying_distance = 10 #alignment
-        self.formation_flying_strength = 0.5 #alignment
-        self.iterations = 100
+        self.formation_flying_strength = 0.8 #alignment
+        self.iterations = 400
         self.second_flock = True
-        self.perception_length = 0.002
+        self.perception_length_herring = 0.002
         self.velocity_predator = 2
         
 
@@ -66,9 +65,10 @@ class Experiment():
         return velocities
     
     def initialize_direction_predator(self):
+        """NOG DOCSTRING SCHRIJVEN"""
+
         velocities_predator = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
-        # print('initialization')
-        # print(velocities_predator)
+      
         return velocities_predator
 
     def center_movement(self, positions, velocities):
@@ -86,7 +86,8 @@ class Experiment():
         positions[1] %= 500
 
     def normalize(self, vector):
-        """Function that normalizes a vector."""
+        """Function that normalizes a vector. This ensures we are left with solely direction without considering
+        its scale/length."""
 
         magnitude = np.linalg.norm(vector)
 
@@ -94,79 +95,87 @@ class Experiment():
             # Scale the vector to have a unit magnitude
             return vector / magnitude
         else:
-            # If the magnitude is 0, return the original vector
+            # If magnitude is 0, return the original vector
             return vector
 
     def cohesion(self, positions, velocities):
-        """Function that aligns the positions of the herring and adapts the velocities accordingly,
-        whereafter they are added to the positions."""
+        """This function finds the surrounding herring for each individual herring based on perception length,
+        and aligns the position of the individual herring based on its surroundings."""
 
-        # eigenlijk is de perception length het verschil tussen min_distance en alignment_distance
+        # Creating a (2, N, N) matrix of pairwise distances between each herring in x and y direction
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
-        squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
-        # perceived = squared_distances <= self.perception_length
-        # fish does not see these surrounding fish because outside of perception length
-        not_perceived = squared_distances > self.perception_length
-        # print('squared dist', squared_distances)
-        # Creating an alignment matrix with the herring that are import for the direction
+        squared_distances = np.sum(distances**2, 0) # now distance from 1 to 2 equals 2 to 1 (eucladian distances) shape (N, N)
+        
+        # Only considering the herring that are perceived by an individual herring for its direction
+        not_perceived = squared_distances > self.perception_length_herring
+        
+        # Creating a matrix containing only the distances of relevant herring
         alignment_herring = np.copy(distances)
+        # X-direction 
         alignment_herring[0, :, :][not_perceived] = 0
+        # Y-direction
         alignment_herring[1, :, :][not_perceived] = 0
-        # alignment_herring[0, :, :][too_far] = 0
-        # alignment_herring[1, :, :][too_far] = 0
-        # print('alignment', alignment_herring)
 
-        velocities -= np.sum(alignment_herring, 1)
+        # Using np.sum(array, 1) : taking the columnwise sum for each herring its alignment matrix
+        # shape will go from (2, 10, 10) to (2, 10)
+        velocities -= np.sum(alignment_herring, 1)  
         positions += velocities
+
+        # Periodic boundaries
         positions[0] %= 500
         positions[1] %= 500
 
     def alignment(self, positions, velocities):
-        """ Function that aligns the velocities of the herring."""
+        """Function that finds the surrounding herring within the radius of the formation size, for each individual herring,
+        and aligns the velocity of the individual herring based on this. Here the formation_flying_distance determines the 
+        radius in which herring are considered to be included in the formation size, forming of the school."""
 
-        distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) # all pairwise distances in x and y direction
-        squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
+        # Creating a (2, N, N) matrix of pairwise distances between each herring in x and y direction
+        distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis]) 
+        squared_distances = np.sum(distances**2, 0) # eucladian distances
+        
         velocity_differences = velocities[:, np.newaxis, :] - velocities[:, :, np.newaxis]
-
-        very_far = squared_distances > self.formation_flying_distance
+        excluded_from_formation = squared_distances > self.formation_flying_distance
         velocity_differences_if_close = np.copy(velocity_differences)
-        velocity_differences_if_close[0, :, :][very_far] = 0
-        velocity_differences_if_close[1, :, :][very_far] = 0
+        velocity_differences_if_close[0, :, :][excluded_from_formation] = 0
+        velocity_differences_if_close[1, :, :][excluded_from_formation] = 0
+
         velocities -= np.mean(velocity_differences_if_close, 1) * self.formation_flying_strength
 
 
     def collision_avoidance(self, positions, velocities):
-        """ Function that makes sure the herring do not collide."""
+            """ Function that makes sure the herring do not collide."""
 
-        #Creating a 2 x N x N matrix of the distances between each herring
-        distances = positions[:, np.newaxis, :] - positions[:, :, np.newaxis] # all pairwise distances in x and y direction
-        squared_distances = np.sum(distances**2, 0) # distance from 1 to 2 equals 2 to 1 (eucladian distances)
+            #Creating a 2 x N x N matrix of the distances between each herring
+            distances = positions[:, np.newaxis, :] - positions[:, :, np.newaxis] 
+            squared_distances = np.sum(distances**2, 0) 
 
-        # making sure that the impact of herring far away is not taken into account
-        far_away = squared_distances > self.min_distance
+            far_away = squared_distances > self.min_distance
+            close_herring = np.copy(distances)
 
-        close_herring = np.copy(distances)
-        # X-direction
-        close_herring[0, :, :][far_away] = 0
-        # Y-direction
-        close_herring[1, :, :][far_away] = 0
+            # X-direction
+            close_herring[0, :, :][far_away] = 0
+            # Y-direction
+            close_herring[1, :, :][far_away] = 0
 
-        adjustment = np.copy(close_herring)
-        non_zero_mask = close_herring != 0
-        adjustment[non_zero_mask] -= self.min_distance / self.min_distance
+            adjustment = np.copy(close_herring)
+            non_zero_mask = close_herring != 0
+            adjustment[non_zero_mask] -= self.min_distance / self.min_distance
 
-        # Update all individual positions
-        positions += np.sum(adjustment, 1)
-        positions[0] %= 500
-        positions[1] %= 500
+            # Update all individual positions
+            velocities += np.sum(adjustment, 1)
+            positions += velocities
+            positions[0] %= 500
+            positions[1] %= 500
+
 
 
     def velocitie_predator(self, predator_pos, positions, current_direction):
         distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis])  # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0)
         closest = np.argmin(squared_distances)
-        print('start current direction')
-        print(predator_pos)
+        # print('start current direction')
+        # print(predator_pos)
         # Copy the distances matrix
         close_herring = np.copy(distances)
         if closest < self.perception_predator:
@@ -177,20 +186,20 @@ class Experiment():
             predator_pos += np.array([x_coord_closest, y_coord_closest]) * self.velocity_predator
             # Changing velocity if fish is closer.
             current_direction = np.array([x_coord_closest, y_coord_closest])  # Update current direction
-            print('following')
+            # print('following')
         else:
             # Occasionally make a turn by generating a random direction
             if np.random.rand() < 0.3:  
                 velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
                 predator_pos += velocities
                 current_direction = velocities  # Update current direction
-                print('chancing')
+                # print('chancing')
             else:
                 predator_pos += current_direction * self.velocity_predator
-                print('maintaining:')
-                print(predator_pos, current_direction,self.velocity_predator )
-        print('end of current_direction')
-        print(predator_pos)
+                # print('maintaining:')
+                # print(predator_pos, current_direction,self.velocity_predator )
+        # print('end of current_direction')
+        # print(predator_pos)
 
         predator_pos[0] %= 500
         predator_pos[1] %= 500
@@ -198,7 +207,6 @@ class Experiment():
     
     def stone_initialization(self):
         stone_positions = np.random.rand(2, self.nr_stones) * 500
-
         return stone_positions
 
 
@@ -240,16 +248,16 @@ class Experiment():
         stone_positions = self.stone_initialization()
 
         for _ in range(self.iterations):
-            self.collision_avoidance(positions, velocities)
             self.alignment(positions, velocities)
+            self.collision_avoidance(positions, velocities)
             self.center_movement(positions, velocities)
             self.cohesion(positions, velocities)
             self.visualize(positions, predator_pos,stone_positions, ax1)
             self.velocitie_predator(predator_pos, positions, current_direction)
 
             if self.second_flock:
-                self.collision_avoidance(positions2, velocities2)
                 self.alignment(positions2, velocities2)
+                self.collision_avoidance(positions2, velocities2)
                 self.center_movement(positions2, velocities2)
                 self.cohesion(positions2, velocities2)
                 self.visualize(positions,predator_pos,stone_positions, ax1)
@@ -262,12 +270,11 @@ upper_lim_veloc = np.array([10, 20])
 lower_lim_veloc = np.array([0, -20])
 upper_lim_predator = np.array([0, 100])
 lower_lim_predator = np.array([0, 100])
-nr_herring = 20
+nr_herring = 30
 nr_predators = 3
 nr_stones = 10
 perception_predator = 2
 
 if __name__ == '__main__':
-    doctest.testmod()
     simulation = Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators, lower_lim_predator, upper_lim_predator, perception_predator)
     simulation.run()
