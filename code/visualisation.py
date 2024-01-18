@@ -41,14 +41,14 @@ def influence_predator_number(max_number_predators, number_simulations):
         # Do a number of simulation without rocks
         for simulation in range(number_simulations):
             experiment = Experiment(100, number_predators, 0, 30, True, True, False)
-            number_killed_herring = experiment.run()
+            number_killed_herring, _ = experiment.run()
             new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
             df = pd.concat([df, new_row], ignore_index=True)
 
         # Do a number of simulations with rocks
         for simulation in range(number_simulations):
             experiment = Experiment(100, number_predators, 20, 30, True, True, False)
-            number_killed_herring = experiment.run()
+            number_killed_herring, _ = experiment.run()
             new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
             df = pd.concat([df, new_row], ignore_index=True)
 
@@ -83,7 +83,7 @@ def influence_rocks(number_simulations):
         for simulation in range(number_simulations):
             print('simulation', simulation)
             experiment = Experiment(100, 1, number_rock, 30, False, True, False)
-            number_killed_herring = experiment.run()
+            number_killed_herring, _ = experiment.run()
             list_killed_herring.append(number_killed_herring)
 
         # Calculate the mean and the standard deviation and add it to the list
@@ -126,7 +126,7 @@ def influence_alignment_distance(number_simulations):
         for simulation in range(number_simulations):
             print('simulation', simulation)
             experiment = Experiment(100, 1, 20, 20, True, True, False, alignment_distance, 20, 5)
-            number_killed_herring = experiment.run()
+            number_killed_herring, _ = experiment.run()
             list_killed_herring.append(number_killed_herring)
 
         # Calculate the mean and the standard deviation and add it to the list
@@ -165,7 +165,7 @@ def influence_school_size(number_simulations):
     for simulation in range(number_simulations):
         print('Simulation without rocks and with 100 herring', simulation)
         experiment = Experiment(100, 1, 0, 20, True, True, False)
-        number_killed_herring = experiment.run()
+        number_killed_herring, _ = experiment.run()
         new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
@@ -173,14 +173,14 @@ def influence_school_size(number_simulations):
     for simulation in range(number_simulations):
         print('Simulation with rocks and with 100 herring', simulation)
         experiment = Experiment(100, 1, 20, 20, True, True, False)
-        number_killed_herring = experiment.run()
+        number_killed_herring, _ = experiment.run()
         new_row = pd.DataFrame([{'School size': 100, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # Do a number of simulation without rocks and with 200 herring
     for simulation in range(number_simulations):
         experiment = Experiment(200, 1, 0, 20, True, True, False)
-        number_killed_herring = experiment.run()
+        number_killed_herring, _ = experiment.run()
         new_row = pd.DataFrame([{'School size': 200, 'Killed herring': number_killed_herring , 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
@@ -188,7 +188,7 @@ def influence_school_size(number_simulations):
     for simulation in range(number_simulations):
         print('Simulation with rocks and and with 200 herring', simulation)
         experiment = Experiment(200, 1, 20, 20, True, True, False)
-        number_killed_herring = experiment.run()
+        number_killed_herring, _ = experiment.run()
         new_row = pd.DataFrame([{ 'School size': 200, 'Killed herring': number_killed_herring , 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
@@ -258,11 +258,92 @@ def significant_test_school_size(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_small_school_no_rocks, values_large_school_no_rocks)
         print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
 
+def influence_predators_close_distance(number_simulations):
+    """
+    Function that makes a violinplot of the distribution of the killed herring
+    for two sizes of fish schools in an environment with and without rocks.
+    The starting number of predators to 1. ........
 
-def influence_perception_lenght_predator(number_simulations):
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind
+    """
+
+    # Make empty dataframe with three columns
+    column_names = ['Predator', 'Times within close distance']
+    df = pd.DataFrame(columns=column_names)
+
+    # Do a number of simulation without rocks and with 100 herring
+    for simulation in range(number_simulations):
+        print('Simulation', simulation)
+
+        # Simulation without predators
+        experiment = Experiment(100, 0, 0, 30, True, True, False)
+        _, close_herring = experiment.run()
+        new_row = pd.DataFrame([{'Predator': 'no', 'Times within close distance': close_herring}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+        # Simulation with predators
+        experiment = Experiment(100, 1, 0, 30, True, True, False)
+        _, close_herring = experiment.run()
+        new_row = pd.DataFrame([{'Predator': 'yes', 'Times within close distance': close_herring}])
+        df = pd.concat([df, new_row], ignore_index=True)
+
+    # Do a statistical test
+    significant_test_close(df)
+
+    # Determine the colors for the plots
+    colors_box = {'yes': 'peachpuff', 'no': 'lavender'}
+    colors_strip = {'yes': 'red', 'no': 'blue'}
+
+    # # Set Seaborn style
+    # sns.set(style="whitegrid")
+
+    # Make a figure in which both the boxplot an stripplot are plotted
+    plt.figure(figsize=(10, 6))
+    boxplot = sns.boxplot(x='Predator', y='Times within close distance', data=df, palette=colors_box, width=0.6)
+    stripplot = sns.stripplot(x='Predator', y='Times within close distance', data=df, palette=colors_strip, jitter=0.2, dodge=True)
+
+    plt.title('Times herring are within 0.5 of the separation distance of each other with and without a predator')
+    plt.xlabel('Predator Presence')
+    plt.ylabel('Times within Close Distance')
+    plt.show()
+
+def significant_test_close(df):
+    """Function that determines if there is a significant difference in killed
+    herring between a large and small school. It is tested in an envionment with
+    and without rocks
+
+    Parameters:
+    -----------
+    df: Dataframe
+        Datafframe with the values obtaint from the simulated experiments
+    """
+    df['Times within close distance'] = pd.to_numeric(df['Times within close distance'], errors='coerce')
+
+    # Extract the killing values for the small and larg school in environment with rocks
+    values_no_predator = df.loc[(df['Predator'] == 'no'), 'Times within close distance']
+    values_predator = df.loc[(df['Predator'] == 'yes'), 'Times within close distance']
+
+    # Determine if the data is normally distributed
+    statistic_no_predator, p_value_no_predator = shapiro(values_no_predator)
+    statistic_predator, p_value_predator = shapiro(values_predator)
+
+    # Check if both data is normally distributed to determine the statistic test
+    if  p_value_predator >= 0.05 and  p_value_no_predator >= 0.05:
+        t_statistic, p_value = stats.ttest_ind(values_no_predator, values_predator)
+        print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
+
+    else:
+        mw_statistic, p_value = stats.mannwhitneyu(values_no_predator, values_predator)
+        print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
+
+
+def influence_perception_length_predator(number_simulations):
     """
     Function that makes a plot of the average killed herring + 1 SD errorbars whereby
-    the perception lenght of the predator changes over the time. In the environment are
+    the perception length of the predator changes over the time. In the environment are
     rocks and 1 predator.
 
     Parameters:
@@ -275,9 +356,8 @@ def influence_perception_lenght_predator(number_simulations):
     # Simulate a number of experimens
     for simulation in range(0, number_simulations):
         print('nr simulation', simulation)
-
-        experiment = Experiment(150, 1, 10, 240, True, False, True)
-        list_killed_herring, list_predator_perception_lenght = experiment.run()
+        experiment = Experiment(150, 1, 10, 240, True, True, True)
+        list_killed_herring, list_predator_perception_length = experiment.run()
         data_array_killed_herring[simulation, :] = list_killed_herring
 
     # Calculate mean and standard deviation for each column
@@ -285,16 +365,16 @@ def influence_perception_lenght_predator(number_simulations):
     std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
 
     # Determine the time values
-    time_values = list(range(len(list_predator_perception_lenght)))
+    time_values = list(range(len(list_predator_perception_length)))
 
     # Make a plot
     fig, ax = plt.subplots()
     ax.errorbar(time_values, mean_killed_herring_array, yerr= std_killed_herring_array, fmt='o', label=' average killed herring + 1 SD', color='purple', markerfacecolor='blue')
-    plt.step(x= time_values, y= list_predator_perception_lenght, label='perception leght', color= 'pink', where='post')
+    plt.step(x= time_values, y= list_predator_perception_length, label='perception leght', color= 'pink', where='post')
     ax.set_xticks(time_values)
     ax.set_xlabel('Time')
-    ax.set_ylabel('killed herring/ perception lenght')
-    ax.set_title('Average killed herring + 1 SD errorbars when the perception lenght of the predator changes')
+    ax.set_ylabel('killed herring/ perception length')
+    ax.set_title('Average killed herring + 1 SD errorbars when the perception length of the predator changes')
     plt.legend()
     plt.show()
 
@@ -305,28 +385,27 @@ if __name__ == "__main__":
     2: The number of predators in the simulation (int). Default set to one.
     3: The number of rocks in the simulation (int). default set to ten.
     4: The duration of the simulation in seconds (int). Defaut set to twenty.
-    5: If clossely placed rocks should be connected via more rocks (Bool). Default
-    set to False.
-    6: If the herring should start as one big school instead of randomly placed
-    (bool). Default set to False.
-    7: If the perception lenght of the predator changes over the time (bool).
-    Default set to False.
-    8: The alignment distance (float). Default set to 40.
-    9: The cohestion distance (float). Default set to 40.
-    10: The separation distance (float). Default set to 15.
-
+    5: Closeby rocks should be connected via more rocks (Bool). Default set to False.
+    6: Herring start as one school instead of randomly (bool). Default set to False.
+    7: Predator perception length changes over the time (bool). Default set to False.
+    8: The alignment distance (float). Default set to 32.
+    9: The cohestion distance (float). Default set to 32.
+    10: The separation distance (float). Default set to 6.
     """
-    # Determine the influence of rocks on the predator killing rate
-    influence_rocks(5)
+    # # Determine the influence of rocks on the predator killing rate
+    # influence_rocks(3)
+    # #
+    # # Determin the invluence of more predators
+    # influence_predator_number(6, 3)
+    # #
+    # # Determine the influence of the scoolsize
+    # influence_school_size(3)
     #
-    # Determin the invluence of more predators
-    influence_predator_number(6, 5)
-    #
-    # Determine the influence of the scoolsize
-    influence_school_size(5)
+    # # Determine the influence of the alignment distance
+    # influence_alignment_distance(3)
 
-    # Determine the influence of the alignment distance
-    influence_alignment_distance(5)
+    # Determine the influence of a change in the perception length
+    influence_perception_length_predator(3)
 
-    # Determine the influence of a change in the perception lenght
-    influence_perception_lenght_predator(10)
+    # Determine if predator causes panic
+    influence_predators_close_distance(3)
