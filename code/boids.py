@@ -33,7 +33,7 @@ class Experiment():
         self.min_distance = 20
         self.formation_flying_distance = 10 #alignment
         self.formation_flying_strength = 0.8 #alignment
-        self.iterations = 4
+        self.iterations = 100
         self.second_flock = True
         self.perception_length_herring = 0.002
         self.velocity_predator = 2
@@ -47,7 +47,7 @@ class Experiment():
         the number of herring, with the initialized positions of the flock."""
 
         flock = self.lower_lim_flock[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_flock[:, np.newaxis]
-
+        # kunnen range ook weglaten 
         return flock
 
     def initialize_predator(self):
@@ -83,6 +83,8 @@ class Experiment():
 
         velocities -= direction_to_center * self.attraction_to_center
         positions += velocities
+
+        # Periodic boundaries
         positions[0] %= 500
         positions[1] %= 500
 
