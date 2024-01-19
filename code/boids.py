@@ -3,7 +3,8 @@ Authors:      Suze Frikkee, Luca Pouw, Eva Nieuwenhuis
 University:   UvA
 Course:       Project computational science
 Student id's: 14773279 , 15159337, 13717405
-Description:  Agent-based model to simulate herring school movement dynamics.
+Description:  Agent-based model to simulate herring school movement dynamics using
+              matrices.
 """
 
 import numpy as np
@@ -51,8 +52,6 @@ class Experiment():
         self.perception_length_herring = 0.002
 
 
-
-
     def initialize_flock(self):
         """ Function makes an array with the random start positions of the herring.
         If you want the x-values to vary between 100 and 200 and the y-values to be
@@ -72,7 +71,6 @@ class Experiment():
         """
 
         flock = self.lower_lim_flock[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_flock[:, np.newaxis]
-        # kunnen range ook weglaten
         return flock
 
     def initialize_predator(self):
@@ -88,10 +86,7 @@ class Experiment():
         flock: Numpy array
             An array with the initialized positions of al flocks.
         """
-        # predator = self.lower_lim_predator[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_predator[:, np.newaxis]
-
         predator = np.random.rand(2, self.nr_predators) * 500
-
         return predator
 
     def initialize_velocities(self):
@@ -108,9 +103,7 @@ class Experiment():
         velocities: Numpy array
             An array with the initialized velocities of all herring.
         """
-
         velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_herring) * self.width_veloc[:, np.newaxis]
-
         return velocities
 
     def initialize_direction_predator(self):
@@ -127,9 +120,7 @@ class Experiment():
         velocities: Numpy array
             An array with the initialized velocities of all predators.
         """
-
         velocities_predator = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
-
         return velocities_predator
 
     def center_movement(self, positions, velocities):
@@ -145,12 +136,12 @@ class Experiment():
         velocities: Numpy array
             An array with the velocities of the herring.
         """
+        # Determine the center of the positions along the horizontal axes
+        center = np.mean(positions, 1)
 
-        center = np.mean(positions, 1) # 1 because along the horizontal axis
-        # Calculating direction vectors from each position to the center
-        # By adding a new axis the shape of center changes from (2,) to (2,1)
+        # Calculating direction vectors from each position to the center and using
+        # these vectors to change the velocities
         direction_to_center = positions - center[:, np.newaxis]
-
         velocities -= direction_to_center * self.attraction_to_center
         positions += velocities
 
@@ -177,7 +168,6 @@ class Experiment():
          >>> instance.normalize(np.array([0.5, 0.2]))
          array([0.92847669, 0.37139068])
          """
-
         magnitude = np.linalg.norm(vector)
 
         if magnitude > 0:
@@ -201,7 +191,6 @@ class Experiment():
         velocities: Numpy array
             An array with the velocities of the herring.
         """
-
         # Creating a (2, N, N) matrix of pairwise distances between each herring in x and y direction
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis])
         squared_distances = np.sum(distances**2, 0)
@@ -244,8 +233,9 @@ class Experiment():
 
         # Creating a (2, N, N) matrix of pairwise distances between each herring in x and y direction
         distances = self.normalize(positions[:, np.newaxis, :] - positions[:, :, np.newaxis])
-        squared_distances = np.sum(distances**2, 0) # eucladian distances
+        squared_distances = np.sum(distances**2, 0) #
 
+        # Determine the velocity differences between all herrings
         velocity_differences = velocities[:, np.newaxis, :] - velocities[:, :, np.newaxis]
 
         # Only included those herring that are considered to be relevant for the flock formation
@@ -294,24 +284,7 @@ class Experiment():
             positions[1] %= 500
 
 
-    def herring_rock_avoidance(self, positions, rock_positions, velocities):
-        """Function to adapt the herring velocity to avoid swimming through a rock.
-
-        Parameters:
-        -----------
-        self: Experiment
-            The experiment being simulated.
-        positions: Numpy array
-            An (2, N) array with the positions of the herring.
-        rock_positions: Numpy array
-            An (2, N) array with the positions of the rocks.
-        velocities: Numpy array
-            An (2, N) array with the velocities of the herring.
-        """
-        # Determine the distances between the rocks and herring
-        # we want the distances of each herring to each rock
-        # welke haringen zijn dicht bij welke stenen
-    def herring_rock_avoidance(self, positions, rock_positions, velocities):
+    def herring_rock_avoidance(self, positions, rock_positions):
         """Function to adapt the herring velocity to avoid swimming through a rock.
 
         Parameters:
@@ -322,32 +295,28 @@ class Experiment():
             An array with the positions of the herring.
         rock_positions: Numpy array
             An array with the positions of the rocks.
-        velocities: Numpy array
-            An array with the velocities of the herring.
         """
-
         # Calculate distances for all pairs of herring and rocks [i, j]
         all_distances = np.linalg.norm(positions[:, :, np.newaxis] - rock_positions[:, np.newaxis, :], axis=0)
 
         # Find herring that are too close to rocks
-        too_close_mask = all_distances < 15
+        too_close_mask = all_distances < 25
 
         # Determine th direction from each rock to herring
         direction_rock_herring = positions[:, :, np.newaxis] - rock_positions[:, np.newaxis, :]
 
-        # Normalize it
+        # Normalize the direction vectors
         direction_rock_herring_normal = direction_rock_herring/ all_distances
 
-        # Adjust the velocities of the herring close to a rock
+        # Adjust the positions of the herring close to a rock
         avoidance_directions = np.where(too_close_mask, direction_rock_herring_normal, 0)
-        velocities += np.sum(avoidance_directions * (15 - all_distances), axis=2)
+        positions += np.sum(avoidance_directions * (25 - all_distances), axis=2)
 
-        # Update positions based on velocities
-        positions += velocities
+        # Periodic boundaries
         positions[0] %= 500
         positions[1] %= 500
 
-    def herring_predator_avoidance(self, positions, predator_pos, velocities):
+    def herring_predator_avoidance(self, positions, predator_pos):
         """Function to adapt the herring velocity to avoid a predator
 
         Parameters:
@@ -358,21 +327,29 @@ class Experiment():
             An (2, N) array with the positions of the herring.
         predator_pos: Numpy array
             An (2, N) array with the positions of the predators.
-        velocities: Numpy array
-            An (2, N) array with the velocities of the herring.
         """
-        # Determine the distances between the predators and herring
-        for i in range(self.nr_herring):
-            for j in range(self.nr_predators):
-                distance = np.linalg.norm(positions[:, i] - predator_pos[:, j])
+        # Calculate distances for all pairs of herring and predators [i, j]
+        all_distances = np.linalg.norm(positions[:, :, np.newaxis] - predator_pos[:, np.newaxis, :], axis=0)
 
-                # If too close to a predator, adjust the velocity away from the predator
-                if distance < 20:
-                    avoidance_direction = (positions[:, i] - predator_pos[:, j]) / distance
-                    velocities[:, i] += avoidance_direction* 1.5
+        # Find herring that are too close to the predators
+        too_close_mask = all_distances < 25
+
+        # Determine th direction from each rock to herring
+        direction_predator_herring = positions[:, :, np.newaxis] - predator_pos[:, np.newaxis, :]
+
+        # Normalize the direction vectors
+        direction_predator_herring_normal = direction_predator_herring/ all_distances
+
+        # Adjust the positions of the herring close to a rock
+        avoidance_directions = np.where(too_close_mask, direction_predator_herring_normal, 0)
+        positions += np.sum(avoidance_directions * (25 - all_distances), axis=2)
+
+        # Periodic boundaries
+        positions[0] %= 500
+        positions[1] %= 500
 
 
-    def predator_rock_avoidance(self, predator_pos, rock_positions, velocities_predator):
+    def predator_rock_avoidance(self, predator_pos, rock_positions):
         """Function to adapt the predator velocity to avoid the rocks.
 
         Parameters:
@@ -383,19 +360,26 @@ class Experiment():
             An array with the positions of the predators.
         rock_positions: Numpy array
             An array with the positions of the rocks.
-        velocities: Numpy array
-            An array with the velocities of the herring.
         """
-        # Determine the distances between the predators and rocks
-        for i in range(self.nr_predators):
-            for j in range(self.nr_rocks):
-                distance = np.linalg.norm(predator_pos[:, i] - rock_positions[:, j])
+        # Calculate distances for all pairs of predators and rocks [i, j]
+        all_distances = np.linalg.norm(predator_pos[:, :, np.newaxis] - rock_positions[:, np.newaxis, :], axis=0)
 
-                # If too close to a rock, adjust the velocity away from the rock
-                if distance < 30:
-                    avoidance_direction = (predator_pos[:, i] - rock_positions[:, j]) / distance
-                    velocities_predator[:, i] += avoidance_direction
+        # Find predators that are too close to rocks
+        too_close_mask = all_distances < 25
 
+        # Determine the direction from each rock to the predator
+        direction_rock_predator = predator_pos[:, :, np.newaxis] - rock_positions[:, np.newaxis, :]
+
+        # Normalize the direction vectors
+        direction_rock_predator_normal = direction_rock_predator/ all_distances
+
+        # Adjust the positions of the predator close to a rock
+        avoidance_directions = np.where(too_close_mask, direction_rock_predator_normal, 0)
+        predator_pos += np.sum(avoidance_directions * (25 - all_distances), axis=2)
+
+        # Periodic boundaries
+        predator_pos[0] %= 500
+        predator_pos[1] %= 500
 
     def add_randomness(self, positions):
         """ Function to add randomness to the movement of the herring. The function adds a random number to
@@ -408,8 +392,8 @@ class Experiment():
             An array with the positions of the herring.
         """
 
-        k=3
-        randomness_factor = 10
+        k=3 # Number of herring to add randomness to
+        randomness_factor = 10 # strength of the randomness
         selected_columns = random.choices(np.arange(positions.shape[1]), k=k)
         positions[:, selected_columns] = positions[:, selected_columns] + random.random() * randomness_factor
 
@@ -431,36 +415,33 @@ class Experiment():
         distances = self.normalize(positions[:, np.newaxis, :] - predator_pos[:, :, np.newaxis])  # all pairwise distances in x and y direction
         squared_distances = np.sum(distances**2, 0)
         closest = np.argmin(squared_distances)
-        # print('start current direction')
-        # print(predator_pos)
+
         # Copy the distances matrix
         close_herring = np.copy(distances)
         if closest < self.perception_predator:
+
             # Obtain the x and y coordinates of the closest fish
             x_coord_closest = close_herring[0, :, :][:, closest]
             y_coord_closest = close_herring[1, :, :][:, closest]
 
             predator_pos += np.array([x_coord_closest, y_coord_closest]) * self.velocity_predator
+
             # Changing velocity if fish is closer.
             current_direction = np.array([x_coord_closest, y_coord_closest])  # Update current direction
-            # print('following')
-        else:
-            # Occasionally make a turn by generating a random direction
-            if np.random.rand() < 0.3:
-                velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
-                predator_pos += velocities
-                current_direction = velocities  # Update current direction
-                # print('chancing')
-            else:
-                predator_pos += current_direction * self.velocity_predator
-                # print('maintaining:')
-                # print(predator_pos, current_direction,self.velocity_predator )
-        # print('end of current_direction')
-        # print(predator_pos)
 
+        else:
+            # # Occasionally make a turn by generating a random direction
+            # if np.random.rand() < 0.05:
+            #     velocities = self.lower_lim_veloc[:, np.newaxis] + np.random.rand(2, self.nr_predators) * self.width_veloc[:, np.newaxis]
+            #     predator_pos += velocities
+            #     current_direction = velocities  # Update current direction
+            # else:
+                predator_pos += current_direction * self.velocity_predator
+
+        # periodic boundaries
         predator_pos[0] %= 500
         predator_pos[1] %= 500
-        return predator_pos, current_direction
+
 
     def rock_initialization(self):
         """ Function makes an array with the random positions of the rocks.
@@ -479,7 +460,7 @@ class Experiment():
         return rock_positions
 
 
-    def visualize(self, positions, predator_pos,rock_positions, ax1):
+    def visualize(self, positions, predator_pos, rock_positions, ax1):
         """ Function to vizualize the herring and predators on the plot.
 
         Parameters:
@@ -493,8 +474,6 @@ class Experiment():
         ax1: Plot
             The plot on which the objects have to be visualized.
         """
-
-        # nu nog gehardcode, nog dynamisch maken
         ax1.axis([0, 500, 0, 500])
         ax1.scatter(positions[0, :], positions[1, :], c='blue', alpha=0.5, marker='o', s=20)
         ax1.scatter(predator_pos[0], predator_pos[1], c='red', alpha=0.5, marker='o', s=20)
@@ -544,24 +523,27 @@ class Experiment():
         current_direction = self.initialize_direction_predator()
         rock_positions = self.rock_initialization()
 
+        # Update the positions of the predators and herring
         for _ in range(self.iterations):
             self.alignment(positions, velocities)
             self.collision_avoidance(positions, velocities)
             self.center_movement(positions, velocities)
-            self.herring_rock_avoidance( positions,  rock_positions, velocities)
-            self.herring_predator_avoidance(positions, predator_pos, velocities)
+            self.herring_rock_avoidance( positions, rock_positions)
+            self.herring_predator_avoidance(positions, predator_pos)
             self.cohesion(positions, velocities)
             self.velocitie_predator(predator_pos, positions, current_direction)
-            self.visualize(positions, predator_pos,rock_positions, ax1)
+            self.predator_rock_avoidance(predator_pos, rock_positions)
+            self.visualize(positions, predator_pos, rock_positions, ax1)
+
 
             if self.second_flock:
                 self.alignment(positions2, velocities2)
                 self.collision_avoidance(positions2, velocities2)
                 self.center_movement(positions2, velocities2)
-                self.herring_rock_avoidance( positions,  rock_positions, velocities)
-                self.herring_predator_avoidance(positions, predator_pos, velocities)
+                self.herring_rock_avoidance( positions, rock_positions)
+                self.herring_predator_avoidance(positions, predator_pos)
                 self.cohesion(positions2, velocities2)
-                self.visualize(positions,predator_pos,rock_positions, ax1)
+                self.visualize(positions,  predator_pos, rock_positions, ax1)
 
 
 # USAGE
@@ -571,9 +553,11 @@ upper_lim_veloc = np.array([10, 20])
 lower_lim_veloc = np.array([0, -20])
 upper_lim_predator = np.array([0, 100])
 lower_lim_predator = np.array([0, 100])
-nr_herring = 10
-nr_predators = 1
-nr_rocks = 10
+
+# Works only with 2 or more herring
+nr_herring = 2
+nr_predators = 10
+nr_rocks = 20
 perception_predator = 2
 
 if __name__ == '__main__':
