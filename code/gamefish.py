@@ -17,8 +17,8 @@ import math
 import itertools
 
 class Config():
-    """ Class that stores the values of all the parameter constants in the experiment."""
-
+    """ Class that stores the values of all the parameter constants in the experiment.
+    To enhance clarity in the simulation, 1 unit is mort 1 meter but 0.25 meter."""
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
@@ -31,18 +31,18 @@ class Config():
     COHESION_DISTANCE = 32
     HERRING_SPEED = 1.24
     HERRING_SPEED_MAX = 18.44
-    PERCEPTION_LENGTH_HERRING = 32
-    KILL_DISTANCE = 3.6
+    PERCEPTION_LENGTH_HERRING = 32 # How far a herring can sense
+    KILL_DISTANCE = 3.6 # The distance from which a predator will kill a herring
 
     # Parameters predator
     PREDATOR_SIZE = 4
     PREDATOR_SPEED = 3.6
     PREDATOR_SPEED_MAX = 24.4
-    PERCEPTION_LENGTH_PREDATOR = 100
+    PERCEPTION_LENGTH_PREDATOR = 100 # How far a predator can sense
 
     # Parameters rock
     ROCK_LENGTH = 10
-    ROCK_AVOIDANCE_DIST = 15
+    ROCK_AVOIDANCE_DIST = 16
 
 class Herring(pygame.sprite.Sprite):
 
