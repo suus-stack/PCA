@@ -18,7 +18,7 @@ import itertools
 
 class Config():
     """ Class that stores the values of all the parameter constants in the experiment.
-    To enhance clarity in the simulation, 1 unit is mort 1 meter but 0.25 meter."""
+    To enhance clarity in the simulation, 1 unit is not 1 meter but 0.25 meter."""
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
@@ -31,14 +31,14 @@ class Config():
     COHESION_DISTANCE = 32
     HERRING_SPEED = 1.24
     HERRING_SPEED_MAX = 18.44
-    PERCEPTION_LENGTH_HERRING = 32 # How far a herring can sense
-    KILL_DISTANCE = 3.6 # The distance from which a predator will kill a herring
+    PERCEPTION_LENGTH_HERRING = 32
+    KILL_DISTANCE = 3.6
 
     # Parameters predator
     PREDATOR_SIZE = 4
     PREDATOR_SPEED = 3.6
     PREDATOR_SPEED_MAX = 24.4
-    PERCEPTION_LENGTH_PREDATOR = 100 # How far a predator can sense
+    PERCEPTION_LENGTH_PREDATOR = 100
 
     # Parameters rock
     ROCK_LENGTH = 10
@@ -180,6 +180,7 @@ class Herring(pygame.sprite.Sprite):
             distance_to_rock = self.position.distance_to(rock.position)
 
             if distance_to_rock < Config.ROCK_AVOIDANCE_DIST and distance_to_rock != 0:
+
                 # Determine the avoidance vector and add it to total vector
                 rock_avoidance_vector += (self.position - rock.position)/ distance_to_rock
                 neighbour_rock +=1
@@ -212,7 +213,8 @@ class Herring(pygame.sprite.Sprite):
             if closest_predator_distance < Config.PERCEPTION_LENGTH_HERRING:
                 # Closeness of the herring to the nearest predator within its perception range
                 closeness = (Config.PERCEPTION_LENGTH_HERRING - closest_predator_distance) / Config.PERCEPTION_LENGTH_HERRING
-                # Normalize velocity and multiply by the changed speed to which some variation is added.
+
+                # Normalize velocity and multiply by the changed speed
                 self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + (Config.HERRING_SPEED_MAX - Config.HERRING_SPEED + random.uniform(-0.05, 0.05)) * closeness)
 
     def update(self, all_herring, all_predators, all_rocks):
@@ -248,7 +250,6 @@ class Herring(pygame.sprite.Sprite):
 
         # Update the center of the herring form
         self.rect.center = self.position
-
 
 class Predator(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos):
@@ -289,11 +290,11 @@ class Predator(pygame.sprite.Sprite):
                     collision_avoidance_vector += (self.position - predator.position) / distance_between_predator
                     close_predator += 1
 
-        # Calculate the average collision avoidance vector
+        velocities_predator Calculate the average collision avoidance vector
         if close_predator > 0:
             self.velocity += (collision_avoidance_vector / close_predator)
 
-        # Normalize velocity and multiply by speed to which some randomness is added
+        velocities_predator Normalize velocity and multiply by speed to which some randomness is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
 
     def attack_herring(self, all_herring):
@@ -376,6 +377,7 @@ class Predator(pygame.sprite.Sprite):
         if closest_herring_distance < Config.PERCEPTION_LENGTH_PREDATOR:
             # Closeness of the predator to the nearest herring within its perception range
             closeness = (Config.PERCEPTION_LENGTH_PREDATOR - closest_herring_distance) / Config.PERCEPTION_LENGTH_PREDATOR
+
             # Normalize velocity and multiply by changed speed to which some variation is added
             self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + (Config.PREDATOR_SPEED_MAX - Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8)) * closeness)
 
@@ -409,7 +411,6 @@ class Predator(pygame.sprite.Sprite):
 
         # Update the center of the predator form
         self.rect.center = self.position
-
 
 class Rock(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos):
@@ -589,7 +590,6 @@ class Experiment(pygame.sprite.Sprite):
 
         return all_rocks
 
-
     def add_herring_experiment(self, all_rocks):
         """ Function that adds herring to the experiment.
 
@@ -630,7 +630,6 @@ class Experiment(pygame.sprite.Sprite):
 
         return all_herring
 
-
     def add_predator_experiment(self, all_rocks, all_herring):
         """ Function that adds predators to the experiment.
 
@@ -648,6 +647,7 @@ class Experiment(pygame.sprite.Sprite):
 
         # Give all the predators a position and add them to the group
         for _ in range(self.predator_nr):
+
             # Give the predator its own position not under a rock and not near a herring
             pos_x = random.randint(0, Config.WIDTH)
             pos_y = random.randint(0, Config.HEIGHT)
