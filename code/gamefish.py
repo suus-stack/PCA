@@ -774,9 +774,12 @@ class Experiment(pygame.sprite.Sprite):
         perception_lengths_predator = []
         perception_lengths_herring = []
 
+        Herring.killed_herring = 0
+        Herring.herring_within_separation_distance = 0
+
         # Set the number of killed herring and perception length to the begin value
         Config.PERCEPTION_LENGTH_PREDATOR = 100
-        Config.PERCEPTION_LENGTH_HERRING = 100
+        Config.PERCEPTION_LENGTH_HERRING = 32
 
         # Make the rocks, herring and predator group
         all_rocks = self.add_rocks_experiment()
