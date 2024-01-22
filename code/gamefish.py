@@ -89,13 +89,13 @@ class Herring(pygame.sprite.Sprite):
         for herring in all_herring:
             distance_two_herring = self.position.distance_to(herring.position)
 
+            if distance_two_herring < 6 and herring != self:
+                Herring.herring_within_separation_distance += 1
+
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.SEPARATION_DISTANCE:
                     # Determine separation vector and add it to the total vector
                     separation_vector += ((self.position - herring.position) / distance_two_herring)
                     neighbour_herring_separation += 1
-
-                    if distance_two_herring < (Config.SEPARATION_DISTANCE/2):
-                        Herring.herring_within_separation_distance += 1
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.ALIGNMENT_DISTANCE:
                     # Add direction of the neighbour to the total alignment vector
@@ -470,8 +470,10 @@ class Experiment(pygame.sprite.Sprite):
             If true; areas between close rocks ar filled with more rocks.
         start_school: Bool
             If true; the herring are not randomly placed but in a school.
-        perception_change: Bool
-            If true; the perception length of predator changes over the time.
+        perception_change_predator: Bool
+            If true; the perception length of a predator changes over the time.
+        perception_change_herring: Bool
+            If true; the perception length of a herring changes over the time.
         alignment_distance: Float
             The distance that determines which neighbouring herring are used for the
             alignment rule.
@@ -704,28 +706,29 @@ class Experiment(pygame.sprite.Sprite):
 
     def perception_change(self, showed_frames, perception_list_predator, perception_list_herring, killed_count_ls):
         """ Function that changes the perception length over time for either the predator, herring or both.
-        
-        Parameters: NOG AANPASSEN!!!!!!!!!!!!!!!!!!!!!!!!1
+
+        Parameters:
         -----------
         self: Experiment
             The experiment being simulated.
         showed_frames: Int
             The number of frames that is shown.
-        perception_lenghts_predator: List
-            List with the perception length of the predator on each measured
-            timepoint.
-        list_killed_herring: List
-            List with the number of killed herring between each timepoint.
+        perception_list_predator: List
+            List with the perception length of the predator on each measured timepoint.
+        perception_list_predator: List
+            List with the perception length of the herring on each measured timepoint.
+        killed_count_ls: List
+            List with the number of killed herring between each measured timepoint
 
         Returns:
         -----------
-        perception_lenghts_predator: List
+        return_values: Dictionary
             List with the perception length of the predator on each measured
             timepoint.
         list_killed_herring: List
             List with the number of killed herring between each timepoint.
         """
-    
+
         # Convert the number of frames to seconds and determine the elapsed time
         frame_to_seconds = showed_frames / Config.FRAMES_PER_SECOND
         elapsed_time = frame_to_seconds % 240
@@ -735,7 +738,7 @@ class Experiment(pygame.sprite.Sprite):
              return perception_length + adaption
             else:
              return perception_length - adaption
-        
+
         def handle_perception_change(perception_list, perception_length_attr, adaption):
             # 10 seconds intervals
             if round(elapsed_time, 4) % 10 == 0:
@@ -754,11 +757,16 @@ class Experiment(pygame.sprite.Sprite):
             handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 5)
 
         return perception_list_predator, perception_list_herring, killed_count_ls
-            
+
 
     def run(self):
-        """ Function that runs an experiment."""
+        """ Function that runs an experiment.
 
+        Parameters:
+        -----------
+        self: Experiment
+            The experiment being simulated.
+        """
         pygame.font.init()
         pygame.init()
         return_values = {}
@@ -805,7 +813,7 @@ class Experiment(pygame.sprite.Sprite):
                 return_values['Perception_lenghts_predator'] = perception_lengths_predator
                 return_values['Killed_herring_count_predator_perception_change'] = killed_herring_count
             if self.perception_change_herring:
-                # perception_lenghts_predator, perception_lenghts_herring, killed_herring_count = 
+                # perception_lenghts_predator, perception_lenghts_herring, killed_herring_count =
                 self.perception_change(showed_frames, perception_lengths_predator, perception_lengths_herring, killed_herring_count)
                 return_values['Perception_lenghts_herring'] = perception_lengths_herring
                 return_values['Killed_herring_count_herring_perception_change'] = killed_herring_count
@@ -829,12 +837,12 @@ class Experiment(pygame.sprite.Sprite):
 
         # If the while loop has stopped quit the game
         pygame.quit()
-            
-        return_values['Killed_herring'] = Herring.killed_herring 
+
+        return_values['Killed_herring'] = Herring.killed_herring
         return_values['Herring_within_separation_distance'] = Herring.herring_within_separation_distance
 
         return return_values
-    
+
 if __name__ == "__main__":
     """
     The parameters that have to be given:
@@ -851,7 +859,5 @@ if __name__ == "__main__":
     11: The separation distance (float). Default set to 6.
     """
     doctest.testmod()
-    experiment_example = Experiment(200, 5, 20, 240, True, True, True, True, 32, 32, 6)
+    experiment_example = Experiment(200, 5, 20, 20, True, True, False, False, 32, 32, 6)
     return_values = experiment_example.run()
-    print(return_values)
-
