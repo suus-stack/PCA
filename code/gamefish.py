@@ -290,11 +290,11 @@ class Predator(pygame.sprite.Sprite):
                     collision_avoidance_vector += (self.position - predator.position) / distance_between_predator
                     close_predator += 1
 
-        velocities_predator Calculate the average collision avoidance vector
+        # Calculate the average collision avoidance vector
         if close_predator > 0:
             self.velocity += (collision_avoidance_vector / close_predator)
 
-        velocities_predator Normalize velocity and multiply by speed to which some randomness is added
+        # velocities_predator Normalize velocity and multiply by speed to which some randomness is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
 
     def attack_herring(self, all_herring):
