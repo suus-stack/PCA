@@ -606,8 +606,10 @@ class Experiment(pygame.sprite.Sprite):
                 # Adding additional rocks >> introduce variability in the placement of rocks for a more natural look
                 for _ in range(num_extra_rocks):
                     random_ratio = random.uniform(0, 1)
-                    new_x = rockA.position[0] + random_ratio * (rockB.position[0] - rockA.position[0])
-                    new_y = rockA.position[1] + random_ratio * (rockB.position[1] - rockA.position[1])
+                    random_radius = random.uniform(0, 10)
+                    angle = random.uniform(0, 2 * 3.14159265359)
+                    new_x = rockA.position[0] + random_ratio * (rockB.position[0] - rockA.position[0]) + random_radius * math.cos(angle)
+                    new_y = rockA.position[1] + random_ratio * (rockB.position[1] - rockA.position[1]) + random_radius * math.cos(angle)
 
                     # Add the rock to the rock population
                     all_rocks.add(Rock(new_x, new_y))
@@ -883,5 +885,5 @@ if __name__ == "__main__":
     12: The influence of boids rules (int). Default set to 0.
     """
     doctest.testmod()
-    experiment_example = Experiment(100, 2, 20, 20, True, True, False, False, 32, 32, 6, 2)
+    experiment_example = Experiment(100, 2, 20, 10, True, True, False, False, 32, 32, 6, 0)
     return_values = experiment_example.run()
