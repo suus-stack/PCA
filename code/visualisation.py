@@ -378,6 +378,63 @@ def influence_perception_length_predator(number_simulations):
     plt.legend()
     plt.show()
 
+def influence_perception_length_predator(number_simulations):
+
+    data_array_killed_herring = np.empty((number_simulations + 1, 4))
+
+    herring_nr = 150
+    predator_nr = 2
+    rock_nr = 10
+    simulation_duration = 10
+    extra_rocks = True
+    start_school = True
+    perception_change = True
+
+    # Simulate a number of experiments with varying boids_influence values
+    for simulation in range(number_simulations):
+        print('simulation:', simulation)
+        for boids_influence_value in range(0,3):
+            experiment = Experiment(
+                herring_nr, predator_nr, rock_nr, simulation_duration,
+                extra_rocks, start_school, perception_change,
+                boids_influence=boids_influence_value
+            )
+            print('Boids Influence Value:', boids_influence_value)
+            
+            # Set the value of boids_influence for this simulation
+            experiment = Experiment(
+                herring_nr, predator_nr, rock_nr, simulation_duration,
+                extra_rocks, start_school, perception_change,
+                boids_influence=boids_influence_value
+            )
+
+            return_values = experiment.run()
+            data_array_killed_herring[boids_influence_value, :] = return_values['Killed_herring']
+
+
+    # Calculate mean and standard deviation for each column
+    mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
+    std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
+
+    df = pd.DataFrame(data_array_killed_herring.T, columns=[f'Influence_{i}' for i in range(number_simulations)])
+    print(df)
+
+        # Create a boxplot using seaborn
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=df)
+    plt.xlabel('Boids Influence')
+    plt.ylabel('Killed Herring')
+    plt.title('Boxplot of Killed Herring for Different Boids Influence Values')
+    plt.show()
+
+    # Optionally, you can also plot the mean values
+    plt.figure(figsize=(10, 6))
+    sns.barplot(x=df.columns, y=df.mean())
+    plt.xlabel('Boids Influence')
+    plt.ylabel('Mean Killed Herring')
+    plt.title('Mean Killed Herring for Different Boids Influence Values')
+    plt.show()
+
 if __name__ == "__main__":
     """
     The parameters that have to be given:
@@ -394,18 +451,21 @@ if __name__ == "__main__":
     """
     # # Determine the influence of rocks on the predator killing rate
     # influence_rocks(3)
-    # #
+    
     # # Determin the invluence of more predators
     # influence_predator_number(6, 3)
-    # #
+    
     # # Determine the influence of the scoolsize
     # influence_school_size(3)
-    #
-    # # Determine the influence of the alignment distance
+    
+    #  # Determine the influence of the alignment distance
     # influence_alignment_distance(3)
 
-    # Determine the influence of a change in the perception length
-    influence_perception_length_predator(3)
+    # # Determine the influence of a change in the perception length
+    # influence_perception_length_predator(3)
 
-    # Determine if predator causes panic
-    influence_predators_close_distance(3)
+    # # Determine if predator causes panic
+    # influence_predators_close_distance(3)
+
+    # Determine if boids rules have influence
+    influence_perception_length_predator(5)
