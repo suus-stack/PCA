@@ -64,7 +64,7 @@ class Herring(pygame.sprite.Sprite):
         # Pick velocity and multiply it with the correct speed and add randomness
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
-    def boids_rules_herring(self, all_herring):
+    def boids_rules_herring(self, all_herring, boids_influence):
         """ Function to adapt the herring velocity to implement the flocking rules:
         - The separation rule: herring maintain a certain minimum distance with respect to its surrounding herring.
         - The alignment rule: herring will head in the same direction of the neighbours within its alignment distance.
@@ -85,6 +85,23 @@ class Herring(pygame.sprite.Sprite):
         cohesion_vector = pygame.Vector2(0, 0)
         neighbour_herring_cohesion = 0
 
+        if boids_influence == 0:
+            separation_influence = 1
+            alignment_influence = 1
+            cohesion_influence = 1
+        if boids_influence == 1:
+            separation_influence = 3
+            alignment_influence = 1
+            cohesion_influence = 1
+        if boids_influence == 2:
+            separation_influence = 1
+            alignment_influence = 3
+            cohesion_influence = 1
+        if boids_influence == 3:
+            separation_influence = 1
+            alignment_influence = 1
+            cohesion_influence = 3
+
         # Finding the herring within separation distance
         for herring in all_herring:
             distance_two_herring = self.position.distance_to(herring.position)
@@ -94,17 +111,17 @@ class Herring(pygame.sprite.Sprite):
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.SEPARATION_DISTANCE:
                     # Determine separation vector and add it to the total vector
-                    separation_vector += ((self.position - herring.position) / distance_two_herring)
+                    separation_vector += ((self.position - herring.position) / distance_two_herring) * separation_influence
                     neighbour_herring_separation += 1
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.ALIGNMENT_DISTANCE:
                     # Add direction of the neighbour to the total alignment vector
-                    alignment_vector += herring.velocity
+                    alignment_vector += herring.velocity * alignment_influence
                     neighbour_herring_alignment += 1
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.COHESION_DISTANCE:
                     # Determine the cohesion vector and add it to the total vector
-                    cohesion_vector += ((herring.position - self.position) / distance_two_herring)
+                    cohesion_vector += ((herring.position - self.position) / distance_two_herring) * cohesion_influence
                     neighbour_herring_cohesion += 1
 
         # Calculate average separation-, alignment-, and cohesion vector
@@ -217,7 +234,7 @@ class Herring(pygame.sprite.Sprite):
                 # Normalize velocity and multiply by the changed speed
                 self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + (Config.HERRING_SPEED_MAX - Config.HERRING_SPEED + random.uniform(-0.05, 0.05)) * closeness)
 
-    def update(self, all_herring, all_predators, all_rocks):
+    def update(self, all_herring, all_predators, all_rocks, boids_influence):
         """This function updates the position of a herring. The new position is dependent
          on the old position, the cohesion-, separation- and alignment rule, the rock
          positions and the positions of the predator(s).
@@ -234,7 +251,7 @@ class Herring(pygame.sprite.Sprite):
             Group containing all rock entities.
         """
         # Appy the three boids rules
-        self.boids_rules_herring(all_herring)
+        self.boids_rules_herring(all_herring, boids_influence)
 
         # Determine influence of the environment
         self.avoid_predator(all_predators, all_herring)
@@ -452,7 +469,7 @@ class Rock(pygame.sprite.Sprite):
         return np.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
 
 class Experiment(pygame.sprite.Sprite):
-    def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20, extra_rocks=False, start_school=False, perception_change_predator=False, perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5):
+    def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20, extra_rocks=False, start_school=False, perception_change_predator=False, perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5, boids_influence = 0):
         """
         Parameters:
         -----------
@@ -483,6 +500,8 @@ class Experiment(pygame.sprite.Sprite):
         separation_distance: Float
             The distance that determines which neighbouring herring are used for the
             separation rule.
+        boids_influence: Int
+            ###
         """
         self.herring_nr = herring_nr
         self.predator_nr = predator_nr
@@ -492,6 +511,7 @@ class Experiment(pygame.sprite.Sprite):
         self.start_school = start_school
         self.perception_change_predator = perception_change_predator
         self.perception_change_herring = perception_change_herring
+        self.boids_influence = boids_influence
 
         Config.ALIGNMENT_DISTANCE = alignment_distance
         Config.COHESION_DISTANCE = cohesion_distance
@@ -577,7 +597,7 @@ class Experiment(pygame.sprite.Sprite):
                 for i in range(1, num_extra_rocks + 1):
                     ratio = i / (num_extra_rocks + 1)
                     new_x = rockA.position[0] + ratio * (rockB.position[0] - rockA.position[0])
-                    new_y = rockA.position[1] + ratio * (rockB.position[1] - rockA.position[1])
+                    new_y = rockB.position[1] + ratio * (rockB.position[1] - rockA.position[1])
                     distances.append((new_x, new_y))
 
                     # Add the rock to the rock population
@@ -806,7 +826,7 @@ class Experiment(pygame.sprite.Sprite):
                     simulation_run = False
 
             # Update the position of the herring and predators
-            all_herring.update(all_herring, all_predators, all_rocks)
+            all_herring.update(all_herring, all_predators, all_rocks, self.boids_influence)
             all_predators.update(all_herring, all_predators, all_rocks)
 
             # Determine if perception length changes should be included
@@ -853,14 +873,15 @@ if __name__ == "__main__":
     2: The number of predators in the simulation (int). Default set to one.
     3: The number of rocks in the simulation (int). default set to ten.
     4: The duration of the simulation in seconds (int). Defaut set to twenty.
-    5: Closeby rocks should be connected via more rocks (Bool). Default set to False.
-    6: Herring start as one school instead of randomly (bool). Default set to True.
+    5: Closeby rocks should be connected via more rocks (Bool). Default set to True.
+    6: Herring start as one school instead of randomly (bool). Default set to False.
     7: Predator perception length changes over time (bool). Default set to False.
     8: Herring perception length changes over time (bool). Default set to False.
     9: The alignment distance (float). Default set to 32.
     10: The cohestion distance (float). Default set to 32.
     11: The separation distance (float). Default set to 6.
+    12: The influence of boids rules (int). Default set to 0.
     """
     doctest.testmod()
-    experiment_example = Experiment(200, 5, 20, 20, True, True, False, False, 32, 32, 6)
+    experiment_example = Experiment(100, 2, 20, 20, True, True, False, False, 32, 32, 6, 2)
     return_values = experiment_example.run()
