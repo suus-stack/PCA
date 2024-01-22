@@ -65,10 +65,12 @@ the alignment distance, cohesion distance, and separation distance can be modifi
 assess their respective influences. This is done to investigate whether these rule
 adjustments have an impact on the killing rate of herrings.
 
-In the default function, the model returns the number of killed herrings and the
-number of times herring came close to each other. It can also provide a list with
-the number of killed herrings over time and a list of the predator perception lengths
-over time when 'perception_change'  is set to True.
+In the default function, the model returns a dictionary that always contains the number of
+killed herring and the number of times herring came within the separation distance. If
+'perception_change_herring' is set to True is also returns al list with the perception lenght
+of the herring and with the killed herrings on every time point. If 'perception_change_predator'
+is set to True is also returns al list with the perception lenght of the predator and with
+the killed herrings on every time point. 
 
 FIXED PARAMETERS ###the the number?
 * HERRING_SIZE (float) = the radius of the circle representing a herring in the simulation.
@@ -103,7 +105,8 @@ CHANGEABLE PARAMETERS
 * simulation_duration (int) = duration of a simulation is seconds.
 * extra_rocks (bool) = added rocks for the clustering/connecting of rocks. ###
 * start_school (bool) = herring start as one school instead of randomly.
-* perception_change (bool) = change of the perception length by barracuda over time.
+* perception_change_predator (bool) = change of the perception length by barracuda over time.
+* perception_change_herring (bool) = change of the perception length by herring over time.
 * SEPARATION_DISTANCE (float) = if another herring is within this distance, it will be included
                         in the separation rule. ###
                         for the separation rule
@@ -120,8 +123,8 @@ changes on the herring killing rate. It uses the gamefish code to run an experim
 HOW TO RUN:
 Command to simulate the model with these values:
 Experiment(herring_nr = 100, predator_nr = 1, rock_nr = 10, simulation_duration = 20,
-extra_rocks = False, start_school = True, perception_change = False, alignment_distance = 32,
-cohesion_distance = 32 and separation_distance = 6)
+extra_rocks = False, start_school = True, perception_change_predator = False, perception_change_herring = False,
+alignment_distance = 32, cohesion_distance = 32 and separation_distance = 6)
 
 - python gamefish.py
 
