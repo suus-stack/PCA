@@ -464,19 +464,19 @@ def influence_boid_rules(number_simulations, time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    influence_boid_rules(5, 10)
+    # influence_boid_rules(5, 10)
     #
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(3, 2)
 
     # # Determin the invluence of more predators
-    influence_predator_number(10, 3, 10)
+    # influence_predator_number(10, 3, 10)
 
     # Determine the influence of the scoolsize
-    influence_school_size(3, 10)
+    influence_school_size(3, 5)
 
     # Determine the influence of the alignment distance
-    influence_alignment_distance(3, 10)
+    # influence_alignment_distance(3, 10)
 
     # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(5, 10)
+    influences_closeness_herring(5, 5)

@@ -9,6 +9,7 @@ behaviour of a herring school. The aim is to assess the influence of three movem
 rules, as well as the impact of environmental changes, the presence of rocks, and the
 number of predators (barracuda), on the herring killing rate.
 
+
 THE MODEL: gamefish
 Gamefish contains the code to run an agent-based model in which the herring, rocks
 and predators are represented as agents with their own positions and velocities.
@@ -47,15 +48,18 @@ placing additional rocks along this distance line. For each extra rock, another 
 is added, and its position is determined by multiplying a random number between 0 and 1.
 
 THE FUNCTION
-Experiment(nr herring, nr predator, nr rocks, duration, connect_rocks, start as
-        school, change perception predator, alignment distance, cohesion distance,
-        separation distance)
+Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
+extra_rocks, start_school, perception_change_predator, perception_change_herring,
+alignment_distance, cohesion_distance, separation_distance, boids_influence)
 
-In the default function, the rocks get a random position, and connect_rocks is set to true.
-The herrings get different positions close to each other to form a school. The barracudas
-get a random position that is not within the barracuda's perception with a herring.
-This is done so the full attack can be studied. The simulation is run for the specified
-number of seconds.
+In the default function, the rocks get a random position, and connect_rocks is set to
+true. Because start_school is also set to True, the herrings get different positions
+close to each other to form a school. The barracudas get a random position that is not
+within the barracuda's perception with a herring. This is done so the full attack can be
+studied. The simulation is run for the specified number of seconds. In de default function
+the perception length of the herring and predator do not change because perception_change
+_predator and perception_change_herring are set to false. And every Boid rule has the
+same amount of influence.
 
 Specifications in model (finetuning)
 When the 'start_school' parameter is set to False, herrings will not be placed in a school
@@ -63,16 +67,18 @@ but rather randomly. For longer simulation durations, the perception length of b
 can dynamically change over time using the 'perception_change' parameter. Additionally,
 the alignment distance, cohesion distance, and separation distance can be modified to
 assess their respective influences. This is done to investigate whether these rule
-adjustments have an impact on the killing rate of herrings.
+adjustments have an impact on the killing rate of herrings. It is also possible to
+change the boids_influence parameter to make the influence of one rule bigger.
 
+Returns model
 In the default function, the model returns a dictionary that always contains the number of
-killed herring and the number of times herring came within the separation distance. If
-'perception_change_herring' is set to True is also returns al list with the perception lenght
+killed herring and the number of times herring came within the separation distance of 6. If
+'perception_change_herring' is set to True is also returns al list with the perception length
 of the herring and with the killed herrings on every time point. If 'perception_change_predator'
-is set to True is also returns al list with the perception lenght of the predator and with
-the killed herrings on every time point. 
+is set to True is also returns al list with the perception length of the predator and with
+the killed herrings on every time point.
 
-FIXED PARAMETERS ###the the number?
+FIXED PARAMETERS
 * HERRING_SIZE (float) = the radius of the circle representing a herring in the simulation.
                       - Set to 3
 * HERRING_SPEED (float) = the average speed of a herring.
@@ -114,20 +120,17 @@ CHANGEABLE PARAMETERS
                        in the alignment rule.
 * COHESION_DISTANCE (float) = if another herring is within this distance, it will be included in
                       the cohesion rule.
+* boids_influence (int) = Indicates the influence of boids rules. 1 = all rule equal important, 1
+                    separation more important, 2 alignment more important and 3 cohesion more important.
 
-
-THE VISUALISATION
-Visualization contains the code to make plots that show the influence of environmental
-changes on the herring killing rate. It uses the gamefish code to run an experiment.
 
 HOW TO RUN:
 Command to simulate the model with these values:
 Experiment(herring_nr = 100, predator_nr = 1, rock_nr = 10, simulation_duration = 20,
 extra_rocks = False, start_school = True, perception_change_predator = False, perception_change_herring = False,
-alignment_distance = 32, cohesion_distance = 32 and separation_distance = 6)
+alignment_distance = 32, cohesion_distance = 32, separation_distance = 6, boids_influence = 0)
 
 - python gamefish.py
-
 
 
 INCOMPLETE MODEL: matrixes
@@ -186,3 +189,9 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc,
            upper_lim_veloc, nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
+
+
+
+THE VISUALISATION: gamefish.py
+Visualization contains the code to make plots that show the influence of environmental
+changes on the herring killing rate. It uses the gamefish code to run an experiment.
