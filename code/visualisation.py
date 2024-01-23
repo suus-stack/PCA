@@ -402,64 +402,56 @@ def significant_test_close(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_12_no_r)
         print(f'Effect larger separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
-def influence_boid_rules(number_simulations, time_simulation):
-    """Function that makes a boxplot and scatterplot of the distribution of killed
-    herring where differerent boid rules are most important. It also makes a stipplot
-    to show the mean and standard deviation.
+def boids_rules_influence(number_simulations):
 
-    Parameters:
-    -----------
-    number_simulations: Int
-        The number of simulations per experiment kind.
-    time_simulation: Int
-        The number of seconds the simulation runs.
-    """
-    data_array_killed_herring = np.empty((number_simulations + 1, 4))
+    data_array_killed_herring = np.empty((number_simulations, 4))
 
+    # Keep other parameters the same for all simulations
     herring_nr = 150
     predator_nr = 2
     rock_nr = 10
-    simulation_duration = time_simulation
+    simulation_duration = 5
     extra_rocks = True
     start_school = True
-    perception_change = False
-
-    # Make empty dataframe with two columns
-    column_names = ['Boid influence', 'Killed herring']
-    df = pd.DataFrame(columns=column_names)
+    perception_change = True
 
     # Simulate a number of experiments with varying boids_influence values
     for simulation in range(number_simulations):
-        print('Simulation', simulation)
+        print('simulation:', simulation)
+        for boids_influence_value in range(4):
+            experiment = Experiment(
+                herring_nr, predator_nr, rock_nr, simulation_duration,
+                extra_rocks, start_school, perception_change,
+                boids_influence=boids_influence_value
+            )
+            print('Boids Influence rule:', boids_influence_value)
+            
+            return_values = experiment.run()
+            data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
 
-        for boids_influence_value in range(0, 4):
-            print('Boids Influence Value:', boids_influence_value)
-            experiment = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
-                extra_rocks, start_school, perception_change, boids_influence=boids_influence_value)
 
-            values_dict = experiment.run()
-            new_row = pd.DataFrame([{'Boid influence': boids_influence_value, 'Killed herring': values_dict['Killed_herring']}])
-            df = pd.concat([df, new_row], ignore_index=True)
+    # Calculate mean and standard deviation for each column
+    mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
+    std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
+    print(data_array_killed_herring)
+    df = pd.DataFrame(data_array_killed_herring, columns=['no weigted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
+    print(df)
 
-    # Determine the colors for the plots and the x-labels
-    colors_box = {0: 'mistyrose', 1: 'paleturquoise', 2: 'wheat', 3:'aquamarine'}
-    colors_strip = {0: 'red', 1: 'blue', 2: 'darkorange', 3:'green'}
-    custom_labels = ['no stronger', 'separation', 'alignment', 'cohesion']
 
-    # Create a boxplot using seaborn
+    # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
-    boxplot = sns.boxplot(x='Boid influence', y='Killed herring', hue = 'Boid influence', data=df, palette=colors_box, width=0.6, legend=False)
-    stripplot = sns.stripplot(x='Boid influence', y='Killed herring', hue = 'Boid influence',  data=df, palette=colors_strip, legend=False)
-    plt.xticks(ticks=plt.xticks()[0], labels=custom_labels)
-    plt.title('Boxplot of killed herring for different boids influence values')
+    sns.boxplot(data=df)
+    plt.xlabel('Boids influence')
+    plt.ylabel('Killed herring')
+    plt.title('Boxplot of Killed herring for different Boid rules')
     plt.show()
 
-    # Optionally, you can also plot the mean values
+    #plot bar graf of mean values
     plt.figure(figsize=(10, 6))
-    sns.pointplot(x='Boid influence', y='Killed herring', hue = 'Boid influence', data=df, errorbar='sd', linestyle='none', capsize=0.1, markers='o', palette= colors_strip, legend=False, err_kws={'color': 'black', 'linewidth': 1})
-    plt.xticks(ticks=plt.xticks()[0], labels=custom_labels)
-    plt.ylabel('Mean Killed Herring')
-    plt.title('Average killed herring + 1 SD errorbars for different boid influence values')
+    sns.barplot(x=df.columns, y=df.mean())
+    plt.xlabel('Boids influence')
+    plt.ylabel('Mean killed herring')
+    plt.title('Mean killed herring for different boid rules')
     plt.show()
 
 if __name__ == "__main__":
@@ -473,10 +465,13 @@ if __name__ == "__main__":
     # influence_predator_number(10, 3, 10)
 
     # Determine the influence of the scoolsize
-    influence_school_size(3, 5)
+   # influence_school_size(3, 5)
 
     # Determine the influence of the alignment distance
     # influence_alignment_distance(3, 10)
 
     # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(5, 5)
+    #influences_closeness_herring(5, 5)
+
+    # Determine the influence of boids rules
+    boids_rules_influence(8)
