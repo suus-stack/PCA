@@ -383,7 +383,6 @@ def visualizing_perception_change(time_simulation):
     # herring and predator perception change
     return_values_dict4 = Experiment(200, 5, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
-    plt.style.use('seaborn')
     fig, axs = plt.subplots(2, 2)
     # no perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], np.diff(return_values_dict1['Killed_herring_over_time']))
@@ -413,23 +412,23 @@ def visualizing_perception_change(time_simulation):
 
 
 if __name__ == "__main__":
-    # # Determine the influence of the boid rules
-    # influence_boid_rules(2, 3)
-    #
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(2, 3)
-    #
-    # # Determin the invluence of more predators
-    # influence_predator_number(2, 2, 3)
-    #
-    # # Determine the influence of the scoolsize
-    # influence_school_size(3, 5)
-    #
+    # Determine the influence of the boid rules
+    influence_boid_rules(20, 30)
+
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(20, 30)
+
+    # Determin the invluence of more predators
+    influence_predator_number(20, 20, 30)
+
+    # Determine the influence of the scoolsize
+    influence_school_size(20, 30)
+
     # # Determine the influence of the alignment distance
-    # influence_alignment_distance(3, 3)
-    #
-    # # Determine what influence if predators are more within the separation distance
-    # influences_closeness_herring(3, 3)
+    influence_alignment_distance(20, 30)
+
+    # Determine what influence if predators are more within the separation distance
+    influences_closeness_herring(20, 30)
 
     # Determine the influence of changes in the perception length
     visualizing_perception_change(60)

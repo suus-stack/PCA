@@ -15,7 +15,6 @@ import numpy as np
 import doctest
 import math
 import itertools
-from visua_suze import visualizing_perception_change
 
 class Config():
     """ Class that stores the values of all the parameter constants in the experiment.
