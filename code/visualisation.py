@@ -16,6 +16,7 @@ import seaborn as sns
 from gamefish import *
 from scipy.stats import shapiro
 from scipy import stats
+import pandas as pd
 
 def influence_predator_number(max_number_predators, number_simulations):
     """
@@ -378,14 +379,15 @@ def influence_perception_length_predator(number_simulations):
     plt.legend()
     plt.show()
 
-def influence_perception_length_predator(number_simulations):
+def boids_rules_influence(number_simulations):
 
-    data_array_killed_herring = np.empty((number_simulations + 1, 4))
+    data_array_killed_herring = np.empty((number_simulations, 4))
 
+    # Keep other parameters the same for all simulations
     herring_nr = 150
     predator_nr = 2
     rock_nr = 10
-    simulation_duration = 10
+    simulation_duration = 100
     extra_rocks = True
     start_school = True
     perception_change = True
@@ -393,7 +395,7 @@ def influence_perception_length_predator(number_simulations):
     # Simulate a number of experiments with varying boids_influence values
     for simulation in range(number_simulations):
         print('simulation:', simulation)
-        for boids_influence_value in range(0,3):
+        for boids_influence_value in range(4):
             experiment = Experiment(
                 herring_nr, predator_nr, rock_nr, simulation_duration,
                 extra_rocks, start_school, perception_change,
@@ -401,22 +403,15 @@ def influence_perception_length_predator(number_simulations):
             )
             print('Boids Influence Value:', boids_influence_value)
             
-            # Set the value of boids_influence for this simulation
-            experiment = Experiment(
-                herring_nr, predator_nr, rock_nr, simulation_duration,
-                extra_rocks, start_school, perception_change,
-                boids_influence=boids_influence_value
-            )
-
             return_values = experiment.run()
-            data_array_killed_herring[boids_influence_value, :] = return_values['Killed_herring']
+            data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
 
 
     # Calculate mean and standard deviation for each column
     mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
     std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
-
-    df = pd.DataFrame(data_array_killed_herring.T, columns=[f'Influence_{i}' for i in range(number_simulations)])
+    print(data_array_killed_herring)
+    df = pd.DataFrame(data_array_killed_herring, columns=[f'Influence_{i}' for i in range(4)])
     print(df)
 
         # Create a boxplot using seaborn
@@ -468,4 +463,4 @@ if __name__ == "__main__":
     # influence_predators_close_distance(3)
 
     # Determine if boids rules have influence
-    influence_perception_length_predator(5)
+    boids_rules_influence(10)
