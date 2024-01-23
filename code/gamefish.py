@@ -93,17 +93,17 @@ class Herring(pygame.sprite.Sprite):
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 1:
-            separation_influence = 5
+            separation_influence = 3
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 2:
             separation_influence = 1
-            alignment_influence = 5
+            alignment_influence = 3
             cohesion_influence = 1
         if boids_influence == 3:
             separation_influence = 1
             alignment_influence = 1
-            cohesion_influence = 5
+            cohesion_influence = 3
 
         # Finding the herring within separation distance
         for herring in all_herring:
@@ -516,7 +516,7 @@ class Experiment(pygame.sprite.Sprite):
         self.perception_change_herring = perception_change_herring
         self.boids_influence = boids_influence
         self.perception_change_called = True
- 
+
         Config.ALIGNMENT_DISTANCE = alignment_distance
         Config.COHESION_DISTANCE = cohesion_distance
         Config.SEPARATION_DISTANCE = separation_distance
@@ -759,23 +759,23 @@ class Experiment(pygame.sprite.Sprite):
         # frame_to_seconds = showed_frames / Config.FRAMES_PER_SECOND
         # elapsed_time = frame_to_seconds % self.simulation_duration
 
-        # This needs to happen only the first time the function is called, not every time over and over again 
-        if self.perception_change_called: 
+        # This needs to happen only the first time the function is called, not every time over and over again
+        if self.perception_change_called:
             print("First call")
             self.perception_change_called = False
             Config.PERCEPTION_LENGTH_PREDATOR = 20
             Config.PERCEPTION_LENGTH_HERRING = 10
-            
+
 
         # elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND) % self.simulation_duration
-        elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND) 
+        elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
 
         def update_perception_length(perception_length, adaption, elapsed_time):
             if elapsed_time <= self.simulation_duration/2:
              return perception_length + adaption
             else:
              return perception_length - adaption
-        
+
         def handle_perception_change(perception_list, perception_length_attr, adaption, killed_count_ls):
             # 10 seconds intervals
             if round(elapsed_time, 4) % 10 == 0:
@@ -789,7 +789,7 @@ class Experiment(pygame.sprite.Sprite):
                 print('after', getattr(Config, perception_length_attr))
 
                 # Resetting count after the simulation has run witht this perception length value for some time
-                # Herring.killed_herring = 0 
+                # Herring.killed_herring = 0
                 killing_count = 0
 
         if self.perception_change_predator:
@@ -798,7 +798,7 @@ class Experiment(pygame.sprite.Sprite):
             handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 3, killed_count_ls_herr)
 
         return perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr
-            
+
 
     def run(self):
         """ Function that runs an experiment.
@@ -817,7 +817,7 @@ class Experiment(pygame.sprite.Sprite):
         perception_lengths_herring = []
         killed_herring_og = [0]
         time = []
-        
+
         Herring.killed_herring = 0
         Herring.herring_within_separation_distance = 0
 
@@ -856,7 +856,7 @@ class Experiment(pygame.sprite.Sprite):
             # Keeping track over the amount of killed herring over time either way
             # Again re-assigning because otherwise you are not able to reset per time frame
 
-            elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND) 
+            elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
             # print('epased time', elapsed_time)
 
             # this is necessary because otherwise the time does not get added when both are false
@@ -865,7 +865,7 @@ class Experiment(pygame.sprite.Sprite):
                 killed_herring_og.append(kill_count)
                 return_values['Killed_herring_over_time'] = killed_herring_og
                 kill_count = 0
-                time.append(elapsed_time) 
+                time.append(elapsed_time)
                 return_values['Elapsed_time'] = time
 
             # Determine if perception length changes should be included
@@ -917,25 +917,7 @@ if __name__ == "__main__":
     11: The separation distance (float). Default set to 6.
     12: The influence of boids rules (int). Default set to 0.
     """
-    # doctest.testmod()
-    # experiment_example = Experiment(200, 5, 20, 240, True, True, True, True, 32, 32, 6)
-    # return_values = experiment_example.run()
-    # print(return_values)
-
-
-# no perception change
-dict1 = Experiment(200, 5, 20, 60, True, True, False, False, 32, 32, 6).run()
-# predator perception change
-dict2 = Experiment(200, 5, 20, 60, True, True, True, False, 32, 32, 6).run()
-# herring perception change
-dict3 = Experiment(200, 5, 20, 60, True, True, False, True, 32, 32, 6).run()
-# herring and predator perception change 
-dict4 = Experiment(200, 5, 20, 60, True, True, True, True, 32, 32, 6).run()
-
-print('dict1', dict1)
-print('dict2', dict2)
-print('dict3', dict3)
-print('dict4', dict4)
-
-
-visualizing_perception_change(dict1, dict2, dict3, dict4)
+    doctest.testmod()
+    experiment_example = Experiment(200, 5, 20, 240, True, True, False, False, 32, 32, 6, 0)
+    return_values = experiment_example.run()
+    print(return_values)
