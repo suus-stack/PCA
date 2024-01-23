@@ -32,7 +32,7 @@ class Experiment():
         self.nr_predators = nr_predators
         self.nr_rocks = nr_rocks
         self.iterations = 100
-        self.second_flock = True
+        self.second_flock = False
 
         # Centre movement method, negative=repulsion, positive is attraction
         self.attraction_to_center = 0.00008
