@@ -41,7 +41,7 @@ def significant_test_school_size(df):
     print('no rocks', values_small_school_no_rocks, values_large_school_no_rocks)
     # Influence school size in environment with rocks. Check if both data is normally
     # distributed to determine the statistic test
-    if  p_value_large_school_rocks >= 0.05 and  p_value_small_school_rocks >= 0.05:
+    if  p_value_large_school_rocks >= 0.05 and p_value_small_school_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_rocks, values_large_school_rocks)
         print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
     else:
@@ -50,7 +50,7 @@ def significant_test_school_size(df):
 
     # Influence school size in environment without rocks. Check if both data is normally
     # distributed to determine the statistic test
-    if  p_value_large_school_no_rocks >= 0.05 and  p_value_small_school_no_rocks >= 0.05:
+    if  p_value_large_school_no_rocks >= 0.05 and p_value_small_school_no_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_no_rocks, values_large_school_no_rocks)
         print(f'Small vs large school in environment without rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
     else:
