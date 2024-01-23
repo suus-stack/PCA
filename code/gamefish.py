@@ -76,6 +76,8 @@ class Herring(pygame.sprite.Sprite):
             The herring for which the separation vector is determined.
         all_herring: Pygame.sprite.Group
             Group containing all herring entities.
+        boids_influence: Int
+            Indicates if a boid rule is more important.
         """
         # Make needed vectors and counters
         separation_vector = pygame.Vector2(0, 0)
@@ -90,17 +92,17 @@ class Herring(pygame.sprite.Sprite):
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 1:
-            separation_influence = 3
+            separation_influence = 5
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 2:
             separation_influence = 1
-            alignment_influence = 3
+            alignment_influence = 5
             cohesion_influence = 1
         if boids_influence == 3:
             separation_influence = 1
             alignment_influence = 1
-            cohesion_influence = 3
+            cohesion_influence = 5
 
         # Finding the herring within separation distance
         for herring in all_herring:
@@ -111,17 +113,17 @@ class Herring(pygame.sprite.Sprite):
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.SEPARATION_DISTANCE:
                     # Determine separation vector and add it to the total vector
-                    separation_vector += ((self.position - herring.position) / distance_two_herring) * separation_influence
+                    separation_vector += ((self.position - herring.position) / distance_two_herring)
                     neighbour_herring_separation += 1
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.ALIGNMENT_DISTANCE:
                     # Add direction of the neighbour to the total alignment vector
-                    alignment_vector += herring.velocity * alignment_influence
+                    alignment_vector += herring.velocity
                     neighbour_herring_alignment += 1
 
             if herring != self and distance_two_herring != 0 and distance_two_herring < Config.COHESION_DISTANCE:
                     # Determine the cohesion vector and add it to the total vector
-                    cohesion_vector += ((herring.position - self.position) / distance_two_herring) * cohesion_influence
+                    cohesion_vector += ((herring.position - self.position) / distance_two_herring)
                     neighbour_herring_cohesion += 1
 
         # Calculate average separation-, alignment-, and cohesion vector
@@ -136,7 +138,7 @@ class Herring(pygame.sprite.Sprite):
             cohesion_vector = cohesion_vector / neighbour_herring_cohesion
 
         # Determine total vector of all the rules and add it to the velocity
-        self.velocity += (separation_vector + alignment_vector + cohesion_vector)
+        self.velocity += (separation_vector* separation_influence + alignment_vector * alignment_influence + cohesion_vector * cohesion_influence)
 
         # Normalize velocity and multiply by speed to which some variation is added
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
@@ -501,7 +503,7 @@ class Experiment(pygame.sprite.Sprite):
             The distance that determines which neighbouring herring are used for the
             separation rule.
         boids_influence: Int
-            ###
+            Indicates if one boid rule is more important
         """
         self.herring_nr = herring_nr
         self.predator_nr = predator_nr
@@ -885,5 +887,5 @@ if __name__ == "__main__":
     12: The influence of boids rules (int). Default set to 0.
     """
     doctest.testmod()
-    experiment_example = Experiment(100, 2, 20, 10, True, True, False, False, 32, 32, 6, 0)
+    experiment_example = Experiment(100, 2, 20, 30, True, True, False, False, 32, 32, 6, 0)
     return_values = experiment_example.run()
