@@ -924,8 +924,7 @@ class Experiment(pygame.sprite.Sprite):
                 return_values['Elapsed_time'] = time
 
             # Determine if perception length changes should be included
-            if self.perception_change_predator or self.perception_change_herring: # kan nog aanpassen dat je niet meegeeft maar alles default op lege lijsten zet
-                # perception_lenghts_predator, perception_lenghts_herring, killed_herring_count = self.perception_change(showed_frames)
+            if self.perception_change_predator or self.perception_change_herring: 
                 perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr = self.perception_change(showed_frames, perception_lengths_predator, perception_lengths_herring, killed_herring_count_pred, killed_herring_count_herr)
                 return_values['Perception_lenghts_predator'] = perception_list_predator
                 return_values['Killed_herring_count_predator_perception_change'] = killed_count_ls_pred
