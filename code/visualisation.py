@@ -330,24 +330,18 @@ def influence_boid_rules(number_simulations, time_simulation):
     mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
     std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
     print(data_array_killed_herring)
-    df = pd.DataFrame(data_array_killed_herring, columns=['no weigted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
-    print(df)
+    boids_rules_df = pd.DataFrame(data_array_killed_herring, columns=['no weigted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
+    print(boids_rules_df)
 
     # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
-    sns.boxplot(data=df)
+    sns.boxplot(data=boids_rules_df)
     plt.xlabel('Boids influence')
     plt.ylabel('Killed herring')
-    plt.title('Boxplot of killed herring for different Boid rules')
+    plt.title('killed herring with different Boid rules')
     plt.show()
 
-    # Plot bar graf of mean values ->*** Kan dit weg ?? ***
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=df.columns, y=df.mean())
-    plt.xlabel('Boids influence')
-    plt.ylabel('Mean killed herring')
-    plt.title('Mean killed herring for different boid rules')
-    plt.show()
+    return boids_rules_df
 
 def visualizing_perception_change(time_simulation):
     """Function that makes four line plots that show the differences between the number of killed herring per
@@ -415,7 +409,7 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    # influence_boid_rules(20, 30)
+    influence_boid_rules(20, 60)
 
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 20, 30)
