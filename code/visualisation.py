@@ -289,7 +289,7 @@ def influences_closeness_herring(number_simulations, time_simulation):
     background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2.5, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
     ax.add_patch(background_legend)
 
-    ax.set_xticks([0, 1, 2, 3, 4])  # Set custom tick positions
+    ax.set_xticks([0, 1, 2, 3, 4]) 
     ax.set_xticklabels(['no p, no r,\ns d = 6', '2 p, no r,\ns d = 6', 'no p, 20 r, \ns d = 6', 'no p, no r,\ns d = 3', 'no p, no r,\ns d = 12'])
 
     plt.title('Herring count within the original separation distance (6) across various conditions.')
@@ -400,7 +400,7 @@ def visualizing_perception_change(time_simulation):
     # axs[0, 1].legend()
     # axs[1, 0].legend()
     # axs[1, 1]. legend()
-    
+
     # fig.legend()
     fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize='small', framealpha=1)
 
@@ -419,35 +419,25 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-<<<<<<< HEAD
-    # influence_boid_rules(20, 30)
-    #
-    # # # Determine the influence of rocks on the killing rate
-=======
     influence_boid_rules(20, 60)
 
-    # # Determine the influence of rocks on the killing rate
->>>>>>> 164aec1a4d3c9c26a7922ef2cedba1ada9193c20
-    # influence_rocks(80, 20, 30)
-    #
-    # # Determin the invluence of more predators
-    # influence_predator_number(20, 20, 30)
-    #
-    # # Determine the influence of the scoolsize
-    # influence_school_size(20, 30)
-    #
-    # # # Determine the influence of the alignment distance
-    # influence_alignment_distance(20, 30)
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 20, 30)
+
+    # Determin the invluence of more predators
+    influence_predator_number(20, 20, 30)
+
+    # Determine the influence of the scoolsize
+    influence_school_size(20, 30)
+
+    # Determine the influence of the alignment distance
+    influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    # influences_closeness_herring(20, 30)
+    influences_closeness_herring(20, 30)
 
     # Determine the influence of changes in the perception length
-<<<<<<< HEAD
     visualizing_perception_change(30)
-=======
-    visualizing_perception_change(20)
->>>>>>> 164aec1a4d3c9c26a7922ef2cedba1ada9193c20
 
 
     # """Faster run???????"""
