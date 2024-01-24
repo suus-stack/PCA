@@ -185,11 +185,10 @@ CHANGEABLE PARAMETERS
 
 HOW TO RUN:  
 Command to simulate the incomplete model with the values:
-Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc,
-           upper_lim_veloc, nr_herring = 20, nr_predators = 2, nr_rocks = 10)
+Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
+          nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
-
 
 
 THE VISUALISATION: gamefish.py  
@@ -198,8 +197,9 @@ changes on the herring killing rate and school density. It uses the gamefish cod
 an experiment. The code also does some statistical tests provided by the code in statistic_test.py.
 
 All plots are also provided in the folder data_visualisation.
-* 4-perception_change_plot:
-       - ####HOW TO RUN###
+* 4-perception_change_plot: Line plot that shows the change in perception length and
+                  the resulting number of killed herring over the time.
+                  - ####HOW TO RUN###
 
 * Change_alignment_distance_plot: Line plot of the average killed herring + 1 SD error
                   bars at different alignment distances.
@@ -222,8 +222,11 @@ All plots are also provided in the folder data_visualisation.
                   herring in large and small schools, with and without rocks.
                   - ####HOW TO RUN###
 
-* PLOT LUCA
-       - ####HOW TO RUN###
+* Boids_rules_influence: Boxplot with strip plot overlap that shows the number of killed
+                  herring when different boid rules are emphasised
+                  - ####HOW TO RUN###
+
+- python visualisation.py.
 
 
 THE STATISTICAL TESTS
@@ -234,3 +237,5 @@ It contains 3 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
 - Test to determine if environmental changes significantly influence the school density.
 - Test to determine if the different Boid rules significantly influence the killing rate.
+
+This cannot be run separately because it needs the data collected in visualisation.py. 
