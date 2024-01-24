@@ -375,17 +375,22 @@ def visualizing_perception_change(time_simulation):
     plt.style.use('seaborn')
     fig, axs = plt.subplots(2, 2)
 
+
     # no perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], np.diff(return_values_dict1['Killed_herring_over_time']))
     axs[0, 0].set_title('No perception change', fontsize=10)
     # predator perception change
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], np.diff(return_values_dict2['Killed_herring_count_predator_perception_change']), 'tab:orange')
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'])
     axs[0, 1].set_title('Predator perception change', fontsize=10)
     # herring perception change (x-as:time, y-as: killed herring)
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], np.diff(return_values_dict3['Killed_herring_count_herring_perception_change']), 'tab:green')
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'])
     axs[1, 0].set_title('Herring perception change', fontsize=10)
     # both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], np.diff(return_values_dict4['Killed_herring_count_herring_perception_change']), 'tab:red')
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'])
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'])
     axs[1, 1].set_title('Predator and herring perception change', fontsize=10)
 
     for ax in axs.flat:
@@ -397,31 +402,30 @@ def visualizing_perception_change(time_simulation):
     for ax in axs.flat:
         ax.label_outer()
 
-    plt.show()
     fig.savefig("..\\data_visualisation\\4-perception_change_plot.png")
 
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    influence_boid_rules(20, 30)
+    # influence_boid_rules(20, 30)
 
     # # Determine the influence of rocks on the killing rate
-    influence_rocks(80, 20, 30)
+    # influence_rocks(80, 20, 30)
 
     # Determin the invluence of more predators
-    influence_predator_number(20, 20, 30)
+    # influence_predator_number(20, 20, 30)
 
     # Determine the influence of the scoolsize
-    influence_school_size(20, 30)
+    # influence_school_size(20, 30)
 
     # # Determine the influence of the alignment distance
-    influence_alignment_distance(20, 30)
+    # influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(20, 30)
+    # influences_closeness_herring(20, 30)
 
     # Determine the influence of changes in the perception length
-    visualizing_perception_change(60)
+    visualizing_perception_change(30)
 
 
     # """Faster run???????"""
