@@ -354,10 +354,13 @@ def influence_boid_rules(number_simulations, time_simulation):
     plt.show()
 
 def visualizing_perception_change(time_simulation):
-    """Function that makes four line plots that show number of killed herring per
-    time interval for different perception length conditions. The 4 conditions are:
-    both perception lengths do not change, only the herring perception length changes,
-    only the predator perception length changes and both perception length change.
+    """Function that makes four line plots that show the differences between the number of killed herring per
+    time interval (10 sec) for different perception lengths. The 4 simulated cases are:
+    - Both perception lengths do not change over time and remain their default setting.
+    - Solely the herring perception length changes over time.
+    - Solely the predator perception length changes over time.
+    - Both perception lengths are changed over time, but with a different adaption. (3 for herring and 5 for predator)
+    change over time.
 
     Parameters:
     -----------
@@ -373,19 +376,25 @@ def visualizing_perception_change(time_simulation):
     # herring and predator perception change
     return_values_dict4 = Experiment(200, 5, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
+    plt.style.use('seaborn')
     fig, axs = plt.subplots(2, 2)
+
 
     # no perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], np.diff(return_values_dict1['Killed_herring_over_time']))
     axs[0, 0].set_title('No perception change', fontsize=10)
     # predator perception change
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], np.diff(return_values_dict2['Killed_herring_count_predator_perception_change']), 'tab:orange')
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'])
     axs[0, 1].set_title('Predator perception change', fontsize=10)
     # herring perception change (x-as:time, y-as: killed herring)
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], np.diff(return_values_dict3['Killed_herring_count_herring_perception_change']), 'tab:green')
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'])
     axs[1, 0].set_title('Herring perception change', fontsize=10)
     # both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], np.diff(return_values_dict4['Killed_herring_count_herring_perception_change']), 'tab:red')
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'])
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'])
     axs[1, 1].set_title('Predator and herring perception change', fontsize=10)
 
     for ax in axs.flat:
@@ -394,12 +403,10 @@ def visualizing_perception_change(time_simulation):
         ax.tick_params(axis='x', which='both', labelsize=6)
         ax.grid(True)
 
-
     for ax in axs.flat:
         ax.label_outer()
 
-    plt.show()
-    # fig.savefig("..\\data_visualisation\\4-perception_change_plot.png")
+    fig.savefig("..\\data_visualisation\\4-perception_change_plot.png")
 
 
 if __name__ == "__main__":
@@ -419,10 +426,10 @@ if __name__ == "__main__":
     # influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(20, 30)
+    # influences_closeness_herring(20, 30)
 
     # Determine the influence of changes in the perception length
-    visualizing_perception_change(60)
+    visualizing_perception_change(30)
 
 
     # """Faster run???????"""
