@@ -4,7 +4,7 @@ University:   UvA
 Course:       Project Computational Science
 Student ID's: 14773279 , 15159337, 13717405
 Description:  In this code the functions are given to do statistical tests in
-visualisation.py with the data from the runned simulations.
+              visualisation.py with the data from the runned simulations.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +16,7 @@ import matplotlib.patches as patches
 
 def significant_test_school_size(df):
     """Function that determines if there is a significant difference in killed
-    herring between a large and small school in environment with and without rocks.
+    herring between a large and small school in environments with and without rocks.
 
     Parameters:
     -----------
@@ -25,7 +25,7 @@ def significant_test_school_size(df):
     """
     df['Proportion killed herring'] = pd.to_numeric(df['Proportion killed herring'], errors='coerce')
 
-    # Extract the killing values for the small and larg school
+    # Extract the killing values for the small and large school with and without rocks
     values_small_school_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == 'yes'), 'Proportion killed herring']
     values_large_school_rocks = df.loc[(df['School size'] == 400) & (df['Rocks'] == 'yes'), 'Proportion killed herring']
     values_small_school_no_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == 'no'), 'Proportion killed herring']
@@ -36,11 +36,9 @@ def significant_test_school_size(df):
     statistic_large_school_rocks, p_value_large_school_rocks = shapiro(values_large_school_rocks)
     statistic_small_school_no_rocks, p_value_small_school_no_rocks = shapiro(values_small_school_no_rocks)
     statistic_large_school_no_rocks, p_value_large_school_no_rocks = shapiro(values_large_school_no_rocks)
-    print(df)
-    print('rocks', values_small_school_rocks, values_large_school_rocks)
-    print('no rocks', values_small_school_no_rocks, values_large_school_no_rocks)
+
     # Influence school size in environment with rocks. Check if both data is normally
-    # distributed to determine the statistic test
+    # distributed to determine the statistical test
     if  p_value_large_school_rocks >= 0.05 and p_value_small_school_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_rocks, values_large_school_rocks)
         print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -49,7 +47,7 @@ def significant_test_school_size(df):
         print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
 
     # Influence school size in environment without rocks. Check if both data is normally
-    # distributed to determine the statistic test
+    # distributed to determine the statistical test
     if  p_value_large_school_no_rocks >= 0.05 and p_value_small_school_no_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_no_rocks, values_large_school_no_rocks)
         print(f'Small vs large school in environment without rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -85,7 +83,7 @@ def significant_test_close(df):
     statistic_no_p_12_no_r, p_value_no_p_12_no_r = shapiro(values_no_p_12_no_r)
 
     # Determine if introducing predators has significant influence. Check if both data
-    # is normally distributed to determine the statistic test
+    # is normally distributed to determine the statistical test
     if p_value_no_p_6_no_r >= 0.05 and p_value_p_6_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_p_6_no_r)
         print(f'Effect introduction predators. T-Statistic: {t_statistic}, p-value: {p_value}')

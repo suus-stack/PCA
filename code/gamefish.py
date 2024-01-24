@@ -66,9 +66,12 @@ class Herring(pygame.sprite.Sprite):
 
     def boids_rules_herring(self, all_herring, boids_influence):
         """ Function to adapt the herring velocity to implement the flocking rules:
-        - The separation rule: herring maintain a certain minimum distance with respect to its surrounding herring.
-        - The alignment rule: herring will head in the same direction of the neighbours within its alignment distance.
-        - The cohesion rule: herring moves to the position of the neighbours within cohesion distance.
+        - The separation rule: herring maintain a certain minimum distance with respect
+        to its surrounding herring.
+        - The alignment rule: herring will head in the same direction of the neighbours
+        within its alignment distance.
+        - The cohesion rule: herring moves to the position of the neighbours within
+        cohesion distance.
 
         Parameters:
         -----------
@@ -215,8 +218,8 @@ class Herring(pygame.sprite.Sprite):
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def accelerate_to_avoid_perdator(self, all_predators):
-        """This function ensures that herring will accelerate in speed when a predator is within
-        the herrings' perception length. The closer the predator is the faster the herring will swim.
+        """This function ensures that herring accelerate when a predator is within the herrings'
+         perception length. The closer the predator is the faster the herring will swim.
 
         Parameters:
         -----------
@@ -251,6 +254,8 @@ class Herring(pygame.sprite.Sprite):
             Group containing all herring entities.
         all_rocks: Pygame.sprite.Group
             Group containing all rock entities.
+        boids_influence: Int
+            Indicates if a boid rule is more important.
         """
         # Appy the three boids rules
         self.boids_rules_herring(all_herring, boids_influence)
@@ -408,10 +413,10 @@ class Predator(pygame.sprite.Sprite):
         -----------
         self: Predators
             The predator currently updated.
-        all_predators: Pygame.sprite.Group
-            Group containing all predator entities.
         all_herring: Pygame.sprite.Group
             Group containing all herring entities.
+        all_predators: Pygame.sprite.Group
+            Group containing all predator entities.
         all_rocks: Pygame.sprite.Group
             Group containing all rock entities.
         """
@@ -471,7 +476,8 @@ class Rock(pygame.sprite.Sprite):
         return np.sqrt((self.position[0] - other_position[0])**2 + (self.position[1] - other_position[1])**2)
 
 class Experiment(pygame.sprite.Sprite):
-    def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20, extra_rocks=False, start_school=False, perception_change_predator=False, perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5, boids_influence=0):
+    def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20, extra_rocks=False, start_school=False, perception_change_predator=False,
+        perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5, boids_influence=0):
         """
         Parameters:
         -----------
@@ -525,6 +531,8 @@ class Experiment(pygame.sprite.Sprite):
 
         Parameters:
         -----------
+        self: Experiment
+            The experiment being initialized.
         position_1: List
             The position of onject 1
         position_2: List
@@ -571,7 +579,8 @@ class Experiment(pygame.sprite.Sprite):
         return all_rocks
 
     def extra_rocks_experiment(self, all_rocks):
-        """ Function that adds extra rocks to connect rocks that already lay close to one another, to form rock clusters.
+        """ Function that adds extra rocks to connect rocks that already lay close
+        to one another, to form rock clusters.
 
         Parameters:
         -----------
@@ -626,6 +635,8 @@ class Experiment(pygame.sprite.Sprite):
         -----------
         self: Experiment
             The experiment being simulated.
+        all_rocks: Pygame.sprite.Group
+            Group containing all rock entities.
 
         Returns:
         -----------
@@ -666,6 +677,10 @@ class Experiment(pygame.sprite.Sprite):
         -----------
         self: Experiment
             The experiment being simulated.
+        all_rocks: Pygame.sprite.Group
+            Group containing all rock entities.
+        all_herring: Pygame.sprite.Group
+            Group containing all herring entities.
 
         Returns:
         -----------
@@ -702,6 +717,11 @@ class Experiment(pygame.sprite.Sprite):
             The experiment being simulated.
         font: Font
             The font used to style the text in the legend.
+        screen: Screen
+            The screen on which the legend has to be shown.
+
+        Returns:
+        -----------
         screen: Screen
             The screen on which the legend is shown.
         """
@@ -740,18 +760,27 @@ class Experiment(pygame.sprite.Sprite):
             The number of frames that is shown.
         perception_list_predator: List
             List with the perception length of the predator on each measured timepoint.
-        perception_list_predator: List
+        perception_list_herring: List
             List with the perception length of the herring on each measured timepoint.
-        killed_count_ls: List
-            List with the number of killed herring between each measured timepoint
+        killed_count_ls_pred: List
+            List with the number of killed herring between each measured timepoint if
+            the perception length of the predator changes.
+        killed_count_ls_herr: List
+            List with the number of killed herring between each measured timepoint if
+            the perception length of the herring changes.
 
         Returns:
         -----------
-        return_values: Dictionary
-            List with the perception length of the predator on each measured
-            timepoint.
-        list_killed_herring: List
-            List with the number of killed herring between each timepoint.
+        perception_list_predator: List
+            List with the perception length of the predator on each measured timepoint.
+        perception_list_herring: List
+            List with the perception length of the herring on each measured timepoint.
+        killed_count_ls_pred: List
+            List with the number of killed herring between each measured timepoint if
+            the perception length of the predator changes.
+        killed_count_ls_herr: List
+            List with the number of killed herring between each measured timepoint if
+            the perception length of the herring changes.
         """
 
         # Convert the number of frames to seconds and determine the elapsed time
@@ -765,17 +794,46 @@ class Experiment(pygame.sprite.Sprite):
             Config.PERCEPTION_LENGTH_PREDATOR = 20
             Config.PERCEPTION_LENGTH_HERRING = 10
 
-
         # elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND) % self.simulation_duration
         elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
 
         def update_perception_length(perception_length, adaption, elapsed_time):
+            """Function that updates the perception length
+
+            Parameters:
+            -----------
+            perception_length: Float
+                The current perception length.
+            adaption: Int
+                The change in perception length.
+            elapsed_time: Float
+                The time that is already passed.
+
+            Returns:
+            -----------
+            perception_length + or - adaption: Float
+                The new perception length after the change.
+            """
+
             if elapsed_time <= self.simulation_duration/2:
              return perception_length + adaption
             else:
              return perception_length - adaption
 
         def handle_perception_change(perception_list, perception_length_attr, adaption, killed_count_ls):
+            """Function that changes the perception lenght on specific time points
+
+            Parameters:
+            -----------
+            perception_list: List
+                List with the perception length on each measured timepoint.
+            perception_lenghth_attr: Float
+                The perception length.
+            adaption: Int
+                The change in perception length.
+            killed_count_ls: List
+                List with the number of killed herring between each measured timepoint.
+            """
             # 10 seconds intervals
             if round(elapsed_time, 4) % 10 == 0:
                 new_perception_length = update_perception_length(getattr(Config, perception_length_attr), adaption, elapsed_time)
@@ -806,6 +864,12 @@ class Experiment(pygame.sprite.Sprite):
         -----------
         self: Experiment
             The experiment being simulated.
+
+        Returns:
+        -----------
+        return_values: Dictionary
+            List with the perception length of the predator on each measured
+            timepoint.
         """
         pygame.font.init()
         pygame.init()

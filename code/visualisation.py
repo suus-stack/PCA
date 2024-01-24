@@ -8,7 +8,6 @@ Description:  In this code functions are given that are used to make the plots. 
               from gamefish.py a number of times. The plots show the influence of
               different factors on the killing rate of the herrings.
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -57,13 +56,15 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
     plt.title('Killed herring for different numbers of predators, with and without rocks')
     plt.show()
 
-def influence_rocks(number_simulations, time_simulation):
+def influence_rocks(max_number_rocks, number_simulations, time_simulation):
     """ Function that makes a plot of the average killed herring + 1 SD errorbars in
     an environment with differnt numbers of rocks. The starting number of herring is
     set to 200 and they start in 1 school. There is looked at 1 and 3 predators.
 
     Parameters:
     -----------
+    max_number_rocks: Int
+        The maximum number of rocks that is investigated.
     number_simulations: Int
         The number of simulations per experiment kind.
     time_simulation: Int
@@ -76,7 +77,7 @@ def influence_rocks(number_simulations, time_simulation):
     list_std_killed_3_predators = []
 
     # Simulate the experiment with different number of rocks
-    for number_rock in range(0, 41, 10):
+    for number_rock in range(0, max_number_rocks+1, 10):
         print('nr rock', number_rock)
         list_rock_number.append(number_rock)
 
@@ -359,6 +360,7 @@ def visualizing_perception_change(time_simulation):
     return_values_dict4 = Experiment(200, 5, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
     fig, axs = plt.subplots(2, 2)
+
     # no perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], np.diff(return_values_dict1['Killed_herring_over_time']))
     axs[0, 0].set_title('No perception change', fontsize=10)
@@ -414,7 +416,7 @@ if __name__ == "__main__":
     influence_boid_rules(3, 5)
 
     # Determine the influence of rocks on the killing rate
-    influence_rocks(3, 5)
+    influence_rocks(30, 5, 5)
 
     # Determin the invluence of more predators
     influence_predator_number(3, 10, 5)
