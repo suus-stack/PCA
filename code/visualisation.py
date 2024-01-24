@@ -18,9 +18,8 @@ from statistic_tests import *
 import matplotlib.patches as patches
 
 def influence_predator_number(max_number_predators, number_simulations, time_simulation):
-    """
-    Function that makes a violin plot of the distribution of the killed herring for
-    different number of predators in an environment with and without rocks. The
+    """ Function that makes a violin plot of the distribution of the killed herring
+    for different number of predators in an environment with and without rocks. The
     starting number of herring is set to 200 and the herring start in a school.
 
     Parameters:
@@ -43,13 +42,11 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
         # Do a number of simulation without rocks and with rocks
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            experiment = Experiment(200, number_predators, 0, time_simulation, True, True, False, False)
-            values_dict = experiment.run()
+            values_dict = Experiment(200, number_predators, 0, time_simulation, True, True, False, False).run()
             new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': values_dict['Killed_herring'], 'Rocks':'no'}])
             df = pd.concat([df, new_row], ignore_index=True)
 
-            experiment = Experiment(200, number_predators, 20, time_simulation, True, True, False, False)
-            values_dict  = experiment.run()
+            values_dict = Experiment(200, number_predators, 20, time_simulation, True, True, False, False).run()
             new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': values_dict['Killed_herring'], 'Rocks':'yes'}])
             df = pd.concat([df, new_row], ignore_index=True)
 
@@ -79,22 +76,20 @@ def influence_rocks(number_simulations, time_simulation):
     list_std_killed_3_predators = []
 
     # Simulate the experiment with different number of rocks
-    for number_rock in range(0, 81, 10):
+    for number_rock in range(0, 41, 10):
         print('nr rock', number_rock)
         list_rock_number.append(number_rock)
 
         list_killed_herring_1_predator = []
         list_killed_herring_3_predators = []
 
-        # Repeat the simulation with 1 predator and with 3 predators a number of times
+        # Repeat the simulation with 1 predator and 3 predators a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            experiment = Experiment(200, 1, number_rock, time_simulation, False, True, False, False)
-            values_dict = experiment.run()
+            values_dict = Experiment(200, 1, number_rock, time_simulation, False, True, False, False).run()
             list_killed_herring_1_predator.append(values_dict['Killed_herring'])
 
-            experiment = Experiment(200, 3, number_rock, time_simulation, False, True, False, False)
-            values_dict = experiment.run()
+            values_dict = Experiment(200, 3, number_rock, time_simulation, False, True, False, False).run()
             list_killed_herring_3_predators.append(values_dict['Killed_herring'])
 
         # Calculate the mean and the standard deviation and add it to the list
@@ -138,8 +133,7 @@ def influence_alignment_distance(number_simulations, time_simulation):
         # Simulate the experiment a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
-            experiment = Experiment(200, 3, 20, time_simulation, True, True, False, False, alignment_distance)
-            values_dict = experiment.run()
+            values_dict = Experiment(200, 3, 20, time_simulation, True, True, False, False, alignment_distance).run()
             list_killed_herring.append(values_dict['Killed_herring'])
 
         # Calculate the mean and the standard deviation and add it to the list
@@ -175,32 +169,25 @@ def influence_school_size(number_simulations, time_simulation):
     # Do a number of simulations
     for simulation in range(number_simulations):
         print('School size simulation:', simulation)
-        # Do a number of simulations without rocks and with 200 herring
-        experiment = Experiment(200, 3, 0, time_simulation, True, True, False, False)
-        values_dict = experiment.run()
-        p_killed_h = values_dict['Killed_herring']/200
-        new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': p_killed_h, 'Rocks':'no'}])
+
+        # Without rocks and with 200 herring
+        values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False).run()
+        new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': values_dict['Killed_herring']/200, 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Do a number of simulations with rocks and with 200 herring
-        experiment = Experiment(200, 3, 20, time_simulation, True, True, False, False)
-        values_dict = experiment.run()
-        p_killed_h = values_dict['Killed_herring']/200
-        new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': p_killed_h, 'Rocks':'yes'}])
+        # With rocks and with 200 herring
+        values_dict = Experiment(200, 3, 20, time_simulation, True, True, False, False).run()
+        new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': values_dict['Killed_herring']/200, 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Do a number of simulation without rocks and with 400 herring
-        experiment = Experiment(400, 3, 0, time_simulation, True, True, False, False)
-        values_dict = experiment.run()
-        p_killed_h = values_dict['Killed_herring']/400
-        new_row = pd.DataFrame([{'School size': 400, 'Proportion killed herring': p_killed_h, 'Rocks':'no'}])
+        # Without rocks and with 400 herring
+        values_dict = Experiment(400, 3, 0, time_simulation, True, True, False, False).run()
+        new_row = pd.DataFrame([{'School size': 400, 'Proportion killed herring': values_dict['Killed_herring']/400, 'Rocks':'no'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Do a number of simulations with rocks and with 400 herring
-        experiment = Experiment(400, 3, 20, time_simulation, True, True, False, False)
-        values_dict = experiment.run()
-        p_killed_h = values_dict['Killed_herring']/400
-        new_row = pd.DataFrame([{ 'School size': 400, 'Proportion killed herring': p_killed_h, 'Rocks':'yes'}])
+        # With rocks and with 400 herring
+        values_dict = Experiment(400, 3, 20, time_simulation, True, True, False, False).run()
+        new_row = pd.DataFrame([{ 'School size': 400, 'Proportion killed herring': values_dict['Killed_herring']/400, 'Rocks':'yes'}])
         df = pd.concat([df, new_row], ignore_index=True)
 
     # Do a statistical test
@@ -221,7 +208,6 @@ def influence_school_size(number_simulations, time_simulation):
     # Make a legend
     handles, labels = stripplot.get_legend_handles_labels()
     plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
-
     plt.show()
 
 
@@ -246,33 +232,28 @@ def influences_closeness_herring(number_simulations, time_simulation):
     for simulation in range(number_simulations):
         print('Simulation', simulation)
 
-        # Simulation with no predators, no rocks and default seperation distance (6)
-        experiment = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 6)
-        values_dict = experiment.run()
+        # No predators, no rocks and default seperation distance (6)
+        values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Simulation with no predators, 20 rocks and default seperation distance (6)
-        experiment = Experiment(200, 0, 20, time_simulation, True, True, False, False, 32, 32, 6)
-        values_dict = experiment.run()
+        # No predators, 20 rocks and default seperation distance (6)
+        values_dict = Experiment(200, 0, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + 20 r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Simulation with 2 predators, no rocks and default seperation distance (6)
-        experiment = Experiment(200, 2, 0, time_simulation, True, True, False, False, 32, 32, 6)
-        values_dict = experiment.run()
+        # 2 predators, no rocks and default seperation distance (6)
+        values_dict = Experiment(200, 2, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': '2 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # simulation with no predators, no rocks and a seperation distance of 3
-        experiment = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 3)
-        values_dict = experiment.run()
+        # No predators, no rocks and a seperation distance of 3
+        values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 3).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 3', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
         df = pd.concat([df, new_row], ignore_index=True)
 
-        # Simulation with no predators, no rocks and a seperation distance of 12
-        experiment = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 12)
-        values_dict = experiment.run()
+        # No predators, no rocks and a seperation distance of 12
+        values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 12).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 12', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
         df = pd.concat([df, new_row], ignore_index=True)
 
@@ -293,10 +274,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
     ax.text(0.01, 0.965, 'p = predator', transform=ax.transAxes, color='black', fontsize=10)
     ax.text(0.01, 0.93, 'r = rock', transform=ax.transAxes, color='black', fontsize=10)
     ax.text(0.01, 0.9, 's d = separation distance', transform=ax.transAxes, color='black', fontsize=10)
-
-    # Set background color for the legend area
-    background = patches.Rectangle((-0.04, 0.88), 0.3, 2, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
-    ax.add_patch(background)
+    background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
+    ax.add_patch(background_legend)
 
     plt.title('Herring count within the original separation distance (6) across various conditions.')
     plt.xlabel('Enviromental situation')
@@ -315,7 +294,6 @@ def influence_boid_rules(number_simulations, time_simulation):
     time_simulation: Int
         The number of seconds the simulation runs.
     """
-
     data_array_killed_herring = np.empty((number_simulations, 4))
 
     # Keep other parameters the same for all simulations
@@ -330,15 +308,12 @@ def influence_boid_rules(number_simulations, time_simulation):
     for simulation in range(number_simulations):
         print('simulation:', simulation)
         for boids_influence_value in range(4):
-            experiment = Experiment(
-                herring_nr, predator_nr, rock_nr, simulation_duration,
+            return_values = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
                 extra_rocks, start_school,boids_influence=boids_influence_value
-            )
+            ).run()
             print('Boids Influence rule:', boids_influence_value)
 
-            return_values = experiment.run()
             data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
-
 
     # Calculate mean and standard deviation for each column
     mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
@@ -352,10 +327,10 @@ def influence_boid_rules(number_simulations, time_simulation):
     sns.boxplot(data=df)
     plt.xlabel('Boids influence')
     plt.ylabel('Killed herring')
-    plt.title('Boxplot of Killed herring for different Boid rules')
+    plt.title('Boxplot of killed herring for different Boid rules')
     plt.show()
 
-    #plot bar graf of mean values ->*** Kan dit weg ?? ***
+    # Plot bar graf of mean values ->*** Kan dit weg ?? ***
     plt.figure(figsize=(10, 6))
     sns.barplot(x=df.columns, y=df.mean())
     plt.xlabel('Boids influence')
@@ -432,3 +407,26 @@ if __name__ == "__main__":
 
     # Determine the influence of changes in the perception length
     visualizing_perception_change(60)
+
+
+    """Faster run???????"""
+    # Determine the influence of the boid rules
+    influence_boid_rules(3, 5)
+
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(3, 5)
+
+    # Determin the invluence of more predators
+    influence_predator_number(3, 10, 5)
+
+    # Determine the influence of the scoolsize
+    influence_school_size(3, 5)
+
+    # # Determine the influence of the alignment distance
+    influence_alignment_distance(3, 5)
+
+    # Determine what influence if predators are more within the separation distance
+    influences_closeness_herring(3, 5)
+
+    # Determine the influence of changes in the perception length
+    visualizing_perception_change(30)
