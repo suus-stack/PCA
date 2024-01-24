@@ -344,6 +344,7 @@ def influence_boid_rules(number_simulations, time_simulation):
     plt.title('Boxplot of killed herring for different Boid rules')
     plt.show()
 
+    return boids_rules_df
 
 
 def visualizing_perception_change(time_simulation):
