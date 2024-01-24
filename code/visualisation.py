@@ -283,15 +283,19 @@ def influences_closeness_herring(number_simulations, time_simulation):
 
     # Add legend
     ax = plt.gca()
-    ax.text(0.01, 0.965, 'p = predator', transform=ax.transAxes, color='black', fontsize=10)
-    ax.text(0.01, 0.93, 'r = rock', transform=ax.transAxes, color='black', fontsize=10)
+    ax.text(0.01, 0.965, 'p = predators', transform=ax.transAxes, color='black', fontsize=10)
+    ax.text(0.01, 0.93, 'r = rocks', transform=ax.transAxes, color='black', fontsize=10)
     ax.text(0.01, 0.9, 's d = separation distance', transform=ax.transAxes, color='black', fontsize=10)
     background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2.5, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
     ax.add_patch(background_legend)
 
+    ax.set_xticks([0, 1, 2, 3, 4])  # Set custom tick positions
+    ax.set_xticklabels(['no p, no r,\ns d = 6', '2 p, no r,\ns d = 6', 'no p, 20 r, \ns d = 6', 'no p, no r,\ns d = 3', 'no p, no r,\ns d = 12'])
+
     plt.title('Herring count within the original separation distance (6) across various conditions.')
     plt.xlabel('Enviromental situation', fontsize=11)
     plt.ylabel('Times within original seperation distance (6)', fontsize=11)
+    plt.xticks(fontsize=11)
     plt.show()
 
 def influence_boid_rules(number_simulations, time_simulation):
@@ -400,19 +404,19 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    influence_boid_rules(20, 30)
-
-    # # Determine the influence of rocks on the killing rate
-    influence_rocks(80, 20, 30)
-
-    # Determin the invluence of more predators
-    influence_predator_number(20, 20, 30)
-
-    # Determine the influence of the scoolsize
-    influence_school_size(20, 30)
-
-    # # Determine the influence of the alignment distance
-    influence_alignment_distance(20, 30)
+    # influence_boid_rules(20, 30)
+    #
+    # # # Determine the influence of rocks on the killing rate
+    # influence_rocks(80, 20, 30)
+    #
+    # # Determin the invluence of more predators
+    # influence_predator_number(20, 20, 30)
+    #
+    # # Determine the influence of the scoolsize
+    # influence_school_size(20, 30)
+    #
+    # # # Determine the influence of the alignment distance
+    # influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
     influences_closeness_herring(20, 30)
