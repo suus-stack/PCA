@@ -122,27 +122,36 @@ def influence_alignment_distance(number_simulations, time_simulation):
         The number of seconds the simulation runs.
     """
     list_alignment_distance = []
-    list_mean_killed =[]
-    list_std_killed = []
+    list_mean_killed_rocks =[]
+    list_std_killed_rocks = []
+    list_mean_killed_no_rocks =[]
+    list_std_killed_no_rocks = []
 
     # Simulate the experiment with different alignment distances
     for alignment_distance in range(4, 33, 4):
         print('alignment distance', alignment_distance)
         list_alignment_distance.append(alignment_distance)
-        list_killed_herring = []
+        list_killed_herring_rocks = []
+        list_killed_herring_no_rocks = []
 
         # Simulate the experiment a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
             values_dict = Experiment(200, 3, 20, time_simulation, True, True, False, False, alignment_distance).run()
-            list_killed_herring.append(values_dict['Killed_herring'])
+            list_killed_herring_rocks.append(values_dict['Killed_herring'])
+
+            values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False, alignment_distance).run()
+            list_killed_herring_no_rocks.append(values_dict['Killed_herring'])
 
         # Calculate the mean and the standard deviation and add it to the list
-        list_mean_killed.append(np.mean(list_killed_herring))
-        list_std_killed.append(np.std(list_killed_herring))
+        list_mean_killed_rocks.append(np.mean(list_killed_herring_rocks))
+        list_std_killed_rocks.append(np.std(list_killed_herring_rocks))
+        list_mean_killed_no_rocks.append(np.mean(list_killed_herring_no_rocks))
+        list_std_killed_no_rocks.append(np.std(list_killed_herring_no_rocks))
 
     # Make a plot of the average number of killed herring vs the alignment distance
-    plot = plt.errorbar(list_alignment_distance, list_mean_killed, yerr=list_std_killed, fmt='o--', color='purple', markerfacecolor='blue', label='avarage killed herring + 1 SD', capsize=4)
+    plot1 = plt.errorbar(list_alignment_distance, list_mean_killed_rocks, yerr=list_std_killed_rocks, fmt='o--', color='purple', markerfacecolor='blue', label='mean killed h + 1 SD with rocks', capsize=4)
+    plot2 = plt.errorbar(list_alignment_distance, list_mean_killed_no_rocks, yerr=list_std_killed_no_rocks, fmt='o--', color='red', markerfacecolor='pink', label='mean killed h + 1 SD without rocks', capsize=4)
     plt.xlabel('Alignment distance')
     plt.ylabel('Average killed herring')
     plt.title('The average killed herring + 1 SD errorbars at different alignment distances')
@@ -284,9 +293,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
     plt.show()
 
 def influence_boid_rules(number_simulations, time_simulation):
-    """Function that makes a boxplot and scatterplot of the distribution of killed
-    herring where differerent boid rules are most important. It also makes a stipplot
-    to show the mean and standard deviation.
+    """Function that makes a boxplot the distribution of killed herring when different
+    boid rules are most important.
 
     Parameters:
     -----------
@@ -389,6 +397,7 @@ def visualizing_perception_change(time_simulation):
 
 
 if __name__ == "__main__":
+    influence_alignment_distance(20, 30)
     # Determine the influence of the boid rules
     influence_boid_rules(20, 30)
 
