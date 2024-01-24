@@ -51,7 +51,9 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
 
     # Make a violin plot
     sns.violinplot(data=df, x= 'Nr predators', y= 'Killed herring', hue= 'Rocks', split=True, gap=.1, inner="quart")
-    plt.xlabel('Number of predators')
+    legend = plt.legend(loc='upper left', fontsize=10, title='Rocks')
+    plt.xlabel('Number of predators', fontsize=11)
+    plt.ylabel('Killed herring', fontsize=11)
     plt.ylim(bottom=0)
     plt.title('Killed herring for different numbers of predators, with and without rocks')
     plt.show()
@@ -101,12 +103,12 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
 
     # Make a plot of the average number of killed herring vs the number of rocks
     plot = plt.errorbar(list_rock_number, list_mean_killed_1_predator, yerr=list_std_killed_1_predator, fmt='o--', color='orange', capsize=4, markerfacecolor='red', label='avarage killed herring + 1 SD, 1 predator')
-    plot = plt.errorbar(list_rock_number, list_mean_killed_3_predators, yerr=list_std_killed_3_predators, fmt='o--', color='blue', capsize=4, markerfacecolor='purple', label='avarage killed herring + 1 SD, 3 predators')
-    plt.xlabel('Number or rocks')
-    plt.ylabel('Average killed herring')
+    plot = plt.errorbar(list_rock_number, list_mean_killed_3_predators, yerr=list_std_killed_3_predators,fmt='o--', color='blue', capsize=4, markerfacecolor='purple', label='avarage killed herring + 1 SD, 3 predators')
+    plt.xlabel('Number or rocks', fontsize=11)
+    plt.ylabel('Average killed herring', fontsize=11)
     plt.title('Average killed herring + 1 SD errorbars in environments with different numbers of rocks')
     plt.ylim(bottom=0)
-    plt.legend()
+    plt.legend(fontsize=10)
     plt.show()
 
 def influence_alignment_distance(number_simulations, time_simulation):
@@ -284,12 +286,12 @@ def influences_closeness_herring(number_simulations, time_simulation):
     ax.text(0.01, 0.965, 'p = predator', transform=ax.transAxes, color='black', fontsize=10)
     ax.text(0.01, 0.93, 'r = rock', transform=ax.transAxes, color='black', fontsize=10)
     ax.text(0.01, 0.9, 's d = separation distance', transform=ax.transAxes, color='black', fontsize=10)
-    background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
+    background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2.5, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
     ax.add_patch(background_legend)
 
     plt.title('Herring count within the original separation distance (6) across various conditions.')
-    plt.xlabel('Enviromental situation')
-    plt.ylabel('Times within original seperation distance (6)')
+    plt.xlabel('Enviromental situation', fontsize=11)
+    plt.ylabel('Times within original seperation distance (6)', fontsize=11)
     plt.show()
 
 def influence_boid_rules(number_simulations, time_simulation):
@@ -397,12 +399,11 @@ def visualizing_perception_change(time_simulation):
 
 
 if __name__ == "__main__":
-    influence_alignment_distance(20, 30)
     # Determine the influence of the boid rules
     influence_boid_rules(20, 30)
 
-    # Determine the influence of rocks on the killing rate
-    influence_rocks(20, 30)
+    # # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 20, 30)
 
     # Determin the invluence of more predators
     influence_predator_number(20, 20, 30)
@@ -420,24 +421,24 @@ if __name__ == "__main__":
     visualizing_perception_change(60)
 
 
-    """Faster run???????"""
-    # Determine the influence of the boid rules
-    influence_boid_rules(3, 5)
-
-    # Determine the influence of rocks on the killing rate
-    influence_rocks(30, 5, 5)
-
-    # Determin the invluence of more predators
-    influence_predator_number(3, 10, 5)
-
-    # Determine the influence of the scoolsize
-    influence_school_size(3, 5)
-
-    # # Determine the influence of the alignment distance
-    influence_alignment_distance(3, 5)
-
-    # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(3, 5)
-
-    # Determine the influence of changes in the perception length
-    visualizing_perception_change(30)
+    # """Faster run???????"""
+    # # Determine the influence of the boid rules
+    # influence_boid_rules(3, 5)
+    #
+    # # Determine the influence of rocks on the killing rate
+    # influence_rocks(30, 5, 5)
+    #
+    # # Determin the invluence of more predators
+    # influence_predator_number(3, 10, 5)
+    #
+    # # Determine the influence of the scoolsize
+    # influence_school_size(3, 5)
+    #
+    # # # Determine the influence of the alignment distance
+    # influence_alignment_distance(3, 5)
+    #
+    # # Determine what influence if predators are more within the separation distance
+    # influences_closeness_herring(3, 5)
+    #
+    # # Determine the influence of changes in the perception length
+    # visualizing_perception_change(30)
