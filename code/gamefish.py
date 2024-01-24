@@ -759,14 +759,14 @@ class Experiment(pygame.sprite.Sprite):
         showed_frames: Int
             The number of frames that is shown.
         perception_list_predator: List
-            List with the perception length of the predator on each measured timepoint.
+            Empty list to store the perception length of the predator on each measured timepoint.
         perception_list_herring: List
-            List with the perception length of the herring on each measured timepoint.
+            Empty list to store the perception length of the herring on each measured timepoint.
         killed_count_ls_pred: List
-            List with the number of killed herring between each measured timepoint if
+            Empty list to save the number of killed herring between each measured timepoint if
             the perception length of the predator changes.
         killed_count_ls_herr: List
-            List with the number of killed herring between each measured timepoint if
+            Emtpy list to store the number of killed herring between each measured timepoint if
             the perception length of the herring changes.
 
         Returns:
@@ -783,18 +783,12 @@ class Experiment(pygame.sprite.Sprite):
             the perception length of the herring changes.
         """
 
-        # Convert the number of frames to seconds and determine the elapsed time
-        # frame_to_seconds = showed_frames / Config.FRAMES_PER_SECOND
-        # elapsed_time = frame_to_seconds % self.simulation_duration
-
-        # This needs to happen only the first time the function is called, not every time over and over again
+        # Ensuring the perception lengths are set to their starting value only in the first function call
         if self.perception_change_called:
-            print("First call")
             self.perception_change_called = False
             Config.PERCEPTION_LENGTH_PREDATOR = 20
             Config.PERCEPTION_LENGTH_HERRING = 10
 
-        # elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND) % self.simulation_duration
         elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
 
         def update_perception_length(perception_length, adaption, elapsed_time):
@@ -803,16 +797,16 @@ class Experiment(pygame.sprite.Sprite):
             Parameters:
             -----------
             perception_length: Float
-                The current perception length.
+                The current perception length stored in the Config class.
             adaption: Int
-                The change in perception length.
+                The change in perception length, differs for herring and predator.
             elapsed_time: Float
-                The time that is already passed.
+                The time that has already passed when this function is called.
 
             Returns:
             -----------
             perception_length + or - adaption: Float
-                The new perception length after the change.
+                The new perception length after adaption.
             """
 
             if elapsed_time <= self.simulation_duration/2:
@@ -821,32 +815,30 @@ class Experiment(pygame.sprite.Sprite):
              return perception_length - adaption
 
         def handle_perception_change(perception_list, perception_length_attr, adaption, killed_count_ls):
-            """Function that changes the perception lenght on specific time points
+            """Function that changes the perception length of the herring or predator on specific time points
+            during the simulation. Trying to create the concept of the water getting darker later on the day.
 
             Parameters:
             -----------
             perception_list: List
-                List with the perception length on each measured timepoint.
+                Empty list to store the perception lengths on each measured timepoint.
             perception_lenghth_attr: Float
-                The perception length.
+                The perception length of either a herring or predator that is currently stored in the Config class.
             adaption: Int
-                The change in perception length.
+                The change in perception length, differs for herring and predator.
             killed_count_ls: List
-                List with the number of killed herring between each measured timepoint.
+                Empty list to store the number of killed herring between each measured timepoint.
             """
             # 10 seconds intervals
             if round(elapsed_time, 4) % 10 == 0:
                 new_perception_length = update_perception_length(getattr(Config, perception_length_attr), adaption, elapsed_time)
                 perception_list.append(new_perception_length)
-                # Determine the number of killed herring
-                killing_count = Herring.killed_herring ## opslaan in aparte var omdat je anders de hele class variabele de hele tijd weer op 0 zet (r.750)
+                # Saving in different var to prevent the Herring class var (killed_herring) to change throughout the entire simulation
+                killing_count = Herring.killed_herring 
                 killed_count_ls.append(killing_count)
-                print('perp length before', getattr(Config, perception_length_attr))
                 setattr(Config, perception_length_attr, new_perception_length)
-                print('after', getattr(Config, perception_length_attr))
 
                 # Resetting count after the simulation has run witht this perception length value for some time
-                # Herring.killed_herring = 0
                 killing_count = 0
 
         if self.perception_change_predator:
@@ -932,8 +924,7 @@ class Experiment(pygame.sprite.Sprite):
                 return_values['Elapsed_time'] = time
 
             # Determine if perception length changes should be included
-            if self.perception_change_predator or self.perception_change_herring: # kan nog aanpassen dat je niet meegeeft maar alles default op lege lijsten zet
-                # perception_lenghts_predator, perception_lenghts_herring, killed_herring_count = self.perception_change(showed_frames)
+            if self.perception_change_predator or self.perception_change_herring: 
                 perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr = self.perception_change(showed_frames, perception_lengths_predator, perception_lengths_herring, killed_herring_count_pred, killed_herring_count_herr)
                 return_values['Perception_lenghts_predator'] = perception_list_predator
                 return_values['Killed_herring_count_predator_perception_change'] = killed_count_ls_pred
