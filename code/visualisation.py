@@ -368,13 +368,13 @@ def visualizing_perception_change(time_simulation):
         The number of seconds the simulation runs.
     """
     # no perception change
-    return_values_dict1 = Experiment(200, 5, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
+    return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
     # predator perception change
-    return_values_dict2 = Experiment(200, 5, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
+    return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
     # herring perception change
-    return_values_dict3 = Experiment(200, 5, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
+    return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
     # herring and predator perception change
-    return_values_dict4 = Experiment(200, 5, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
+    return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
     plt.style.use('seaborn')
     fig, axs = plt.subplots(2, 2)
@@ -385,17 +385,25 @@ def visualizing_perception_change(time_simulation):
     axs[0, 0].set_title('No perception change', fontsize=10)
     # predator perception change
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], np.diff(return_values_dict2['Killed_herring_count_predator_perception_change']), 'tab:orange')
-    axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'])
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5, label='Perception length predator')
     axs[0, 1].set_title('Predator perception change', fontsize=10)
     # herring perception change (x-as:time, y-as: killed herring)
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], np.diff(return_values_dict3['Killed_herring_count_herring_perception_change']), 'tab:green')
-    axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'])
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5, label='Perception length herring')
     axs[1, 0].set_title('Herring perception change', fontsize=10)
     # both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], np.diff(return_values_dict4['Killed_herring_count_herring_perception_change']), 'tab:red')
-    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'])
-    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'])
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'], 'tab:red', linestyle='--', alpha=0.5, label='Perception length herring')
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'], linestyle='--', alpha=0.5, label='Perception length predator')
     axs[1, 1].set_title('Predator and herring perception change', fontsize=10)
+
+    # axs[0, 1].legend()
+    # axs[1, 0].legend()
+    # axs[1, 1]. legend()
+    
+    # fig.legend()
+    fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize='small', framealpha=1)
+
 
     for ax in axs.flat:
         ax.set(xlabel= 'Elapsed time', ylabel= 'Number of killed herring')
@@ -411,9 +419,15 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
+<<<<<<< HEAD
     # influence_boid_rules(20, 30)
     #
     # # # Determine the influence of rocks on the killing rate
+=======
+    influence_boid_rules(20, 60)
+
+    # # Determine the influence of rocks on the killing rate
+>>>>>>> 164aec1a4d3c9c26a7922ef2cedba1ada9193c20
     # influence_rocks(80, 20, 30)
     #
     # # Determin the invluence of more predators
@@ -429,7 +443,11 @@ if __name__ == "__main__":
     # influences_closeness_herring(20, 30)
 
     # Determine the influence of changes in the perception length
+<<<<<<< HEAD
     visualizing_perception_change(30)
+=======
+    visualizing_perception_change(20)
+>>>>>>> 164aec1a4d3c9c26a7922ef2cedba1ada9193c20
 
 
     # """Faster run???????"""
