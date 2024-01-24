@@ -17,7 +17,7 @@ from statistic_tests import *
 import matplotlib.patches as patches
 
 def influence_predator_number(max_number_predators, number_simulations, time_simulation):
-    """ Function that makes a violin plot of the distribution of the killed herring
+    """Function that makes a violin plot of the distribution of the killed herring
     for different number of predators in an environment with and without rocks. The
     starting number of herring is set to 200 and the herring start in a school.
 
@@ -26,7 +26,7 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
     max_number_predators: Int
         The maximum number of predators that is investigated.
     number_simulations: Int
-        The number of simulations per experiment kind.
+        The number of simulations per experiment type.
     time_simulation: Int
         The number of seconds the simulation runs.
     """
@@ -59,7 +59,7 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
     plt.show()
 
 def influence_rocks(max_number_rocks, number_simulations, time_simulation):
-    """ Function that makes a plot of the average killed herring + 1 SD errorbars in
+    """Function that makes a plot of the average killed herring + 1 SD errorbars in
     an environment with differnt numbers of rocks. The starting number of herring is
     set to 200 and they start in 1 school. There is looked at 1 and 3 predators.
 
@@ -114,7 +114,8 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
 def influence_alignment_distance(number_simulations, time_simulation):
     """Function that makes a plot of the average killed herring + 1 SD errorbars for
     different values of the alignment distance. The starting number of herring is set
-    to 200 and that of the predators to 3. It is tested in an envionment with rocks.
+    to 200 and that of the predators to 3. It is tested in an envionment with and
+    without rocks.
 
     Parameters:
     -----------
@@ -136,7 +137,7 @@ def influence_alignment_distance(number_simulations, time_simulation):
         list_killed_herring_rocks = []
         list_killed_herring_no_rocks = []
 
-        # Simulate the experiment a number of times
+        # Simulate the experiments a number of times
         for simulation in range(number_simulations):
             print('simulation', simulation)
             values_dict = Experiment(200, 3, 20, time_simulation, True, True, False, False, alignment_distance).run()
@@ -161,11 +162,11 @@ def influence_alignment_distance(number_simulations, time_simulation):
     plt.legend()
     plt.show()
 
-
 def influence_school_size(number_simulations, time_simulation):
     """Function that makes a boxplot and scatterplot of the distribution of the
     killed herring for two sizes of fish schools in an environment with and without
-    rocks. The starting number of predators is 3. It also does a significance test.
+    rocks. The starting number of predators is 3. It also does a significance test to
+    determine if the school size significantly changes the killing proportion.
 
     Parameters:
     -----------
@@ -222,12 +223,12 @@ def influence_school_size(number_simulations, time_simulation):
     plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
     plt.show()
 
-
 def influences_closeness_herring(number_simulations, time_simulation):
     """Function that makes a boxplot and scatterplot of the distribution of herring
     within the seperation distance of 6 for different seperation distances and by
     introducing 2 predators. The starting number of herring is set to 200 and the
-    herring start in a school. It also does a significance test.
+    herring start in a school. It also does a significance test to determine if
+    environmental changes significantly influence the school density.
 
     Parameters:
     -----------
@@ -289,7 +290,7 @@ def influences_closeness_herring(number_simulations, time_simulation):
     background_legend = patches.Rectangle((-0.04, 0.88), 0.3, 2.5, edgecolor='black', facecolor='lightcyan', transform=ax.transAxes)
     ax.add_patch(background_legend)
 
-    ax.set_xticks([0, 1, 2, 3, 4]) 
+    ax.set_xticks([0, 1, 2, 3, 4])
     ax.set_xticklabels(['no p, no r,\ns d = 6', '2 p, no r,\ns d = 6', 'no p, 20 r, \ns d = 6', 'no p, no r,\ns d = 3', 'no p, no r,\ns d = 12'])
 
     plt.title('Herring count within the original separation distance (6) across various conditions.')
@@ -300,7 +301,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
 
 def influence_boid_rules(number_simulations, time_simulation):
     """Function that makes a boxplot the distribution of killed herring when different
-    boid rules are most important.
+    boid rules are most important. The starting number of herring is set to 200 and the
+    herring start in a school.
 
     Parameters:
     -----------
@@ -312,9 +314,9 @@ def influence_boid_rules(number_simulations, time_simulation):
     data_array_killed_herring = np.empty((number_simulations, 4))
 
     # Keep other parameters the same for all simulations
-    herring_nr = 150
+    herring_nr = 200
     predator_nr = 2
-    rock_nr = 10
+    rock_nr = 20
     simulation_duration = time_simulation
     extra_rocks = True
     start_school = True
@@ -330,12 +332,8 @@ def influence_boid_rules(number_simulations, time_simulation):
 
             data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
 
-    # Calculate mean and standard deviation for each column
-    mean_killed_herring_array = np.mean(data_array_killed_herring, axis=0)
-    std_killed_herring_array = np.std(data_array_killed_herring, axis=0)
-    print(data_array_killed_herring)
+    # Make a dataframe of the array
     df = pd.DataFrame(data_array_killed_herring, columns=['no weigted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
-    print(df)
 
     # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
@@ -354,44 +352,44 @@ def influence_boid_rules(number_simulations, time_simulation):
     plt.show()
 
 def visualizing_perception_change(time_simulation):
-    """Function that makes four line plots that show the differences between the number of killed herring per
-    time interval (10 sec) for different perception lengths. The 4 simulated cases are:
+    """Function that makes four line plots that show the differences between the
+    number of killed herring per time interval (10 sec) for different perception lengths.
+    The 4 simulated cases are:
     - Both perception lengths do not change over time and remain their default setting.
     - Solely the herring perception length changes over time.
     - Solely the predator perception length changes over time.
-    - Both perception lengths are changed over time, but with a different adaption. (3 for herring and 5 for predator)
-    change over time.
+    - Both perception lengths are changed over time, but with a different adaption.
+    (3 for herring and 5 for predator) change over time.
 
     Parameters:
     -----------
     time_simulation: Int
         The number of seconds the simulation runs.
     """
-    # no perception change
+    # No perception change
     return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
-    # predator perception change
+    # Predator perception change
     return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
-    # herring perception change
+    # Herring perception change
     return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
-    # herring and predator perception change
+    # Herring and predator perception change
     return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
     plt.style.use('seaborn')
     fig, axs = plt.subplots(2, 2)
 
-
-    # no perception change
+    # No perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], np.diff(return_values_dict1['Killed_herring_over_time']))
     axs[0, 0].set_title('No perception change', fontsize=10)
-    # predator perception change
+    # Predator perception change
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], np.diff(return_values_dict2['Killed_herring_count_predator_perception_change']), 'tab:orange')
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5, label='Perception length predator')
     axs[0, 1].set_title('Predator perception change', fontsize=10)
-    # herring perception change (x-as:time, y-as: killed herring)
+    # Herring perception change (x-as:time, y-as: killed herring)
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], np.diff(return_values_dict3['Killed_herring_count_herring_perception_change']), 'tab:green')
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5, label='Perception length herring')
     axs[1, 0].set_title('Herring perception change', fontsize=10)
-    # both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
+    # Both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], np.diff(return_values_dict4['Killed_herring_count_herring_perception_change']), 'tab:red')
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'], 'tab:red', linestyle='--', alpha=0.5, label='Perception length herring')
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'], linestyle='--', alpha=0.5, label='Perception length predator')
@@ -403,7 +401,6 @@ def visualizing_perception_change(time_simulation):
 
     # fig.legend()
     fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize='small', framealpha=1)
-
 
     for ax in axs.flat:
         ax.set(xlabel= 'Elapsed time', ylabel= 'Number of killed herring')
