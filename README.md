@@ -5,7 +5,7 @@ Student id's: 14773279, 15159337, 13717405
 
 THE GOAL  
 The main goal of this project is to make a 2D Agent-based model that simulates the
-behaviour of a herring school. The aim is to assess the influence of the three Boid
+behaviour of a herring school. The aim is to assess the influence of the three boid
 rules, as well as the impact of environmental changes, rocks and predators (barracuda),
 on the herring killing rate.
 
@@ -21,7 +21,7 @@ The movement of a herring (boid) is based on three rules:
 - Cohesion: Herring moves towards the position of their closest neighbours.
 
 The speed of the herring is the average speed at which some value between -1 *standard
-Deviation (sd) and +1* sd is added. This variation is introduced to create diversity
+Deviation (SD) and +1* SD is added. This variation is introduced to create diversity
 within the herring population. The presence of rocks and predators in the environment
 influences the herring's behaviour. Rocks can alter the direction of a herring and
 predators can affect both the speed and direction.  If a predator is within the perception
@@ -31,7 +31,7 @@ predator. The closer the predator, the more the speed increases.
 Barracuda features  
 The movement of a barracuda is random unless it comes too close to another barracuda
 in which case it will move away. The speed of the barracuda is the average speed at
-which some value between -1 * sd and +1* sd is added. This variation is introduced to
+which some value between -1 * SD and +1* SD is added. This variation is introduced to
 create diversity within the barracuda population. The presence of rocks and herring
 in the environment influences the movement of a barracuda. Rocks can alter the direction
 of a barracuda and herring can change the speed and direction. If a herring is within
@@ -55,7 +55,7 @@ close to each other to form a school. The barracudas get a random position that 
 within the barracuda's perception with a herring. This is done so the full attack can be
 studied. The simulation is run for a specified number of seconds. In de default function
 the perception length of the herring and predator do not change because perception_change
-_predator and perception_change_herring are set to False. Every Boid rule has the
+_predator and perception_change_herring are set to False. Every boid rule has the
 same amount of influence.
 
 Specifications in model (finetuning)  
@@ -79,7 +79,7 @@ FIXED PARAMETERS
 * HERRING_SIZE (float) = the radius of the circle representing herring in the simulation.
                       - Set to 3
 * HERRING_SPEED (float) = the average speed of a herring.
-                      - Set to 1.24 (sd = 0.05)
+                      - Set to 1.24 (SD = 0.05)
 * HERRING_SPEED_MAX (float) = the maximum speed of a herring.
                       - Set to 18.44
 * PERCEPTION_LENGHT_HERRING (float) = the length a herring can sense.
@@ -90,7 +90,7 @@ FIXED PARAMETERS
 * PREDATOR_SIZE (float) = radius of the circle representing a herring in the simulation.
                       - Set to 4
 * PREDATOR_SPEED (float) = the normal average speed of a barracuda.
-                      - Set to 3.6 (sd = 0.8)
+                      - Set to 3.6 (SD = 0.8)
 * PREDATOR_SPEED_MAX (float) = the highest speed a barracuda can have.
                       - Set to 24.4
 * PERCEPTION_LENGHT_PREDATOR (float)= the length a barracuda can sense.
@@ -122,7 +122,7 @@ CHANGEABLE PARAMETERS
 
 HOW TO RUN:  
 Command to simulate the model with these values:
-Experiment(herring_nr = 100, predator_nr = 1, rock_nr = 10, simulation_duration = 20,
+Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration = 20,
       extra_rocks = False, start_school = True, perception_change_predator = False,
       perception_change_herring = False, alignment_distance = 32, cohesion_distance = 32,
       separation_distance = 6, boids_influence = 0)
@@ -131,9 +131,9 @@ Experiment(herring_nr = 100, predator_nr = 1, rock_nr = 10, simulation_duration 
 
 
 INCOMPLETE MODEL: matrixes  
-Boids.py contains code to run an agent-based simulation of herring schools and possibly
+boids.py contains code to run an agent-based simulation of herring schools and possibly
 rocks and/or predators. This code works with matrices.
-Implementing the three Boid flocking rules (separation, alignment and cohesion) was
+Implementing the three boid flocking rules (separation, alignment and cohesion) was
 possible. However, by introducing rocks and predators, working with the matrices became
 too difficult. So for that reason, the code is not complete and we did not use it for
 analysis. But it shows that we tried it this way.   
@@ -222,8 +222,8 @@ All plots are also provided in the folder data_visualisation.
                   herring in large and small schools, with and without rocks.
                   - ####HOW TO RUN###
 
-* Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of killed
-                  herring when different Boid rules are emphasised
+* boids_rules_influence_60_plot: Boxplot with strip plot overlap that shows the number of killed
+                  herring when different boid rules are emphasised
                   - ####HOW TO RUN###
 
 - python visualisation.py.
@@ -236,6 +236,6 @@ in visualisation.py.
 It contains 3 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
 - Test to determine if environmental changes significantly influence the school density.
-- Test to determine if the different Boid rules significantly influence the killing rate.
+- Test to determine if the different boid rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected in visualisation.py.

@@ -422,6 +422,80 @@ def visualizing_perception_change(time_simulation):
 
     fig.savefig("..\\data_visualisation\\4-perception_change_plot.png")
 
+def sensitivity_rules_distance(number_simulations, time_simulation):
+    """Function that makes a plot of the average killed herring + 1 SD errorbars for
+    different deviations of the original choosen alignment distance (32), cohesion
+    distance (32) and separation distance (6) as sensitivity analyse. The starting
+    number of herring is set to 200 and the herring start in a school. There are no
+    rocks present.
+
+    Parameters:
+    -----------
+    number_simulations: Int
+        The number of simulations per experiment kind.
+    time_simulation: Int
+        The number of seconds the simulation runs.
+    """
+    list_distance_deviation = []
+    list_mean_killed_alignment =[]
+    list_std_killed_alignment = []
+    list_mean_killed_cohesion =[]
+    list_std_killed_cohesion = []
+    list_mean_killed_separation =[]
+    list_std_killed_separation = []
+
+    # Simulate the experiment with different distance deviations
+    for distance_deviation in range(-5, 6):
+        print('distance', distance_deviation)
+        list_distance_deviation.append(distance_deviation)
+        list_killed_herring_alignment = []
+        list_killed_herring_cohesion = []
+        list_killed_herring_separation = []
+
+        # Simulate the experiments a number of times
+        for simulation in range(number_simulations):
+            print('simulation', simulation)
+            values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False, 32+distance_deviation, 32, 6).run()
+            list_killed_herring_alignment.append(values_dict['Killed_herring'])
+
+            values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False, 32, 32+distance_deviation, 6).run()
+            list_killed_herring_cohesion.append(values_dict['Killed_herring'])
+
+            values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False, 32, 32, 6+distance_deviation).run()
+            list_killed_herring_separation.append(values_dict['Killed_herring'])
+
+        # Calculate the mean and the standard deviation and add it to the list
+        list_mean_killed_alignment.append(np.mean(list_killed_herring_alignment))
+        list_std_killed_alignment.append(np.std(list_killed_herring_alignment))
+        list_mean_killed_cohesion.append(np.mean(list_killed_herring_cohesion))
+        list_std_killed_cohesion.append(np.std(list_killed_herring_cohesion))
+        list_mean_killed_separation.append(np.mean(list_killed_herring_separation))
+        list_std_killed_separation.append(np.std(list_killed_herring_separation))
+
+    # Make a plot of the average number of killed herring vs the distance deviation
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    # Alignment distance
+    plot1 = axes[0].errorbar(list_distance_deviation, list_mean_killed_alignment, yerr = list_std_killed_alignment, fmt = 'o--', color = 'blue', markerfacecolor = 'blue', capsize = 4, label = 'average killed h + 1 SD')
+    axes[0].set_title('Alignment distance')
+    axes[0].set_xlabel('Deviation original distance (32)')
+
+    # Cohesion distance
+    plot2 = axes[1].errorbar(list_distance_deviation, list_mean_killed_cohesion, yerr = list_std_killed_cohesion, fmt = 'o--', color = 'red', markerfacecolor = 'red', capsize = 4, label = 'average killed h + 1 SD')
+    axes[1].set_title('Cohesion distance')
+    axes[1].set_xlabel('Deviation original distance (32)')
+
+    # Separation distance
+    plot3 = axes[2].errorbar(list_distance_deviation, list_mean_killed_separation, yerr = list_std_killed_separation, fmt = 'o--', color = 'green', markerfacecolor = 'green', capsize = 4, label = 'average killed h + 1 SD')
+    axes[2].set_title('Separation distance')
+    axes[2].set_xlabel('Deviation original distance (6)')
+
+
+    for ax in axes:
+        ax.set_ylabel('Average killed herring')
+        ax.legend()
+
+    plt.suptitle('Sensitivity analyse boid rules')
+    plt.show()
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
@@ -447,3 +521,6 @@ if __name__ == "__main__":
 
     # Determine the influence of changes in the perception length
     visualizing_perception_change(30)
+
+    # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    sensitivity_rules_distance(30, 20)
