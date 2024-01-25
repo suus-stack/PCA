@@ -40,8 +40,7 @@ def significant_test_school_size(df):
     statistic_small_school_no_rocks, p_value_small_school_no_rocks = shapiro(values_small_school_no_rocks)
     statistic_large_school_no_rocks, p_value_large_school_no_rocks = shapiro(values_large_school_no_rocks)
 
-    # Influence school size in environment with rocks. Check if both data is normally
-    # distributed to determine the statistical test
+    # Influence school size in environment with rocks.
     if  p_value_large_school_rocks >= 0.05 and p_value_small_school_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_rocks, values_large_school_rocks)
         print(f'Small vs large school in environment with rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -49,8 +48,7 @@ def significant_test_school_size(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_small_school_rocks, values_large_school_rocks)
         print(f'Small vs large school in environment with rocks. Mann-Whitney U Statistic: {mw_statistic}, p-Value: {p_value}')
 
-    # Influence school size in environment without rocks. Check if both data is normally
-    # distributed to determine the statistical test
+    # Influence school size in environment without rocks.
     if  p_value_large_school_no_rocks >= 0.05 and p_value_small_school_no_rocks >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_small_school_no_rocks, values_large_school_no_rocks)
         print(f'Small vs large school in environment without rocks. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -85,8 +83,7 @@ def significant_test_close(df):
     statistic_no_p_3_no_r, p_value_no_p_3_no_r = shapiro(values_no_p_3_no_r)
     statistic_no_p_12_no_r, p_value_no_p_12_no_r = shapiro(values_no_p_12_no_r)
 
-    # Determine if introducing predators has significant influence. Check if both data
-    # is normally distributed to determine the statistical test
+    # Determine if introducing predators has significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_p_6_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_p_6_no_r)
         print(f'Effect introduction predators. T-Statistic: {t_statistic}, p-value: {p_value}')
@@ -94,8 +91,7 @@ def significant_test_close(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_p_6_no_r)
         print(f'Effect introduction predators. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
-    # Determine if introducing rocks has significant influence. Check if both data
-    # is normally distributed to determine the statistic test
+    # Determine if introducing rocks has significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_6_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_6_r)
         print(f'Effect introduction rocks. T-Statistic: {t_statistic}, p-value: {p_value}')
@@ -103,8 +99,7 @@ def significant_test_close(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_6_r)
         print(f'Effect introduction rocks. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
-    # Determine if a lower seperation distance has a significant influence. Check if
-    # both data is normally distributed to determine the statistic test
+    # Determine if a lower seperation distance has a significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_3_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_3_no_r)
         print(f'Effect smaller separation distance. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -112,8 +107,7 @@ def significant_test_close(df):
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_3_no_r)
         print(f'Effect smaller separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
-    # Determine if a higher seperation distance has a significant influence. Check if
-    # both data is normally distributed to determine the statistic test
+    # Determine if a higher seperation distance has a significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_12_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_12_no_r)
         print(f'Effect larger separation distance. T-Statistic: {t_statistic}, p-Value: {p_value}')
@@ -122,7 +116,14 @@ def significant_test_close(df):
         print(f'Effect larger separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
 def significant_test_boidsrules(data):
+    """Function that determines if there is a significant difference in herring
+    killing rate when one of the Boid rules is weighted.
 
+    Parameters:
+    -----------
+    data: Dataframe
+        Datafframe with the values obtaint from the simulated experiments.
+    """
     # Perform tests for each pair
     comparison_pairs = [('no weighted boid rules', 'weighted seperation rule'),
                         ('no weighted boid rules', 'weighted alignment rule'),

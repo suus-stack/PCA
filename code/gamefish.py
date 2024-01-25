@@ -834,7 +834,7 @@ class Experiment(pygame.sprite.Sprite):
                 new_perception_length = update_perception_length(getattr(Config, perception_length_attr), adaption, elapsed_time)
                 perception_list.append(new_perception_length)
                 # Saving in different var to prevent the Herring class var (killed_herring) to change throughout the entire simulation
-                killing_count = Herring.killed_herring 
+                killing_count = Herring.killed_herring
                 killed_count_ls.append(killing_count)
                 setattr(Config, perception_length_attr, new_perception_length)
 
@@ -924,7 +924,7 @@ class Experiment(pygame.sprite.Sprite):
                 return_values['Elapsed_time'] = time
 
             # Determine if perception length changes should be included
-            if self.perception_change_predator or self.perception_change_herring: 
+            if self.perception_change_predator or self.perception_change_herring:
                 perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr = self.perception_change(showed_frames, perception_lengths_predator, perception_lengths_herring, killed_herring_count_pred, killed_herring_count_herr)
                 return_values['Perception_lenghts_predator'] = perception_list_predator
                 return_values['Killed_herring_count_predator_perception_change'] = killed_count_ls_pred
@@ -972,6 +972,6 @@ if __name__ == "__main__":
     12: The influence of boids rules (int). Default set to 0.
     """
     doctest.testmod()
-    experiment_example = Experiment(200, 5, 20, 240, True, True, False, False, 32, 32, 6, 0)
+    experiment_example = Experiment(200, 3, 40, 60, True, True, False, False, 32, 32, 6, 0)
     return_values = experiment_example.run()
     print(return_values)

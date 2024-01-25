@@ -153,8 +153,8 @@ def influence_alignment_distance(number_simulations, time_simulation):
         list_std_killed_no_rocks.append(np.std(list_killed_herring_no_rocks))
 
     # Make a plot of the average number of killed herring vs the alignment distance
-    plot1 = plt.errorbar(list_alignment_distance, list_mean_killed_rocks, yerr=list_std_killed_rocks, fmt='o--', color='purple', markerfacecolor='blue', label='mean killed h + 1 SD with rocks', capsize=4)
-    plot2 = plt.errorbar(list_alignment_distance, list_mean_killed_no_rocks, yerr=list_std_killed_no_rocks, fmt='o--', color='red', markerfacecolor='pink', label='mean killed h + 1 SD without rocks', capsize=4)
+    plot1 = plt.errorbar(list_alignment_distance, list_mean_killed_rocks, yerr = list_std_killed_rocks, fmt = 'o--', color = 'purple', markerfacecolor = 'blue', label = 'mean killed h + 1 SD with rocks', capsize = 4)
+    plot2 = plt.errorbar(list_alignment_distance, list_mean_killed_no_rocks, yerr = list_std_killed_no_rocks, fmt = 'o--', color = 'red', markerfacecolor = 'pink', label = 'mean killed h + 1 SD without rocks', capsize = 4)
     plt.xlabel('Alignment distance')
     plt.ylabel('Average killed herring')
     plt.title('The average killed herring + 1 SD errorbars at different alignment distances')
@@ -174,10 +174,15 @@ def influence_school_size(number_simulations, time_simulation):
         The number of simulations per experiment kind.
     time_simulation: Int
         The number of seconds the simulation runs.
+
+    Returns:
+    -----------
+    df_school_size: Dataframe
+        The datframe with the obtained data.
     """
     # Make empty dataframe with three columns
     column_names = ['School size', 'Proportion killed herring', 'Rocks']
-    df = pd.DataFrame(columns=column_names)
+    df_school_size = pd.DataFrame(columns=column_names)
 
     # Do a number of simulations
     for simulation in range(number_simulations):
@@ -186,25 +191,22 @@ def influence_school_size(number_simulations, time_simulation):
         # Without rocks and with 200 herring
         values_dict = Experiment(200, 3, 0, time_simulation, True, True, False, False).run()
         new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': values_dict['Killed_herring']/200, 'Rocks':'no'}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_school_size = pd.concat([df_school_size, new_row], ignore_index=True)
 
         # With rocks and with 200 herring
         values_dict = Experiment(200, 3, 20, time_simulation, True, True, False, False).run()
         new_row = pd.DataFrame([{'School size': 200, 'Proportion killed herring': values_dict['Killed_herring']/200, 'Rocks':'yes'}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_school_size = pd.concat([df_school_size, new_row], ignore_index=True)
 
         # Without rocks and with 400 herring
         values_dict = Experiment(400, 3, 0, time_simulation, True, True, False, False).run()
         new_row = pd.DataFrame([{'School size': 400, 'Proportion killed herring': values_dict['Killed_herring']/400, 'Rocks':'no'}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_school_size  = pd.concat([df_school_size , new_row], ignore_index=True)
 
         # With rocks and with 400 herring
         values_dict = Experiment(400, 3, 20, time_simulation, True, True, False, False).run()
         new_row = pd.DataFrame([{ 'School size': 400, 'Proportion killed herring': values_dict['Killed_herring']/400, 'Rocks':'yes'}])
-        df = pd.concat([df, new_row], ignore_index=True)
-
-    # Do a statistical test
-    significant_test_school_size(df)
+        df_school_size = pd.concat([df_school_size , new_row], ignore_index=True)
 
     # Determine the colors for the plots
     colors_box = {'yes': 'peachpuff', 'no': 'lavender'}
@@ -212,8 +214,8 @@ def influence_school_size(number_simulations, time_simulation):
 
     # Make a figure in which both the boxplot an stripplot are plotted
     plt.figure(figsize=(10, 6))
-    boxplot = sns.boxplot(x='School size', y='Proportion killed herring', hue='Rocks', data=df, palette=colors_box, width=0.8, dodge=True)
-    stripplot = sns.stripplot(x='School size', y='Proportion killed herring', hue='Rocks', data=df, dodge=True, palette=colors_strip)
+    boxplot = sns.boxplot(x = 'School size', y = 'Proportion killed herring', hue = 'Rocks', data = df_school_size, palette = colors_box, width = 0.8, dodge = True)
+    stripplot = sns.stripplot(x = 'School size', y = 'Proportion killed herring', hue = 'Rocks', data = df_school_size, dodge = True, palette = colors_strip)
     plt.title('Proportion killed herring in large and small schools, with and without rocks')
     plt.xlabel('Herring school size')
     plt.ylim(bottom=0)
@@ -223,12 +225,13 @@ def influence_school_size(number_simulations, time_simulation):
     plt.legend(handles[0:2], labels[0:2], title='Rocks', loc='upper right')
     plt.show()
 
+    return df_school_size
+
 def influences_closeness_herring(number_simulations, time_simulation):
     """Function that makes a boxplot and scatterplot of the distribution of herring
     within the seperation distance of 6 for different seperation distances and by
     introducing 2 predators. The starting number of herring is set to 200 and the
-    herring start in a school. It also does a significance test to determine if
-    environmental changes significantly influence the school density.
+    herring start in a school.
 
     Parameters:
     -----------
@@ -236,10 +239,15 @@ def influences_closeness_herring(number_simulations, time_simulation):
         The number of simulations per experiment kind.
     time_simulation: Int
         The number of seconds the simulation runs.
+
+    Returns:
+    -----------
+    df_closeness: Dataframe
+        The datframe with the obtained data.
     """
     # Make empty dataframe with two columns
     column_names = ['Predator and separation distance', 'Times within separation distance']
-    df = pd.DataFrame(columns=column_names)
+    df_closeness = pd.DataFrame(columns=column_names)
 
     # Do a number of simulation without rocks and with 100 herring
     for simulation in range(number_simulations):
@@ -248,30 +256,27 @@ def influences_closeness_herring(number_simulations, time_simulation):
         # No predators, no rocks and default seperation distance (6)
         values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # No predators, 20 rocks and default seperation distance (6)
         values_dict = Experiment(200, 0, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + 20 r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # 2 predators, no rocks and default seperation distance (6)
         values_dict = Experiment(200, 2, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row = pd.DataFrame([{'Predator and separation distance': '2 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # No predators, no rocks and a seperation distance of 3
         values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 3).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 3', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
-        df = pd.concat([df, new_row], ignore_index=True)
+        df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # No predators, no rocks and a seperation distance of 12
         values_dict = Experiment(200, 0, 0, time_simulation, True, True, False, False, 32, 32, 12).run()
         new_row = pd.DataFrame([{'Predator and separation distance': 'no p + no r + s d = 12', 'Times within separation distance': values_dict['Herring_within_separation_distance']}])
-        df = pd.concat([df, new_row], ignore_index=True)
-
-    # Do a statistical test
-    significant_test_close(df)
+        df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
     # Determine the colors for the plots
     colors_box = {'no p + no r + s d = 6': 'mistyrose', '2 p + no r + s d = 6': 'paleturquoise', 'no p + 20 r + s d = 6': 'wheat', 'no p + no r + s d = 3':'aquamarine', 'no p + no r + s d = 12': 'plum'}
@@ -279,8 +284,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
 
     # Make a figure in which both the boxplot an stripplot are plotted
     plt.figure(figsize=(10, 6))
-    boxplot = sns.boxplot(x='Predator and separation distance', y='Times within separation distance', hue = 'Predator and separation distance', data=df, palette=colors_box, width=0.6, legend=False)
-    stripplot = sns.stripplot(x='Predator and separation distance', y='Times within separation distance', hue = 'Predator and separation distance',  data=df, palette=colors_strip, legend=False)
+    boxplot = sns.boxplot(x='Predator and separation distance', y='Times within separation distance', hue = 'Predator and separation distance', data= df_closeness, palette=colors_box, width=0.6, legend=False)
+    stripplot = sns.stripplot(x='Predator and separation distance', y='Times within separation distance', hue = 'Predator and separation distance',  data= df_closeness, palette=colors_strip, legend=False)
 
     # Add legend
     ax = plt.gca()
@@ -299,6 +304,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
     plt.xticks(fontsize=11)
     plt.show()
 
+    return df_closeness
+
 def influence_boid_rules(number_simulations, time_simulation):
     """Function that makes a boxplot the distribution of killed herring when different
     boid rules are most important.
@@ -309,13 +316,18 @@ def influence_boid_rules(number_simulations, time_simulation):
         The number of simulations per experiment kind.
     time_simulation: Int
         The number of seconds the simulation runs.
+
+    Returns:
+    -----------
+    boids_rules_df: Dataframe
+        The datframe with the obtained data.
     """
     data_array_killed_herring = np.empty((number_simulations, 4))
 
     # Keep other parameters the same for all simulations
-    herring_nr = 150
-    predator_nr = 2
-    rock_nr = 10
+    herring_nr = 200
+    predator_nr = 3
+    rock_nr = 20
     simulation_duration = time_simulation
     extra_rocks = True
     start_school = True
@@ -331,16 +343,17 @@ def influence_boid_rules(number_simulations, time_simulation):
 
             data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
 
-    print(data_array_killed_herring)
     boids_rules_df = pd.DataFrame(data_array_killed_herring, columns=['no weighted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
-    print(boids_rules_df)
 
     # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
     sns.boxplot(data=boids_rules_df)
     sns.stripplot(data=boids_rules_df, color='black', jitter=0.2, size=5)
-    plt.xlabel('Boids influence')
-    plt.ylabel('Killed herring')
+    ax = plt.gca()
+    ax.set_xticks([0, 1, 2, 3])
+    ax.set_xticklabels(['no weighted \n boid rules', 'weighted \n seperation rule','weighted\n alignment rule', 'weighted \ncohesion rule'], fontsize=11)
+    plt.xlabel('Boids influence', fontsize=11)
+    plt.ylabel('Killed herring', fontsize=11)
     plt.title('Boxplot of killed herring for different Boid rules')
     plt.show()
 
@@ -395,7 +408,6 @@ def visualizing_perception_change(time_simulation):
     # axs[1, 0].legend()
     # axs[1, 1]. legend()
 
-    # fig.legend()
     fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize='small', framealpha=1)
 
     for ax in axs.flat:
@@ -412,7 +424,7 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(5, 5)
+    df_boid_killed = influence_boid_rules(20, 30)
     significant_test_boidsrules(df_boid_killed)
 
     # Determine the influence of rocks on the killing rate
@@ -422,13 +434,15 @@ if __name__ == "__main__":
     influence_predator_number(20, 20, 30)
 
     # Determine the influence of the scoolsize
-    influence_school_size(20, 30)
+    df_school_size = influence_school_size(20, 30)
+    significant_test_school_size(df_school_size)
 
     # Determine the influence of the alignment distance
     influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    influences_closeness_herring(20, 30)
+    df_closeness_herring = influences_closeness_herring(20, 30)
+    significant_test_close(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
     visualizing_perception_change(30)
