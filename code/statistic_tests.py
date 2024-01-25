@@ -59,8 +59,8 @@ def significant_test_school_size(df):
 
 def significant_test_close(df):
     """Function that determines if there is a significant difference in herring
-    within the perception distance of 6 when the perception distance changes and
-    when a preadator gets introduced. It is tested in an envionment without rocks.
+    within the perception distance of 6 when the perception distance changes, when
+    more preadators gets introduced or when rocks get introduced.
 
     Parameters:
     -----------
@@ -70,11 +70,11 @@ def significant_test_close(df):
     df['Times within separation distance'] = pd.to_numeric(df['Times within separation distance'], errors='coerce')
 
     # Extract the killing values for the different environments
-    values_no_p_6_no_r = df.loc[(df['Predator and separation distance'] == 'no p + no r + s d = 6'), 'Times within separation distance']
-    values_no_p_6_r = df.loc[(df['Predator and separation distance'] == 'no p + 20 r + s d = 6'), 'Times within separation distance']
-    values_p_6_no_r = df.loc[(df['Predator and separation distance'] == '2 p + no r + s d = 6'), 'Times within separation distance']
-    values_no_p_3_no_r = df.loc[(df['Predator and separation distance'] == 'no p + no r + s d = 3'), 'Times within separation distance']
-    values_no_p_12_no_r = df.loc[(df['Predator and separation distance'] == 'no p + no r + s d = 12'), 'Times within separation distance']
+    values_no_p_6_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 6'), 'Times within separation distance']
+    values_no_p_6_r = df.loc[(df['Predator and separation distance'] == '1 p + 20 r + s d = 6'), 'Times within separation distance']
+    values_p_6_no_r = df.loc[(df['Predator and separation distance'] == '4 p + no r + s d = 6'), 'Times within separation distance']
+    values_no_p_3_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 3'), 'Times within separation distance']
+    values_no_p_12_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 12'), 'Times within separation distance']
 
     # Determine if the data is normally distributed
     statistic_no_p_6_no_r, p_value_no_p_6_no_r = shapiro(values_no_p_6_no_r)
@@ -86,34 +86,94 @@ def significant_test_close(df):
     # Determine if introducing predators has significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_p_6_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_p_6_no_r)
-        print(f'Effect introduction predators. T-Statistic: {t_statistic}, p-value: {p_value}')
+        print(f'Effect introduction predators on density. T-Statistic: {t_statistic}, p-value: {p_value}')
     else:
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_p_6_no_r)
-        print(f'Effect introduction predators. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+        print(f'Effect introduction predators on density. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
     # Determine if introducing rocks has significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_6_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_6_r)
-        print(f'Effect introduction rocks. T-Statistic: {t_statistic}, p-value: {p_value}')
+        print(f'Effect introduction rocks on density. T-Statistic: {t_statistic}, p-value: {p_value}')
     else:
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_6_r)
-        print(f'Effect introduction rocks. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+        print(f'Effect introduction rocks on density. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
     # Determine if a lower seperation distance has a significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_3_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_3_no_r)
-        print(f'Effect smaller separation distance. T-Statistic: {t_statistic}, p-Value: {p_value}')
+        print(f'Effect smaller separation distance on density. T-Statistic: {t_statistic}, p-Value: {p_value}')
     else:
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_3_no_r)
-        print(f'Effect smaller separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+        print(f'Effect smaller separation distance on density. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
 
     # Determine if a higher seperation distance has a significant influence.
     if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_12_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_12_no_r)
-        print(f'Effect larger separation distance. T-Statistic: {t_statistic}, p-Value: {p_value}')
+        print(f'Effect larger separation distance on density. T-Statistic: {t_statistic}, p-Value: {p_value}')
     else:
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_12_no_r)
-        print(f'Effect larger separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+        print(f'Effect larger separation distance on density. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
+
+def significant_test_killed(df):
+    """Function that determines if there is a significant difference in the number
+    of killed herring killed when the perception distance changes, when more preadators
+    gets introduced or when rocks get introduced.
+
+    Parameters:
+    -----------
+    df: Dataframe
+        Datafframe with the values obtaint from the simulated experiments.
+    """
+    df['Killed herring'] = pd.to_numeric(df['Killed herring'], errors='coerce')
+
+    # Extract the killing values for the different environments
+    values_no_p_6_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 6'), 'Killed herring']
+    values_no_p_6_r = df.loc[(df['Predator and separation distance'] == '1 p + 20 r + s d = 6'), 'Killed herring']
+    values_p_6_no_r = df.loc[(df['Predator and separation distance'] == '4 p + no r + s d = 6'), 'Killed herring']
+    values_no_p_3_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 3'), 'Killed herring']
+    values_no_p_12_no_r = df.loc[(df['Predator and separation distance'] == '1 p + no r + s d = 12'), 'Killed herring']
+
+    # Determine if the data is normally distributed
+    statistic_no_p_6_no_r, p_value_no_p_6_no_r = shapiro(values_no_p_6_no_r)
+    statistic_no_p_6_r, p_value_no_p_6_r = shapiro(values_no_p_6_r)
+    statistic_p_6_no_r, p_value_p_6_no_r = shapiro(values_p_6_no_r)
+    statistic_no_p_3_no_r, p_value_no_p_3_no_r = shapiro(values_no_p_3_no_r)
+    statistic_no_p_12_no_r, p_value_no_p_12_no_r = shapiro(values_no_p_12_no_r)
+
+    # Determine if introducing predators has significant influence.
+    if p_value_no_p_6_no_r >= 0.05 and p_value_p_6_no_r >= 0.05:
+        t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_p_6_no_r)
+        print(f'Effect introduction predators on killing rate. T-Statistic: {t_statistic}, p-value: {p_value}')
+    else:
+        mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_p_6_no_r)
+        print(f'Effect introduction predators on killing rate. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
+    # Determine if introducing rocks has significant influence.
+    if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_6_r >= 0.05:
+        t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_6_r)
+        print(f'Effect introduction rocks on killing rate. T-Statistic: {t_statistic}, p-value: {p_value}')
+    else:
+        mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_6_r)
+        print(f'Effect introduction rocks on killing rate. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
+    # Determine if a lower seperation distance has a significant influence.
+    if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_3_no_r >= 0.05:
+        t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_3_no_r)
+        print(f'Effect smaller separation distance on killing rate. T-Statistic: {t_statistic}, p-Value: {p_value}')
+    else:
+        mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_3_no_r)
+        print(f'Effect smaller separation distance on killing rate. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
+    # Determine if a higher seperation distance has a significant influence.
+    if p_value_no_p_6_no_r >= 0.05 and p_value_no_p_12_no_r >= 0.05:
+        t_statistic, p_value = stats.ttest_ind(values_no_p_6_no_r, values_no_p_12_no_r)
+        print(f'Effect larger separation distance on killing rate. T-Statistic: {t_statistic}, p-Value: {p_value}')
+    else:
+        mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_12_no_r)
+        print(f'Effect larger separation distance on killing rate. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
 
 def significant_test_boidsrules(data):
     """Function that determines if there is a significant difference in herring

@@ -534,7 +534,7 @@ if __name__ == "__main__":
     # influence_alignment_distance(30, 20)
 
     # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(3, 20)
+    df_closeness_herring = influences_closeness_herring(20, 30)
     significant_test_close(df_closeness_herring)
     significant_test_killed(df_closeness_herring)
 
