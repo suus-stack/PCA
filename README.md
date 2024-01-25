@@ -144,9 +144,9 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, n
 
 FIXED PARAMETERS  
 * perception_predator (float) = perception rate of predator.
-                         - Set to 50.
+                        - Set to 50.
 * velocity_predator (float) = velocity of predator.
-                         - Set to 2.
+                        - Set to 2.
 * attraction_to_center (float) = the strength of the centre movement method, where a
                     negative value implies repulsion and a positive value attraction.
                         - Set to 0.00008
@@ -222,14 +222,14 @@ All plots are also provided in the folder data_visualisation.
                   herring in large and small schools, with and without rocks.
                   - ####HOW TO RUN###
 
-* Boids_rules_influence: Boxplot with strip plot overlap that shows the number of killed
-                  herring when different boid rules are emphasised
+* Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of killed
+                  herring when different Boid rules are emphasised
                   - ####HOW TO RUN###
 
 - python visualisation.py.
 
 
-THE STATISTICAL TESTS
+THE STATISTICAL TESTS  
 Statistic_tests.py contains the code to do the statistical test on the data obtained
 in visualisation.py.
 
@@ -238,4 +238,4 @@ It contains 3 statistical tests:
 - Test to determine if environmental changes significantly influence the school density.
 - Test to determine if the different Boid rules significantly influence the killing rate.
 
-This cannot be run separately because it needs the data collected in visualisation.py. 
+This cannot be run separately because it needs the data collected in visualisation.py.

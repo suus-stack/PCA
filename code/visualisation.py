@@ -6,7 +6,7 @@ Student id's: 14773279 , 15159337, 13717405
 Description:  In this code functions are given that are used to make the plots. The
               data for the plots is created by running the experiment (simulation)
               from gamefish.py a number of times. The plots show the influence of
-              different factors on the killing rate of the herrings.
+              different factors on the killing rate of the herring.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -40,7 +40,7 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
 
         # Do a number of simulation without rocks and with rocks
         for simulation in range(number_simulations):
-            print('simulation', simulation)
+            print('Simulation', simulation)
             values_dict = Experiment(200, number_predators, 0, time_simulation, True, True, False, False).run()
             new_row = pd.DataFrame([{'Nr predators': number_predators, 'Killed herring': values_dict['Killed_herring'], 'Rocks':'no'}])
             df = pd.concat([df, new_row], ignore_index=True)
@@ -161,6 +161,7 @@ def influence_alignment_distance(number_simulations, time_simulation):
     plt.ylim(bottom=0)
     plt.legend()
     plt.show()
+
 
 def influence_school_size(number_simulations, time_simulation):
     """Function that makes a boxplot and scatterplot of the distribution of the
@@ -347,18 +348,14 @@ def influence_boid_rules(number_simulations, time_simulation):
 
     # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
-    colors_box = ['mistyrose', 'paleturquoise', 'wheat', 'aquamarine']  # Box colors
-    colors_strip = ['red', 'blue', 'darkorange', 'green']  # Strip colors
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(data=boids_rules_df, palette=colors_box)
-    sns.stripplot(data=boids_rules_df,  palette=colors_strip, jitter=0.2, size=5)
-
+    sns.boxplot(data=boids_rules_df)
+    sns.stripplot(data=boids_rules_df, color='black', jitter=0.2, size=5)
     ax = plt.gca()
     ax.set_xticks([0, 1, 2, 3])
-    ax.set_xticklabels(['no weighted \n boid rules', 'weighted \n seperation rule','weighted\n alignment rule', 'weighted\n cohesion rule'], fontsize=11)
+    ax.set_xticklabels(['no weighted \n boid rules', 'weighted \n seperation rule','weighted\n alignment rule', 'weighted \ncohesion rule'], fontsize=11)
     plt.xlabel('Boids influence', fontsize=11)
     plt.ylabel('Killed herring', fontsize=11)
-    plt.title('Boxplot of killed herring for different Boid rules')
+    plt.title('Boxplot of killed herring for different boid rules')
     plt.show()
 
     return boids_rules_df
@@ -428,48 +425,25 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(20, 60)
+    df_boid_killed = influence_boid_rules(20, 30)
     significant_test_boidsrules(df_boid_killed)
 
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(80, 20, 30)
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 30, 20)
 
-    # # Determin the invluence of more predators
-    # influence_predator_number(20, 20, 30)
+    # Determin the invluence of more predators
+    influence_predator_number(20, 20, 30)
 
-    # # Determine the influence of the scoolsize
-    # df_school_size = influence_school_size(20, 30)
-    # significant_test_school_size(df_school_size)
+    # Determine the influence of the scoolsize
+    df_school_size = influence_school_size(20, 30)
+    significant_test_school_size(df_school_size)
 
-    # # Determine the influence of the alignment distance
-    # influence_alignment_distance(20, 30)
+    # Determine the influence of the alignment distance
+    influence_alignment_distance(30, 20)
 
-    # # Determine what influence if predators are more within the separation distance
-    # df_closeness_herring = influences_closeness_herring(20, 30)
-    # significant_test_close(df_closeness_herring)
+    # Determine what influence if predators are more within the separation distance
+    df_closeness_herring = influences_closeness_herring(20, 30)
+    significant_test_close(df_closeness_herring)
 
-    # # Determine the influence of changes in the perception length
-    # visualizing_perception_change(30)
-
-
-    # """Faster run???????"""
-    # # Determine the influence of the boid rules
-    # influence_boid_rules(3, 5)
-    #
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(30, 5, 5)
-    #
-    # # Determin the invluence of more predators
-    # influence_predator_number(3, 10, 5)
-    #
-    # # Determine the influence of the scoolsize
-    # influence_school_size(3, 5)
-    #
-    # # # Determine the influence of the alignment distance
-    # influence_alignment_distance(3, 5)
-    #
-    # # Determine what influence if predators are more within the separation distance
-    # influences_closeness_herring(3, 5)
-    #
-    # # Determine the influence of changes in the perception length
-    # visualizing_perception_change(30)
+    # Determine the influence of changes in the perception length
+    visualizing_perception_change(30)

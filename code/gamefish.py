@@ -958,9 +958,9 @@ class Experiment(pygame.sprite.Sprite):
 if __name__ == "__main__":
     """
     The parameters that have to be given:
-    1: The number of herring in the simulation (int). default set to one hunderd.
+    1: The number of herring in the simulation (int). Default set to one hunderd.
     2: The number of predators in the simulation (int). Default set to one.
-    3: The number of rocks in the simulation (int). default set to ten.
+    3: The number of rocks in the simulation (int). Default set to ten.
     4: The duration of the simulation in seconds (int). Defaut set to twenty.
     5: Closeby rocks should be connected via more rocks (Bool). Default set to True.
     6: Herring start as one school instead of randomly (bool). Default set to False.
