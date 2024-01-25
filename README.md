@@ -233,9 +233,10 @@ THE STATISTICAL TESTS
 Statistic_tests.py contains the code to do the statistical test on the data obtained
 in visualisation.py.
 
-It contains 3 statistical tests:
+It contains 4 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
 - Test to determine if environmental changes significantly influence the school density.
+- Test to determine if environmental changes significantly influence the killing rate.
 - Test to determine if the different boid rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected in visualisation.py.
