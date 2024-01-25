@@ -13,6 +13,9 @@ import seaborn as sns
 from scipy.stats import shapiro
 from scipy import stats
 import matplotlib.patches as patches
+from scipy.stats import shapiro, ttest_rel
+import numpy as np
+from scipy.stats import mannwhitneyu
 
 def significant_test_school_size(df):
     """Function that determines if there is a significant difference in killed
@@ -117,3 +120,31 @@ def significant_test_close(df):
     else:
         mw_statistic, p_value = stats.mannwhitneyu(values_no_p_6_no_r, values_no_p_12_no_r)
         print(f'Effect larger separation distance. Mann-Whitney U Statistic: {mw_statistic}, p-value: {p_value}')
+
+def significant_test_boidsrules(data):
+
+    # Perform tests for each pair
+    comparison_pairs = [('no weighted boid rules', 'weighted seperation rule'),
+                        ('no weighted boid rules', 'weighted alignment rule'),
+                        ('no weighted boid rules', 'weighted cohesion rule')]
+
+    for group1_name, group2_name in comparison_pairs:
+        group1_data = data[group1_name]
+        group2_data = data[group2_name]
+
+        # Check normality for group2_data
+        normality_group2 = shapiro(group2_data).pvalue >= 0.05
+
+        if any(group1_data) and any(group2_data) and normality_group2:
+            # Perform paired t-tests
+            t_stat, p_value = ttest_rel(group1_data, group2_data)
+
+            # Print results
+            print(f'Paired t-test between "{group1_name}" and "{group2_name}": t-statistic = {t_stat}, p-value = {p_value}')
+
+        else:
+            # Perform Mann-Whitney U test
+            u_stat, p_value_mannwhitney = mannwhitneyu(group1_data, group2_data, alternative='two-sided')
+
+            # Print results for Mann-Whitney U test
+            print(f'Mann-Whitney U test between "{group1_name}" and "{group2_name}": U-statistic = {u_stat}, p-value = {p_value_mannwhitney}')

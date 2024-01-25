@@ -301,8 +301,7 @@ def influences_closeness_herring(number_simulations, time_simulation):
 
 def influence_boid_rules(number_simulations, time_simulation):
     """Function that makes a boxplot the distribution of killed herring when different
-    boid rules are most important. The starting number of herring is set to 200 and the
-    herring start in a school.
+    boid rules are most important.
 
     Parameters:
     -----------
@@ -314,42 +313,39 @@ def influence_boid_rules(number_simulations, time_simulation):
     data_array_killed_herring = np.empty((number_simulations, 4))
 
     # Keep other parameters the same for all simulations
-    herring_nr = 200
+    herring_nr = 150
     predator_nr = 2
-    rock_nr = 20
+    rock_nr = 10
     simulation_duration = time_simulation
     extra_rocks = True
     start_school = True
 
-    # Simulate a number of experiments with varying boids_influence values
+    # Simulate experiments with varying influence of different boids rules
     for simulation in range(number_simulations):
         print('simulation:', simulation)
         for boids_influence_value in range(4):
             return_values = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
                 extra_rocks, start_school,boids_influence=boids_influence_value
             ).run()
-            print('Boids Influence rule:', boids_influence_value)
+            print('Boids influence rule:', boids_influence_value)
 
             data_array_killed_herring[simulation, boids_influence_value] = return_values['Killed_herring']
 
-    # Make a dataframe of the array
-    df = pd.DataFrame(data_array_killed_herring, columns=['no weigted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
+    print(data_array_killed_herring)
+    boids_rules_df = pd.DataFrame(data_array_killed_herring, columns=['no weighted boid rules', 'weighted seperation rule','weighted alignment rule', 'weighted cohesion rule'])
+    print(boids_rules_df)
 
     # Create a boxplot of the different boid rules
     plt.figure(figsize=(10, 6))
-    sns.boxplot(data=df)
+    sns.boxplot(data=boids_rules_df)
+    sns.stripplot(data=boids_rules_df, color='black', jitter=0.2, size=5)
     plt.xlabel('Boids influence')
     plt.ylabel('Killed herring')
     plt.title('Boxplot of killed herring for different Boid rules')
     plt.show()
 
-    # Plot bar graf of mean values ->*** Kan dit weg ?? ***
-    plt.figure(figsize=(10, 6))
-    sns.barplot(x=df.columns, y=df.mean())
-    plt.xlabel('Boids influence')
-    plt.ylabel('Mean killed herring')
-    plt.title('Mean killed herring for different boid rules')
-    plt.show()
+    return boids_rules_df
+
 
 def visualizing_perception_change(time_simulation):
     """Function that makes four line plots that show the differences between the
@@ -416,7 +412,8 @@ def visualizing_perception_change(time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    influence_boid_rules(20, 60)
+    df_boid_killed = influence_boid_rules(5, 5)
+    significant_test_boidsrules(df_boid_killed)
 
     # Determine the influence of rocks on the killing rate
     influence_rocks(80, 20, 30)
