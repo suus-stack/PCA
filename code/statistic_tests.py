@@ -16,7 +16,7 @@ from scipy import stats
 import matplotlib.patches as patches
 from scipy.stats import shapiro, ttest_rel
 import numpy as np
-from scipy.stats import mannwhitneyu
+from scipy.stats import wilcoxon
 
 def significant_test_school_size(df):
     """Function that determines if there is a significant difference in killed
