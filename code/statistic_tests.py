@@ -191,7 +191,7 @@ def significant_test_boidsrules(data):
         Datafframe with the values obtaint from the simulated experiments.
     """
     # Perform tests for each pair
-    comparison_pairs = [('no weighted boid rules', 'weighted seperation rule'),
+    comparison_pairs = [('no weighted boid rules', 'weighted separation rule'),
                         ('no weighted boid rules', 'weighted alignment rule'),
                         ('no weighted boid rules', 'weighted cohesion rule')]
 
