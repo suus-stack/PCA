@@ -397,14 +397,17 @@ def visualizing_perception_change(time_simulation):
     time_simulation: Int
         The number of seconds the simulation runs.
     """
-    # No perception change
-    return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
-    # Predator perception change
-    return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
-    # Herring perception change
-    return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
-    # Herring and predator perception change
-    return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
+
+    for simulation in range(10):
+        print('simulation', simulation)
+        # No perception change
+        return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
+        # Predator perception change
+        return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
+        # Herring perception change
+        return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
+        # Herring and predator perception change
+        return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
 
     fig, axs = plt.subplots(2, 2)
@@ -524,32 +527,151 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
     plt.suptitle('Sensitivity analyse boid rules')
     plt.show()
 
+def visualizing_perception_change1(time_simulation):
+    """Function that makes four line plots that show the differences between the
+    number of killed herring per time interval (10 sec) for different perception lengths.
+    The 4 simulated cases are:
+    - Both perception lengths do not change over time and remain their default setting.
+    - Solely the herring perception length changes over time.
+    - Solely the predator perception length changes over time.
+    - Both perception lengths are changed over time, but with a different adaption.
+    (3 for herring and 5 for predator) change over time.
+
+    Parameters:
+    -----------
+    time_simulation: Int
+        The number of seconds the simulation runs.
+    """
+    # Create an empty dataframes
+    df_no_change = pd.DataFrame()
+    df_predator_change = pd.DataFrame()
+    df_herring_change = pd.DataFrame()
+    df_both_change = pd.DataFrame()
+
+    for simulation in range(2):
+        print('simulation', simulation)
+
+        return_values_dict1 = Experiment(250, 4, 2, time_simulation, True, True, False, False, 32, 32, 6).run()
+        new_row_df = pd.DataFrame([np.diff(return_values_dict1['Killed_herring_over_time'])])
+        df_no_change = pd.concat([df_no_change, new_row_df], ignore_index=True)
+        print('1', 1)
+
+        # Predator perception change
+        return_values_dict2 = Experiment(250, 4, 2, time_simulation, True, True, True, False, 32, 32, 6).run()
+        new_row_df = pd.DataFrame([np.diff(return_values_dict2['Killed_herring_count_predator_perception_change'])])
+        df_predator_change = pd.concat([df_predator_change, new_row_df], ignore_index=True)
+
+        # Herring perception change
+        return_values_dict3 = Experiment(250, 4, 2, time_simulation, True, True, False, True, 32, 32, 6).run()
+        new_row_df = pd.DataFrame([np.diff(return_values_dict3['Killed_herring_count_herring_perception_change'])])
+        df_herring_change = pd.concat([df_herring_change, new_row_df], ignore_index=True)
+        print('3', 3)
+        print(df_herring_change)
+        # Herring and predator perception change
+        return_values_dict4 = Experiment(250, 4, 2, time_simulation, True, True, True, True, 32, 32, 6).run()
+        new_row_df = pd.DataFrame([np.diff(return_values_dict4['Killed_herring_count_herring_perception_change'])])
+        df_both_change = pd.concat([df_both_change, new_row_df], ignore_index=True)
+        print(df_both_change)
+
+    # calculate mean values and 95% CI
+    mean_values_no_change = df_no_change.mean(axis=0)
+    sem_values_no_change = df_no_change.sem(axis=0)
+
+    ci_values_no_change = 1.96 * sem_values_no_change
+    summary_df_no_change = pd.DataFrame({'Mean': mean_values_no_change, 'CI_low': mean_values_no_change - ci_values_no_change, 'CI_high': mean_values_no_change + ci_values_no_change})
+
+    mean_values_predator_change = df_predator_change.mean(axis=0)
+    sem_values_predator_change = df_predator_change.sem(axis=0)
+    ci_values_predator_change = 1.96 * sem_values_predator_change
+    summary_df_predator_change = pd.DataFrame({'Mean': mean_values_predator_change, 'CI_low': mean_values_predator_change - ci_values_predator_change, 'CI_high': mean_values_predator_change + ci_values_predator_change})
+
+    mean_values_herring_change = df_herring_change.mean(axis=0)
+    sem_values_herring_change = df_herring_change.sem(axis=0)
+    ci_values_herring_change = 1.96 * sem_values_herring_change
+    summary_df_herring_change = pd.DataFrame({'Mean': mean_values_herring_change, 'CI_low': mean_values_herring_change - ci_values_herring_change, 'CI_high': mean_values_herring_change + ci_values_herring_change})
+
+    mean_values_both_change = df_both_change.mean(axis=0)
+    sem_values_both_change = df_both_change.sem(axis=0)
+    ci_values_both_change = 1.96 * sem_values_both_change
+    summary_df_both_change = pd.DataFrame({'Mean': mean_values_both_change, 'CI_low': mean_values_both_change - ci_values_both_change, 'CI_high': mean_values_both_change + ci_values_both_change})
+
+
+    fig, axs = plt.subplots(2, 2, sharex=True, sharey=True)
+
+    # No perception change
+    axs[0, 0].plot(return_values_dict1['Elapsed_time'], summary_df_no_change['Mean'], marker='o', label = 'Average killed herring')
+    axs[0, 0].fill_between(return_values_dict1['Elapsed_time'], summary_df_no_change['CI_low'], summary_df_no_change['CI_high'], alpha=0.3, label='95% CI')
+    axs[0, 0].axhline(y=32, color='tab:green', linestyle='--',  label='Perception length herring')
+    axs[0, 0].axhline(y=100, color='tab:orange', linestyle='--',  label='Perception length predator')
+    axs[0, 0].set_title('No perception change', fontsize=10)
+
+    # Predator perception change
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], summary_df_predator_change['Mean'], marker='o')
+    axs[0, 1].fill_between(return_values_dict2['Elapsed_time'], summary_df_predator_change['CI_low'], summary_df_predator_change['CI_high'], alpha=0.3 )
+    axs[0, 1].axhline(y=32, color='tab:green', linestyle='--')
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
+    axs[0, 1].set_title('Predator perception change', fontsize=10)
+    # axs[0, 1].set_xticks(return_values_dict2['Elapsed_time'])  # Specify the x-axis tick positions
+    # axs[0, 1].set_yticks(summary_df_predator_change['Mean'])
+
+    # Herring perception change (x-as:time, y-as: killed herring)
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], summary_df_herring_change['Mean'], marker='o')
+    axs[1, 0].fill_between(return_values_dict3['Elapsed_time'], summary_df_herring_change['CI_low'], summary_df_herring_change['CI_high'], alpha=0.3)
+    axs[1, 0].axhline(y=100, color='tab:orange', linestyle='--')
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
+    axs[1, 0].set_title('Herring perception change', fontsize=10)
+
+    # Both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], summary_df_both_change['Mean'], marker='o')
+    axs[1, 1].fill_between(return_values_dict4['Elapsed_time'], summary_df_both_change['CI_low'], summary_df_both_change['CI_high'], alpha=0.3)
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
+    axs[1, 1].set_title('Predator and herring perception change', fontsize=10)
+
+    # axs[0, 1].legend()
+    # axs[1, 0].legend()
+    # axs[1, 1]. legend()
+
+    fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize='small', framealpha=1)
+
+    for ax in axs.flat:
+        ax.set(xlabel= 'Elapsed time', ylabel= 'average killed herring')
+        ax.tick_params(axis='y', which='both', labelleft=True, labelsize=6)
+        ax.tick_params(axis='x', which='both', labelsize=6)
+        ax.grid(True)
+
+    for ax in axs.flat:
+        ax.label_outer()
+
+    plt.show()
+
 if __name__ == "__main__":
+    visualizing_perception_change1(4)
     # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(20, 60)
-    print(df_boid_killed)
-    significant_test_boidsrules(df_boid_killed)
+    # df_boid_killed = influence_boid_rules(20, 60)
+    # print(df_boid_killed)
+    # significant_test_boidsrules(df_boid_killed)
+    #
+    # # Determine the influence of rocks on the killing rate
+    # influence_rocks(80, 20, 30)
+    #
+    # # Determin the invluence of more predators
+    # influence_predator_number(20, 20, 30)
 
-    # Determine the influence of rocks on the killing rate
-    influence_rocks(80, 20, 30)
-
-    # Determin the invluence of more predators
-    influence_predator_number(20, 20, 30)
-
-    # Determine the influence of the scoolsize
-    df_school_size = influence_school_size(20, 30)
-    significant_test_school_size(df_school_size)
-
-    # Determine the influence of the alignment distance
-    influence_alignment_distance(20, 30)
+    # # Determine the influence of the scoolsize
+    # df_school_size = influence_school_size(20, 30)
+    # significant_test_school_size(df_school_size)
+    #
+    # # Determine the influence of the alignment distance
+    # influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(20, 30)
-    significant_test_close(df_closeness_herring)
-    significant_test_killed(df_closeness_herring)
+    # df_closeness_herring = influences_closeness_herring(20, 30)
+    # significant_test_close(df_closeness_herring)
+    # significant_test_killed(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
     # visualizing_perception_change(3)
 
     # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    sensitivity_rules_distance(1, 1)
+    # sensitivity_rules_distance(20, 20)

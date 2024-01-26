@@ -223,7 +223,7 @@ All plots are also provided in the folder data_visualisation.
                   - ####HOW TO RUN###
 
 * Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of
-                  killed herring when different boid rules are emphasised
+                  killed herring when different Boid-flocking rules are emphasised
                   - ####HOW TO RUN###
 
 * Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed
@@ -242,6 +242,6 @@ It contains 4 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
 - Test to determine if environmental changes significantly influence the school density.
 - Test to determine if environmental changes significantly influence the killing rate.
-- Test to determine if the different boid rules significantly influence the killing rate.
+- Test to determine if the different Boid-flocking rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected in visualisation.py.

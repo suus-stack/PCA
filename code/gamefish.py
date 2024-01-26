@@ -831,7 +831,7 @@ class Experiment(pygame.sprite.Sprite):
                 Empty list to store the number of killed herring between each measured timepoint.
             """
             # 10 seconds intervals
-            if round(elapsed_time, 4) % 10 == 0:
+            if round(elapsed_time, 4) % 1 == 0:
                 new_perception_length = update_perception_length(getattr(Config, perception_length_attr), adaption, elapsed_time)
                 perception_list.append(new_perception_length)
                 # Saving in different var to prevent the Herring class var (killed_herring) to change throughout the entire simulation
@@ -916,7 +916,7 @@ class Experiment(pygame.sprite.Sprite):
             # print('epased time', elapsed_time)
 
             # this is necessary because otherwise the time does not get added when both are false
-            if round(elapsed_time, 4) % 10 == 0:
+            if round(elapsed_time, 4) % 1 == 0:
                 kill_count = Herring.killed_herring
                 killed_herring_og.append(kill_count)
                 return_values['Killed_herring_over_time'] = killed_herring_og
