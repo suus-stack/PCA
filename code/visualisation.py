@@ -524,7 +524,6 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
         ax.set_ylabel('Average killed herring')
         ax.legend()
 
-    plt.suptitle('Sensitivity analyse boid rules')
     plt.show()
 
 def visualizing_perception_change1(number_simulations, time_simulation):
