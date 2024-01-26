@@ -213,17 +213,22 @@ All plots are also provided in the folder data_visualisation.
                   environments with different numbers of rocks.
                   - ####HOW TO RUN###
 
-* Density_herring_school_plot: Boxplot with strip plot overlap that shows the distribution
-                  of the herring count within the original separation distance (6) across.
-                  various conditions.
+* Density_Killing_combination_plot:  oxplots with strip plots overlap that show the
+                  distribution of the herring count within the original separation distance
+                  of 6 (left) and the herring killing count (right) across various conditions.
                   - ####HOW TO RUN###
 
 * School_size_plot: Boxplot with strip plot overlap that shows the proportion of killed
                   herring in large and small schools, with and without rocks.
                   - ####HOW TO RUN###
 
-* boids_rules_influence_60_plot: Boxplot with strip plot overlap that shows the number of killed
+* Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of killed
                   herring when different boid rules are emphasised
+                  - ####HOW TO RUN###
+
+* Boid_rules_sensitivity_analysis_plot: Boxplots with strip plots overlap that show the
+                  distribution of the herring count within the original separation distance
+                  of 6 (left) and the herring killing count (right) across various conditions.
                   - ####HOW TO RUN###
 
 - python visualisation.py.

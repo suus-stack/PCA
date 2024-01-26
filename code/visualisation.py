@@ -517,8 +517,8 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
 
 if __name__ == "__main__":
     # # Determine the influence of the boid rules
-    # df_boid_killed = influence_boid_rules(20, 30)
-    # significant_test_boidsrules(df_boid_killed)
+    df_boid_killed = influence_boid_rules(20, 30)
+    significant_test_boidsrules(df_boid_killed)
     #
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 30, 20)
