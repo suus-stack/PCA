@@ -15,7 +15,7 @@ from scipy import stats
 import matplotlib.patches as patches
 from scipy.stats import shapiro, ttest_rel
 import numpy as np
-from scipy.stats import mannwhitneyu
+from scipy.stats import wilcoxon
 
 def significant_test_school_size(df):
     """Function that determines if there is a significant difference in killed
@@ -211,7 +211,7 @@ def significant_test_boidsrules(data):
 
         else:
             # Perform Mann-Whitney U test
-            u_stat, p_value_mannwhitney = mannwhitneyu(group1_data, group2_data, alternative='two-sided')
+            statistic, p_value_wilcoxon = wilcoxon(group1_data, group2_data, alternative='two-sided')
 
-            # Print results for Mann-Whitney U test
-            print(f'Mann-Whitney U test between "{group1_name}" and "{group2_name}": U-statistic = {u_stat}, p-value = {p_value_mannwhitney}')
+            # Print results for wilcoxon test
+            print(f'Wilcoxon test between "{group1_name}" and "{group2_name}": statistic = {statistic}, p-value = {p_value_wilcoxon}')
