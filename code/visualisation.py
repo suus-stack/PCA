@@ -248,7 +248,7 @@ def influences_closeness_herring(number_simulations, time_simulation):
         The datframe with the obtained data.
     """
     # Make empty dataframe with two columns
-    column_names = ['Predator and separation distance', 'Times within separation distance', 'Killed herring']
+    column_names = ['Conditions', 'Times within separation distance', 'Killed herring']
     df_closeness = pd.DataFrame(columns=column_names)
 
     # Do a number of simulation without rocks and with 100 herring
@@ -257,27 +257,27 @@ def influences_closeness_herring(number_simulations, time_simulation):
 
         # 1 predator, no rocks and default separation distance (6)
         values_dict = Experiment(200, 1, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
-        new_row = pd.DataFrame([{'Predator and separation distance': '1 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
+        new_row = pd.DataFrame([{'Conditions': '1 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
         df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # 4 predators, no rocks and default separation distance (6)
         values_dict = Experiment(200, 4, 0, time_simulation, True, True, False, False, 32, 32, 6).run()
-        new_row = pd.DataFrame([{'Predator and separation distance': '4 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
+        new_row = pd.DataFrame([{'Conditions': '4 p + no r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
         df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # 1 predator, 20 rocks and default separation distance (6)
         values_dict = Experiment(200, 1, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
-        new_row = pd.DataFrame([{'Predator and separation distance': '1 p + 20 r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
+        new_row = pd.DataFrame([{'Conditions': '1 p + 20 r + s d = 6', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
         df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # 1 predator, no rocks and a separation distance of 3
         values_dict = Experiment(200, 1, 0, time_simulation, True, True, False, False, 32, 32, 3).run()
-        new_row = pd.DataFrame([{'Predator and separation distance': '1 p + no r + s d = 3', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
+        new_row = pd.DataFrame([{'Conditions': '1 p + no r + s d = 3', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
         df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
         # 1 predator, no rocks and a separation distance of 12
         values_dict = Experiment(200, 1, 0, time_simulation, True, True, False, False, 32, 32, 12).run()
-        new_row = pd.DataFrame([{'Predator and separation distance': '1 p + no r + s d = 12', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
+        new_row = pd.DataFrame([{'Conditions': '1 p + no r + s d = 12', 'Times within separation distance': values_dict['Herring_within_separation_distance'], 'Killed herring': values_dict['Killed_herring']}])
         df_closeness = pd.concat([df_closeness, new_row], ignore_index=True)
 
     # Determine the colors for the plots
@@ -288,8 +288,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
     # Plot the first plot: density
-    boxplot1 = sns.boxplot(x='Predator and separation distance', y='Times within separation distance', hue='Predator and separation distance', data=df_closeness, palette=colors_box, width=0.6, ax=axes[0])
-    stripplot1 = sns.stripplot(x='Predator and separation distance', y='Times within separation distance', hue='Predator and separation distance', data=df_closeness, palette=colors_strip, ax=axes[0])
+    boxplot1 = sns.boxplot(x='Conditions', y='Times within separation distance', hue='Conditions', data=df_closeness, palette=colors_box, width=0.6, ax=axes[0])
+    stripplot1 = sns.stripplot(x='Conditions', y='Times within separation distance', hue='Conditions', data=df_closeness, palette=colors_strip, ax=axes[0])
 
     # Add legend and axis labels to the first subplot
     axes[0].text(0.01, 0.965, 'p = predators', transform=axes[0].transAxes, color='black', fontsize=10)
@@ -304,8 +304,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
     axes[0].set_ylabel('Times within original separation distance (6)', fontsize=11)
 
     # Plot the second subplot: killing rate
-    boxplot2 = sns.boxplot(x='Predator and separation distance', y='Killed herring', hue='Predator and separation distance', data=df_closeness, palette=colors_box, width=0.6, ax=axes[1])
-    stripplot2 = sns.stripplot(x='Predator and separation distance', y='Killed herring', hue='Predator and separation distance', data=df_closeness, palette=colors_strip, ax=axes[1])
+    boxplot2 = sns.boxplot(x='Conditions', y='Killed herring', hue='Conditions', data=df_closeness, palette=colors_box, width=0.6, ax=axes[1])
+    stripplot2 = sns.stripplot(x='Conditions', y='Killed herring', hue='Conditions', data=df_closeness, palette=colors_strip, ax=axes[1])
 
     # Add legend and axis labels to the first subplot
     axes[1].text(0.01, 0.965, 'p = predators', transform=axes[1].transAxes, color='black', fontsize=10)
@@ -403,7 +403,7 @@ def visualizing_perception_change(time_simulation):
     # Herring and predator perception change
     return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
 
-    plt.style.use('seaborn')
+
     fig, axs = plt.subplots(2, 2)
 
     # No perception change
@@ -517,8 +517,8 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
 
 if __name__ == "__main__":
     # # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(20, 30)
-    significant_test_boidsrules(df_boid_killed)
+    # df_boid_killed = influence_boid_rules(20, 30)
+    # significant_test_boidsrules(df_boid_killed)
     #
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 30, 20)
@@ -534,7 +534,7 @@ if __name__ == "__main__":
     # influence_alignment_distance(30, 20)
 
     # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(20, 30)
+    df_closeness_herring = influences_closeness_herring(3, 30)
     significant_test_close(df_closeness_herring)
     significant_test_killed(df_closeness_herring)
 
