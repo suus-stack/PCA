@@ -365,15 +365,18 @@ def influence_boid_rules(number_simulations, time_simulation):
     boids_rules_df = pd.DataFrame(data_array_killed_herring, columns=['no weighted boid rules', 'weighted separation rule','weighted alignment rule', 'weighted cohesion rule'])
 
     # Create a boxplot of the different boid rules
+    colors_box = ['mistyrose', 'paleturquoise', 'wheat', 'aquamarine']  
+    colors_strip = ['red', 'blue', 'darkorange', 'green']  
     plt.figure(figsize=(10, 6))
-    sns.boxplot(data=boids_rules_df)
-    sns.stripplot(data=boids_rules_df, color='black', jitter=0.2, size=5)
+    sns.boxplot(data=boids_rules_df, palette=colors_box)
+    sns.stripplot(data=boids_rules_df, palette=colors_strip, jitter=0.2, size=5)
     ax = plt.gca()
     ax.set_xticks([0, 1, 2, 3])
+   
     ax.set_xticklabels(['no weighted \n boid rules', 'weighted \n separation rule','weighted\n alignment rule', 'weighted \ncohesion rule'], fontsize=11)
-    plt.xlabel('Boids influence', fontsize=11)
-    plt.ylabel('Killed herring', fontsize=11)
-    plt.title('Boxplot of killed herring for different boid rules')
+    plt.xlabel('Boids influence', fontsize=15)
+    plt.ylabel('Killed herring', fontsize=15)
+    plt.title('Boxplot of killed herring for different boid rules', fontsize = 15)
     plt.show()
 
     return boids_rules_df
@@ -516,9 +519,10 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
     plt.show()
 
 if __name__ == "__main__":
-    # # Determine the influence of the boid rules
-    # df_boid_killed = influence_boid_rules(20, 30)
-    # significant_test_boidsrules(df_boid_killed)
+    # Determine the influence of the boid rules
+    df_boid_killed = influence_boid_rules(5, 5)
+    print(df_boid_killed)
+    significant_test_boidsrules(df_boid_killed)
     #
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 30, 20)
@@ -533,13 +537,13 @@ if __name__ == "__main__":
     # # Determine the influence of the alignment distance
     # influence_alignment_distance(30, 20)
 
-    # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(3, 30)
-    significant_test_close(df_closeness_herring)
-    significant_test_killed(df_closeness_herring)
+    # # Determine what influence if predators are more within the separation distance
+    # df_closeness_herring = influences_closeness_herring(3, 30)
+    # significant_test_close(df_closeness_herring)
+    # significant_test_killed(df_closeness_herring)
 
-    # Determine the influence of changes in the perception length
-    visualizing_perception_change(30)
+    # # Determine the influence of changes in the perception length
+    # visualizing_perception_change(30)
 
-    # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    sensitivity_rules_distance(30, 20)
+    # # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    # sensitivity_rules_distance(30, 20)
