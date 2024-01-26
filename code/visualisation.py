@@ -527,7 +527,7 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
     plt.suptitle('Sensitivity analyse boid rules')
     plt.show()
 
-def visualizing_perception_change1(time_simulation):
+def visualizing_perception_change1(number_simulations, time_simulation):
     """Function that makes four line plots that show the differences between the
     number of killed herring per time interval (10 sec) for different perception lengths.
     The 4 simulated cases are:
@@ -541,6 +541,8 @@ def visualizing_perception_change1(time_simulation):
     -----------
     time_simulation: Int
         The number of seconds the simulation runs.
+    number_simulations: Int
+        The number of simulations per experiment kind.
     """
     # Create an empty dataframes
     df_no_change = pd.DataFrame()
@@ -548,35 +550,33 @@ def visualizing_perception_change1(time_simulation):
     df_herring_change = pd.DataFrame()
     df_both_change = pd.DataFrame()
 
-    for simulation in range(2):
+    for simulation in range(number_simulations):
         print('simulation', simulation)
 
-        return_values_dict1 = Experiment(250, 4, 2, time_simulation, True, True, False, False, 32, 32, 6).run()
+        return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict1['Killed_herring_over_time'])])
         df_no_change = pd.concat([df_no_change, new_row_df], ignore_index=True)
         print('1', 1)
 
         # Predator perception change
-        return_values_dict2 = Experiment(250, 4, 2, time_simulation, True, True, True, False, 32, 32, 6).run()
+        return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict2['Killed_herring_count_predator_perception_change'])])
         df_predator_change = pd.concat([df_predator_change, new_row_df], ignore_index=True)
-
+        print('2', 2)
         # Herring perception change
-        return_values_dict3 = Experiment(250, 4, 2, time_simulation, True, True, False, True, 32, 32, 6).run()
+        return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict3['Killed_herring_count_herring_perception_change'])])
         df_herring_change = pd.concat([df_herring_change, new_row_df], ignore_index=True)
         print('3', 3)
-        print(df_herring_change)
+
         # Herring and predator perception change
-        return_values_dict4 = Experiment(250, 4, 2, time_simulation, True, True, True, True, 32, 32, 6).run()
+        return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict4['Killed_herring_count_herring_perception_change'])])
         df_both_change = pd.concat([df_both_change, new_row_df], ignore_index=True)
-        print(df_both_change)
-
+        print('4', 4)
     # calculate mean values and 95% CI
     mean_values_no_change = df_no_change.mean(axis=0)
     sem_values_no_change = df_no_change.sem(axis=0)
-
     ci_values_no_change = 1.96 * sem_values_no_change
     summary_df_no_change = pd.DataFrame({'Mean': mean_values_no_change, 'CI_low': mean_values_no_change - ci_values_no_change, 'CI_high': mean_values_no_change + ci_values_no_change})
 
@@ -595,7 +595,6 @@ def visualizing_perception_change1(time_simulation):
     ci_values_both_change = 1.96 * sem_values_both_change
     summary_df_both_change = pd.DataFrame({'Mean': mean_values_both_change, 'CI_low': mean_values_both_change - ci_values_both_change, 'CI_high': mean_values_both_change + ci_values_both_change})
 
-
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True)
 
     # No perception change
@@ -611,8 +610,6 @@ def visualizing_perception_change1(time_simulation):
     axs[0, 1].axhline(y=32, color='tab:green', linestyle='--')
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
     axs[0, 1].set_title('Predator perception change', fontsize=10)
-    # axs[0, 1].set_xticks(return_values_dict2['Elapsed_time'])  # Specify the x-axis tick positions
-    # axs[0, 1].set_yticks(summary_df_predator_change['Mean'])
 
     # Herring perception change (x-as:time, y-as: killed herring)
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], summary_df_herring_change['Mean'], marker='o')
@@ -636,8 +633,6 @@ def visualizing_perception_change1(time_simulation):
 
     for ax in axs.flat:
         ax.set(xlabel= 'Elapsed time', ylabel= 'average killed herring')
-        ax.tick_params(axis='y', which='both', labelleft=True, labelsize=6)
-        ax.tick_params(axis='x', which='both', labelsize=6)
         ax.grid(True)
 
     for ax in axs.flat:
@@ -646,7 +641,7 @@ def visualizing_perception_change1(time_simulation):
     plt.show()
 
 if __name__ == "__main__":
-    visualizing_perception_change1(4)
+    visualizing_perception_change1(6, 600)
     # Determine the influence of the boid rules
     # df_boid_killed = influence_boid_rules(20, 60)
     # print(df_boid_killed)
