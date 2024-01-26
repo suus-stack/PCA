@@ -222,13 +222,13 @@ All plots are also provided in the folder data_visualisation.
                   herring in large and small schools, with and without rocks.
                   - ####HOW TO RUN###
 
-* Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of killed
-                  herring when different boid rules are emphasised
+* Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of
+                  killed herring when different boid rules are emphasised
                   - ####HOW TO RUN###
 
-* Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed herring +
-                  1 SD error bars for different deviation values of the original alignment (32),  
-                  cohesion (32) and separation (6) distance (6) distance as sensitivity analysis.
+* Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed
+                  herring + 1 SD error bars for different values of the alignment,
+                  cohesion and separation distance as sensitivity analysis.
                   - ####HOW TO RUN###
 
 - python visualisation.py.

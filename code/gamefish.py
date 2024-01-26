@@ -18,7 +18,8 @@ import itertools
 
 class Config():
     """ Class that stores the values of all the parameter constants in the experiment.
-    To enhance clarity in the simulation, 1 unit is not 1 meter but 0.25 meter."""
+    To enhance clarity in the simulation, 1 unit is not 1 meter but 0.25 meter and therefore
+    all real values are multiplied by 4."""
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
