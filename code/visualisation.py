@@ -466,7 +466,7 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
     list_std_killed_separation = []
 
     # Simulate the experiment with different distance deviations
-    for distance_deviation in range(-5, -4):
+    for distance_deviation in range(-5, 5):
         print('distance', distance_deviation)
         list_distance_deviation.append(distance_deviation)
         list_killed_herring_alignment = []
@@ -491,7 +491,7 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
         list_mean_killed_cohesion.append(np.mean(list_killed_herring_cohesion))
         list_std_killed_cohesion.append(np.std(list_killed_herring_cohesion))
         list_mean_killed_separation.append(np.mean(list_killed_herring_separation))
-        list_std_killed_separation.append(np.std(list_killed_herring_separation)).
+        list_std_killed_separation.append(np.std(list_killed_herring_separation))
 
     # Make a plot of the average number of killed herring vs the distance deviation
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -526,30 +526,30 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
 
 if __name__ == "__main__":
     # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(5, 5)
+    df_boid_killed = influence_boid_rules(20, 60)
     print(df_boid_killed)
     significant_test_boidsrules(df_boid_killed)
-    #
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(80, 30, 20)
-    #
-    # # Determin the invluence of more predators
-    # influence_predator_number(20, 20, 30)
-    #
-    # # Determine the influence of the scoolsize
-    # df_school_size = influence_school_size(20, 30)
-    # significant_test_school_size(df_school_size)
-    #
-    # # Determine the influence of the alignment distance
-    # influence_alignment_distance(30, 20)
 
-    # # Determine what influence if predators are more within the separation distance
-    # df_closeness_herring = influences_closeness_herring(3, 30)
-    # significant_test_close(df_closeness_herring)
-    # significant_test_killed(df_closeness_herring)
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 20, 30)
 
-    # # Determine the influence of changes in the perception length
-    # visualizing_perception_change(30)
+    # Determin the invluence of more predators
+    influence_predator_number(20, 20, 30)
 
-    # # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    # sensitivity_rules_distance(30, 20)
+    # Determine the influence of the scoolsize
+    df_school_size = influence_school_size(20, 30)
+    significant_test_school_size(df_school_size)
+
+    # Determine the influence of the alignment distance
+    influence_alignment_distance(20, 30)
+
+    # Determine what influence if predators are more within the separation distance
+    df_closeness_herring = influences_closeness_herring(20, 30)
+    significant_test_close(df_closeness_herring)
+    significant_test_killed(df_closeness_herring)
+
+    # Determine the influence of changes in the perception length
+    # visualizing_perception_change(3)
+
+    # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    sensitivity_rules_distance(1, 1)
