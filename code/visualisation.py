@@ -112,9 +112,9 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
     plt.show()
 
 def influence_alignment_distance(number_simulations, time_simulation):
-    """Function that makes a plot of the average killed herring + 1 SD errorbars for
-    different values of the alignment distance. The starting number of herring is set
-    to 200 and that of the predators to 3. It is tested in an envionment with and
+    """Function that makes a line plot of the average killed herring + 1 SD errorbars
+    for different values of the alignment distance. The starting number of herring is
+    set to 200 and that of the predators to 3. It is tested in an envionment with and
     without rocks.
 
     Parameters:
@@ -365,14 +365,14 @@ def influence_boid_rules(number_simulations, time_simulation):
     boids_rules_df = pd.DataFrame(data_array_killed_herring, columns=['no weighted boid rules', 'weighted separation rule','weighted alignment rule', 'weighted cohesion rule'])
 
     # Create a boxplot of the different boid rules
-    colors_box = ['mistyrose', 'paleturquoise', 'wheat', 'aquamarine']  
-    colors_strip = ['red', 'blue', 'darkorange', 'green']  
+    colors_box = ['mistyrose', 'paleturquoise', 'wheat', 'aquamarine']
+    colors_strip = ['red', 'blue', 'darkorange', 'green']
     plt.figure(figsize=(10, 6))
     sns.boxplot(data=boids_rules_df, palette=colors_box)
     sns.stripplot(data=boids_rules_df, palette=colors_strip, jitter=0.2, size=5)
     ax = plt.gca()
     ax.set_xticks([0, 1, 2, 3])
-   
+
     ax.set_xticklabels(['no weighted \n boid rules', 'weighted \n separation rule','weighted\n alignment rule', 'weighted \ncohesion rule'], fontsize=11)
     plt.xlabel('Boids influence', fontsize=15)
     plt.ylabel('Killed herring', fontsize=15)
@@ -466,7 +466,7 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
     list_std_killed_separation = []
 
     # Simulate the experiment with different distance deviations
-    for distance_deviation in range(-5, 6):
+    for distance_deviation in range(-5, -4):
         print('distance', distance_deviation)
         list_distance_deviation.append(distance_deviation)
         list_killed_herring_alignment = []
@@ -491,25 +491,31 @@ def sensitivity_rules_distance(number_simulations, time_simulation):
         list_mean_killed_cohesion.append(np.mean(list_killed_herring_cohesion))
         list_std_killed_cohesion.append(np.std(list_killed_herring_cohesion))
         list_mean_killed_separation.append(np.mean(list_killed_herring_separation))
-        list_std_killed_separation.append(np.std(list_killed_herring_separation))
+        list_std_killed_separation.append(np.std(list_killed_herring_separation)).
 
     # Make a plot of the average number of killed herring vs the distance deviation
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
     # Alignment distance
     plot1 = axes[0].errorbar(list_distance_deviation, list_mean_killed_alignment, yerr = list_std_killed_alignment, fmt = 'o--', color = 'blue', markerfacecolor = 'blue', capsize = 4, label = 'average killed h + 1 SD')
     axes[0].set_title('Alignment distance')
-    axes[0].set_xlabel('Deviation original distance (32)')
+    axes[0].set_xlabel('Alignment distance')
+    axes[0].set_xticks([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+    axes[0].set_xticklabels(['27', '28','29', '30', '31', '32','33', '34', '35', '36','37'], fontsize=11)
 
     # Cohesion distance
     plot2 = axes[1].errorbar(list_distance_deviation, list_mean_killed_cohesion, yerr = list_std_killed_cohesion, fmt = 'o--', color = 'red', markerfacecolor = 'red', capsize = 4, label = 'average killed h + 1 SD')
     axes[1].set_title('Cohesion distance')
-    axes[1].set_xlabel('Deviation original distance (32)')
+    axes[1].set_xlabel('Cohesion distance')
+    axes[1].set_xticks([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+    axes[1].set_xticklabels(['27', '28','29', '30', '31', '32','33', '34', '35', '36','37'], fontsize=11)
 
     # Separation distance
     plot3 = axes[2].errorbar(list_distance_deviation, list_mean_killed_separation, yerr = list_std_killed_separation, fmt = 'o--', color = 'green', markerfacecolor = 'green', capsize = 4, label = 'average killed h + 1 SD')
     axes[2].set_title('Separation distance')
-    axes[2].set_xlabel('Deviation original distance (6)')
-
+    axes[2].set_xlabel('Separation distance')
+    axes[2].set_xticks([-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5])
+    axes[2].set_xticklabels(['1', '2','3', '4', '5', '6','7', '8', '9', '10','11'], fontsize=11)
 
     for ax in axes:
         ax.set_ylabel('Average killed herring')
