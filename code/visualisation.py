@@ -52,10 +52,10 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
     # Make a violin plot
     sns.violinplot(data=df, x= 'Nr predators', y= 'Killed herring', hue= 'Rocks', split=True, gap=.1, inner="quart")
     legend = plt.legend(loc='upper left', fontsize=10, title='Rocks')
-    plt.xlabel('Number of predators', fontsize=11)
+    plt.xlabel('Number of barracudas', fontsize=11)
     plt.ylabel('Killed herring', fontsize=11)
     plt.ylim(bottom=0)
-    plt.title('Killed herring for different numbers of predators, with and without rocks')
+    plt.title('Killed herring for different numbers of barracudas, with and without rocks')
     plt.show()
 
 def influence_rocks(max_number_rocks, number_simulations, time_simulation):
@@ -102,8 +102,8 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
         list_std_killed_3_predators.append(np.std(list_killed_herring_3_predators))
 
     # Make a plot of the average number of killed herring vs the number of rocks
-    plot = plt.errorbar(list_rock_number, list_mean_killed_1_predator, yerr=list_std_killed_1_predator, fmt='o--', color='orange', capsize=4, markerfacecolor='red', label='avarage killed herring + 1 SD, 1 predator')
-    plot = plt.errorbar(list_rock_number, list_mean_killed_3_predators, yerr=list_std_killed_3_predators,fmt='o--', color='blue', capsize=4, markerfacecolor='purple', label='avarage killed herring + 1 SD, 3 predators')
+    plot = plt.errorbar(list_rock_number, list_mean_killed_1_predator, yerr=list_std_killed_1_predator, fmt='o--', color='orange', capsize=4, markerfacecolor='red', label='avarage killed herring + 1 SD, 1 barracuda')
+    plot = plt.errorbar(list_rock_number, list_mean_killed_3_predators, yerr=list_std_killed_3_predators,fmt='o--', color='blue', capsize=4, markerfacecolor='purple', label='avarage killed herring + 1 SD, 3 barracudas')
     plt.xlabel('Number or rocks', fontsize=11)
     plt.ylabel('Average killed herring', fontsize=11)
     plt.title('Average killed herring + 1 SD errorbars in environments with different numbers of rocks')
@@ -292,13 +292,13 @@ def influences_closeness_herring(number_simulations, time_simulation):
     stripplot1 = sns.stripplot(x='Conditions', y='Times within separation distance', hue='Conditions', data=df_closeness, palette=colors_strip, ax=axes[0])
 
     # Add legend and axis labels to the first subplot
-    axes[0].text(0.01, 0.965, 'p = predators', transform=axes[0].transAxes, color='black', fontsize=10)
+    axes[0].text(0.01, 0.965, 'b = barracuda', transform=axes[0].transAxes, color='black', fontsize=10)
     axes[0].text(0.01, 0.93, 'r = rocks', transform=axes[0].transAxes, color='black', fontsize=10)
     axes[0].text(0.01, 0.9, 's d = separation distance', transform=axes[0].transAxes, color='black', fontsize=10)
     background_legend1 = patches.Rectangle((-0.04, 0.88), 0.45, 8, edgecolor='black', facecolor='lightcyan', transform=axes[0].transAxes)
     axes[0].add_patch(background_legend1)
     axes[0].set_xticks([0, 1, 2, 3, 4])
-    axes[0].set_xticklabels(['1 p, no r,\ns d = 6', '4 p, no r,\ns d = 6', '1 p, 20 r, \ns d = 6', '1 p, no r,\ns d = 3', '1 p, no r,\ns d = 12'], fontsize=11)
+    axes[0].set_xticklabels(['1 b, no r,\ns d = 6', '4 b, no r,\ns d = 6', '1 b, 20 r, \ns d = 6', '1 b, no r,\ns d = 3', '1 b, no r,\ns d = 12'], fontsize=11)
     axes[0].set_title('Herring count within the original separation distance (6)', fontsize=12)
     axes[0].set_xlabel('Environmental situation', fontsize=11)
     axes[0].set_ylabel('Times within original separation distance (6)', fontsize=11)
@@ -548,28 +548,31 @@ def visualizing_perception_change1(number_simulations, time_simulation):
     df_predator_change = pd.DataFrame()
     df_herring_change = pd.DataFrame()
     df_both_change = pd.DataFrame()
-
+    # rechts 350
+    # most links lowerpred percetion start
+    # middel rechts laag 350
     for simulation in range(number_simulations):
         print('simulation', simulation)
 
-        return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
+        return_values_dict1 = Experiment(300, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
+        print(return_values_dict1)
         new_row_df = pd.DataFrame([np.diff(return_values_dict1['Killed_herring_over_time'])])
         df_no_change = pd.concat([df_no_change, new_row_df], ignore_index=True)
         print('1', 1)
 
         # Predator perception change
-        return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
+        return_values_dict2 = Experiment(300, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict2['Killed_herring_count_predator_perception_change'])])
         df_predator_change = pd.concat([df_predator_change, new_row_df], ignore_index=True)
         print('2', 2)
         # Herring perception change
-        return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
+        return_values_dict3 = Experiment(300, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict3['Killed_herring_count_herring_perception_change'])])
         df_herring_change = pd.concat([df_herring_change, new_row_df], ignore_index=True)
         print('3', 3)
 
         # Herring and predator perception change
-        return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
+        return_values_dict4 = Experiment(300, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict4['Killed_herring_count_herring_perception_change'])])
         df_both_change = pd.concat([df_both_change, new_row_df], ignore_index=True)
         print('4', 4)
@@ -597,38 +600,38 @@ def visualizing_perception_change1(number_simulations, time_simulation):
     fig, axs = plt.subplots(2, 2, sharex=True, sharey=True)
 
     # No perception change
-    axs[0, 0].plot(return_values_dict1['Elapsed_time'], summary_df_no_change['Mean'], marker='o', label = 'Average killed herring')
+    axs[0, 0].plot(return_values_dict1['Elapsed_time'], summary_df_no_change['Mean'], label = 'Average killed herring')
     axs[0, 0].fill_between(return_values_dict1['Elapsed_time'], summary_df_no_change['CI_low'], summary_df_no_change['CI_high'], alpha=0.3, label='95% CI')
     axs[0, 0].axhline(y=32, color='tab:green', linestyle='--',  label='Perception length herring')
-    axs[0, 0].axhline(y=100, color='tab:orange', linestyle='--',  label='Perception length predator')
+    axs[0, 0].axhline(y=100, color='tab:orange', linestyle='--',  label='Perception length barracuda')
     axs[0, 0].set_title('No perception change', fontsize=10)
 
     # Predator perception change
-    axs[0, 1].plot(return_values_dict2['Elapsed_time'], summary_df_predator_change['Mean'], marker='o')
+    axs[0, 1].plot(return_values_dict2['Elapsed_time'], summary_df_predator_change['Mean'])
     axs[0, 1].fill_between(return_values_dict2['Elapsed_time'], summary_df_predator_change['CI_low'], summary_df_predator_change['CI_high'], alpha=0.3 )
     axs[0, 1].axhline(y=32, color='tab:green', linestyle='--')
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
-    axs[0, 1].set_title('Predator perception change', fontsize=10)
+    axs[0, 1].set_title('Barracuda perception change', fontsize=10)
 
     # Herring perception change (x-as:time, y-as: killed herring)
-    axs[1, 0].plot(return_values_dict3['Elapsed_time'], summary_df_herring_change['Mean'], marker='o')
+    axs[1, 0].plot(return_values_dict3['Elapsed_time'], summary_df_herring_change['Mean'])
     axs[1, 0].fill_between(return_values_dict3['Elapsed_time'], summary_df_herring_change['CI_low'], summary_df_herring_change['CI_high'], alpha=0.3)
     axs[1, 0].axhline(y=100, color='tab:orange', linestyle='--')
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
     axs[1, 0].set_title('Herring perception change', fontsize=10)
 
     # Both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
-    axs[1, 1].plot(return_values_dict4['Elapsed_time'], summary_df_both_change['Mean'], marker='o')
+    axs[1, 1].plot(return_values_dict4['Elapsed_time'], summary_df_both_change['Mean'])
     axs[1, 1].fill_between(return_values_dict4['Elapsed_time'], summary_df_both_change['CI_low'], summary_df_both_change['CI_high'], alpha=0.3)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
-    axs[1, 1].set_title('Predator and herring perception change', fontsize=10)
+    axs[1, 1].set_title('Barracuda and herring perception change', fontsize=10)
 
     # axs[0, 1].legend()
     # axs[1, 0].legend()
     # axs[1, 1]. legend()
 
-    fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize='small', framealpha=1)
+    fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize='medium', framealpha=1)
 
     for ax in axs.flat:
         ax.set(xlabel= 'Elapsed time', ylabel= 'average killed herring')
@@ -649,7 +652,7 @@ if __name__ == "__main__":
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 20, 30)
     #
-    # # Determin the invluence of more predators
+    # Determin the invluence of more predators
     # influence_predator_number(20, 20, 30)
 
     # # Determine the influence of the scoolsize
@@ -660,9 +663,9 @@ if __name__ == "__main__":
     # influence_alignment_distance(20, 30)
 
     # Determine what influence if predators are more within the separation distance
-    # df_closeness_herring = influences_closeness_herring(20, 30)
-    # significant_test_close(df_closeness_herring)
-    # significant_test_killed(df_closeness_herring)
+    df_closeness_herring = influences_closeness_herring(20, 30)
+    significant_test_close(df_closeness_herring)
+    significant_test_killed(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
     # visualizing_perception_change(3)
