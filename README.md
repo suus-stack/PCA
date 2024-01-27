@@ -7,7 +7,8 @@ THE GOAL
 The main goal of this project is to make a 2D Agent-based model that simulates the
 behaviour of a herring school. The aim is to assess the influence of the three boid
 rules, as well as the impact of environmental changes, rocks and predators (barracuda),
-on the herring killing rate.
+on the herring killing rate. For the parameter values of the predator the values from
+barracudas are taken.
 
 
 THE MODEL: gamefish  
@@ -206,7 +207,7 @@ All plots are also provided in the folder data_visualisation.
                   - ####HOW TO RUN###
 
 * Change_predator_nr_plot: Violin plot of the distribution of the killed herring for
-                  different numbers of predators with and without rocks.
+                  different numbers of barracudas with and without rocks.
                   - ####HOW TO RUN###
 
 * Change_rock_nr_plot: Line plot of the average killed herring + 1 SD error bars in
@@ -223,7 +224,7 @@ All plots are also provided in the folder data_visualisation.
                   - ####HOW TO RUN###
 
 * Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of
-                  killed herring when different Boid-flocking rules are emphasised
+                  killed herring when different boid-flocking rules are emphasised
                   - ####HOW TO RUN###
 
 * Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed
@@ -242,6 +243,6 @@ It contains 4 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
 - Test to determine if environmental changes significantly influence the school density.
 - Test to determine if environmental changes significantly influence the killing rate.
-- Test to determine if the different Boid-flocking rules significantly influence the killing rate.
+- Test to determine if the different boid-flocking rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected in visualisation.py.
