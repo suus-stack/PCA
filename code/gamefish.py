@@ -828,8 +828,8 @@ class Experiment(pygame.sprite.Sprite):
             killed_count_ls: List
                 Empty list to store the number of killed herring between each measured timepoint.
             """
-            # 10 seconds intervals
-            if round(elapsed_time, 4) % 10 == 0:
+            # 20 seconds intervals
+            if round(elapsed_time, 4) % 20 == 0:
                 new_perception_length = update_perception_length(getattr(Config, perception_length_attr), adaption, elapsed_time)
                 perception_list.append(new_perception_length)
                 # Saving in different var to prevent the Herring class var (killed_herring) to change throughout the entire simulation
@@ -841,9 +841,9 @@ class Experiment(pygame.sprite.Sprite):
                 killing_count = 0
 
         if self.perception_change_predator:
-            handle_perception_change(perception_list_predator, 'PERCEPTION_LENGTH_PREDATOR', 3, killed_count_ls_pred)
+            handle_perception_change(perception_list_predator, 'PERCEPTION_LENGTH_PREDATOR', 5, killed_count_ls_pred)
         if self.perception_change_herring:
-            handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 2, killed_count_ls_herr)
+            handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 3, killed_count_ls_herr)
 
         return perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr
 
@@ -909,12 +909,10 @@ class Experiment(pygame.sprite.Sprite):
 
             # Keeping track over the amount of killed herring over time either way
             # Again re-assigning because otherwise you are not able to reset per time frame
-
             elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
-            # print('epased time', elapsed_time)
 
-            # this is necessary because otherwise the time does not get added when both are false
-            if round(elapsed_time, 4) % 10 == 0:
+            # This is necessary because otherwise the time does not get added when both are false
+            if round(elapsed_time, 4) % 20 == 0:
                 kill_count = Herring.killed_herring
                 killed_herring_og.append(kill_count)
                 return_values['Killed_herring_over_time'] = killed_herring_og
