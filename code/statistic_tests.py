@@ -60,13 +60,13 @@ def significant_test_school_size(df):
 
 def significant_test_close(df):
     """Function that determines if there is a significant difference in herring within
-    the original perception distance of 6 when the perception distance changes, when
-    more preadators gets introduced or when rocks get introduced.
+    the original perception distance of 6 (density) when the perception distance
+    changes, when more predators gets introduced or when rocks get introduced.
 
     Parameters:
     -----------
     df: Dataframe
-        Dataframe with the values obtaint from the simulated experiments.
+        Dataframe with the values obtained from the simulated experiments.
     """
     df['Times within separation distance'] = pd.to_numeric(df['Times within separation distance'], errors='coerce')
 
@@ -125,13 +125,13 @@ def significant_test_close(df):
 
 def significant_test_killed(df):
     """Function that determines if there is a significant difference in the number
-    of killed herring killed when the perception distance changes, when more preadators
+    of killed herring when the perception distance changes, when more predators
     gets introduced or when rocks get introduced.
 
     Parameters:
     -----------
     df: Dataframe
-        Datafframe with the values obtaint from the simulated experiments.
+        Dataframe with the values obtained from the simulated experiments.
     """
     df['Killed herring'] = pd.to_numeric(df['Killed herring'], errors='coerce')
 
@@ -149,7 +149,7 @@ def significant_test_killed(df):
     statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(values_1_p_3_no_r)
     statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(values_1_p_12_no_r)
 
-    # Determine if introducing predators has significant influence on the killing rate
+    # Determine if introducing predators has a significant influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_rel(values_1_p_6_no_r, values_4_p_6_no_r)
         print(f'Effect introduction predators on killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
@@ -157,7 +157,7 @@ def significant_test_killed(df):
         w_statistic, p_value = stats.wilcoxon(values_1_p_6_no_r, values_4_p_6_no_r)
         print(f'Effect introduction predators on killing rate; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
 
-    # Determine if introducing rocks has significant influence on the killing rate
+    # Determine if introducing rocks has a significant influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_6_r >= 0.05:
         t_statistic, p_value = stats.ttest_rel(values_1_p_6_no_r, values_1_p_6_r)
         print(f'Effect introduction rocks on killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
@@ -184,7 +184,7 @@ def significant_test_killed(df):
 
 def significant_test_boidsrules(data):
     """Function that determines if there is a significant difference in herring
-    killing rate when one of the boid rules is emphasised.
+    killing rate when one of the Boid rules is emphasised.
 
     Parameters:
     -----------
@@ -200,19 +200,19 @@ def significant_test_boidsrules(data):
         group1_data = data[group1_name]
         group2_data = data[group2_name]
 
-        # Check normality for group2_data
+        # Check if the data is normally distributed
         normality_group2 = shapiro(group2_data).pvalue >= 0.05
 
         if any(group1_data) and any(group2_data) and normality_group2:
             # Perform paired t-tests
             t_stat, p_value = ttest_rel(group1_data, group2_data)
 
-            # Print results
+            # Print the results of the paired t-test 
             print(f'Paired t-test between "{group1_name}" and "{group2_name}": t-statistic = {t_stat}, p-value = {p_value}')
 
         else:
             # Perform Mann-Whitney U test
             statistic, p_value_wilcoxon = wilcoxon(group1_data, group2_data, alternative='two-sided')
 
-            # Print results for wilcoxon test
+            # Print the results for wilcoxon test
             print(f'Wilcoxon test between "{group1_name}" and "{group2_name}": statistic = {statistic}, p-value = {p_value_wilcoxon}')
