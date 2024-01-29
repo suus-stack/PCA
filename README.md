@@ -129,15 +129,15 @@ Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration 
 
 THE VISUALISATION: gamefish.py  
 Visualization.py contains the code to make plots that show the influence of environmental
-changes on the herring killing rate and school density. It uses the gamefish code to run
-an experiment. The code also does some statistical tests provided by the code in statistic_test.py.
+changes on the killing rate and school density. It uses the gamefish.py code to run
+an simulation. 
 
-All plots are also provided in the folder data_visualisation.
-* 4-perception_change_plot: Line plot that shows the change in perception length and
-                  the resulting number of killed herring over the time.
+All results are provided in the folder data_visualisation.
+* 4-perception_change_plot: Line graph that shows the change in perception length and
+                  the influence on the number of killed herring over the time.
                   - ####HOW TO RUN###
 
-* Change_alignment_distance_plot: Line plot of the average killed herring + 1 SD error
+* Change_alignment_distance_plot: Line graph of the average killed herring with standard deviation error
                   bars at different alignment distances.
                   - ####HOW TO RUN###
 
@@ -145,11 +145,11 @@ All plots are also provided in the folder data_visualisation.
                   different numbers of barracudas with and without rocks.
                   - ####HOW TO RUN###
 
-* Change_rock_nr_plot: Line plot of the average killed herring + 1 SD error bars in
-                  environments with different numbers of rocks.
+* Change_rock_nr_plot: Line graph of the average killed herring with the standardeviation error bars in
+                      environments with different numbers of rocks.
                   - ####HOW TO RUN###
 
-* Density_Killing_combination_plot: Boxplots with strip plots overlap that show the
+* Density_Killing_combination_plot: Boxplots with strip plot overlap that show the
                   distribution of the herring count within the original separation distance
                   of 6 and the herring killing count across various conditions.
                   - ####HOW TO RUN###
@@ -172,7 +172,7 @@ All plots are also provided in the folder data_visualisation.
 
 THE STATISTICAL TESTS  
 Statistic_tests.py contains the code to do the statistical test on the data obtained
-in visualisation.py.
+in visualisation.py. 
 
 It contains 4 statistical tests:
 - Test to determine if school size significantly changes the killing proportion.
@@ -180,7 +180,7 @@ It contains 4 statistical tests:
 - Test to determine if environmental changes significantly influence the killing rate.
 - Test to determine if the different boid-flocking rules significantly influence the killing rate.
 
-This cannot be run separately because it needs the data collected in visualisation.py.
+This cannot be run separately because it needs the data collected from visualisation.py.
 
 INCOMPLETE MODEL: matrixes  
 boids.py contains code to run an agent-based simulation of herring schools and possibly
