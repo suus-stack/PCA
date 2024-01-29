@@ -18,8 +18,8 @@ import itertools
 
 class Config():
     """ Class that stores the values of all the parameter constants in the experiment.
-    To enhance clarity in the simulation, 1 unit is not 1 meter but 0.25 meter and therefore
-    all real values are multiplied by 4."""
+    To enhance clarity in the simulation, 1 unit is not 1 meter but 0.25 meter and
+    therefore all real values are multiplied by 4."""
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
@@ -319,7 +319,7 @@ class Predator(pygame.sprite.Sprite):
         if close_predator > 0:
             self.velocity += (collision_avoidance_vector / close_predator)
 
-        # velocities_predator Normalize velocity and multiply by speed to which some randomness is added
+        # Velocities_predator Normalize velocity and multiply by speed to which some randomness is added
         self.velocity = self.velocity.normalize() * (Config.PREDATOR_SPEED + random.uniform(-0.8, 0.8))
 
     def attack_herring(self, all_herring):
@@ -385,9 +385,9 @@ class Predator(pygame.sprite.Sprite):
         self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def accelerate_to_attack_herring(self, all_herring):
-        """Function that ensures the predator will accelerate its speed when a herring is within
-        the predator's perception length. The closer the herring is the faster the predator
-        will swim.
+        """Function that ensures the predator will accelerate its speed when a herring
+        is within the predator's perception length. The closer the herring is the
+        faster the predator will swim.
 
         Parameters:
         -----------
@@ -502,14 +502,11 @@ class Experiment(pygame.sprite.Sprite):
         perception_change_herring: Bool
             If true; the perception length of a herring changes over the time.
         alignment_distance: Float
-            The distance that determines which neighbouring herring are used for the
-            alignment rule.
+            The distance that determines which herring are used for the alignment rule.
         cohesion_distance: Float
-            The distance that determines which neighbouring herring are used for the
-            cohesion rule.
+            The distance that determines which herring are used for the cohesion rule.
         separation_distance: Float
-            The distance that determines which neighbouring herring are used for the
-            separation rule.
+            The distance that determines which herring are used for the separation rule.
         boids_influence: Int
             Indicates if one boid rule is more important
         """
@@ -844,9 +841,9 @@ class Experiment(pygame.sprite.Sprite):
                 killing_count = 0
 
         if self.perception_change_predator:
-            handle_perception_change(perception_list_predator, 'PERCEPTION_LENGTH_PREDATOR', 5, killed_count_ls_pred)
+            handle_perception_change(perception_list_predator, 'PERCEPTION_LENGTH_PREDATOR', 3, killed_count_ls_pred)
         if self.perception_change_herring:
-            handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 3, killed_count_ls_herr)
+            handle_perception_change(perception_list_herring, 'PERCEPTION_LENGTH_HERRING', 2, killed_count_ls_herr)
 
         return perception_list_predator, perception_list_herring, killed_count_ls_pred, killed_count_ls_herr
 
