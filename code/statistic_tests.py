@@ -84,12 +84,6 @@ def significant_test_close(df):
     statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(values_1_p_3_no_r)
     statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(values_1_p_12_no_r)
 
-    print('values_1_p_6_no_r', values_1_p_6_no_r)
-    print('values_1_p_6_r', values_1_p_6_r)
-    print('values_4_p_6_no_r', values_4_p_6_no_r)
-    print('values_1_p_3_no_r', values_1_p_3_no_r)
-    print('values_1_p_12_no_r', values_1_p_12_no_r)
-
     # Determine if introducing predators has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
         t_statistic, p_value = stats.ttest_rel(values_1_p_6_no_r, values_4_p_6_no_r)
@@ -207,7 +201,7 @@ def significant_test_boidsrules(data):
             # Perform paired t-tests
             t_stat, p_value = ttest_rel(group1_data, group2_data)
 
-            # Print the results of the paired t-test 
+            # Print the results of the paired t-test
             print(f'Paired t-test between "{group1_name}" and "{group2_name}": t-statistic = {t_stat}, p-value = {p_value}')
 
         else:
