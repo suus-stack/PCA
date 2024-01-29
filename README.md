@@ -129,15 +129,15 @@ Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration 
 
 THE VISUALISATION: gamefish.py  
 Visualization.py contains the code to make plots that show the influence of environmental
-changes on the herring killing rate and school density. It uses the gamefish code to run
-an experiment. The code also does some statistical tests provided by the code in statistic_test.py.
+changes on the killing rate and school density. It uses the gamefish.py code to run
+an simulation. 
 
-All plots are also provided in the folder data_visualisation.
-* 4-perception_change_plot: Line plot that shows the change in perception length and
-                  the resulting number of killed herring over the time.
+All results are provided in the folder data_visualisation.
+* 4-perception_change_plot: Line graph that shows the change in perception length and
+                  the influence on the number of killed herring over the time.
                   - ####HOW TO RUN###
 
-* Change_alignment_distance_plot: Line plot of the average killed herring + 1 SD error
+* Change_alignment_distance_plot: Line graph of the average killed herring with standard deviation error
                   bars at different alignment distances.
                   - ####HOW TO RUN###
 
@@ -145,11 +145,11 @@ All plots are also provided in the folder data_visualisation.
                   different numbers of barracudas with and without rocks.
                   - ####HOW TO RUN###
 
-* Change_rock_nr_plot: Line plot of the average killed herring + 1 SD error bars in
-                  environments with different numbers of rocks.
+* Change_rock_nr_plot: Line graph of the average killed herring with the standardeviation error bars in
+                      environments with different numbers of rocks.
                   - ####HOW TO RUN###
 
-* Density_Killing_combination_plot: Boxplots with strip plots overlap that show the
+* Density_Killing_combination_plot: Boxplots with strip plot overlap that show the
                   distribution of the herring count within the original separation distance
                   of 6 and the herring killing count across various conditions.
                   - ####HOW TO RUN###
@@ -172,23 +172,30 @@ All plots are also provided in the folder data_visualisation.
 
 THE STATISTICAL TESTS  
 Statistic_tests.py contains the code to do the statistical test on the data obtained
-in visualisation.py.
+in visualisation.py. 
 
-It contains 4 statistical tests:
+significant_test_school_size:
 - Test to determine if school size significantly changes the killing proportion.
+
+significant_test_close
 - Test to determine if environmental changes significantly influence the school density.
+
+significant_test_killed
 - Test to determine if environmental changes significantly influence the killing rate.
+
+significant_test_boidsrules
 - Test to determine if the different boid-flocking rules significantly influence the killing rate.
 
-This cannot be run separately because it needs the data collected in visualisation.py.
+This cannot be run separately because it needs the data collected from visualisation.py.
 
-INCOMPLETE MODEL: matrixes  
+INCOMPLETE MODEL: vectorized implementation  
 boids.py contains code to run an agent-based simulation of herring schools and possibly
-rocks and/or predators. This code works with matrices.
+rocks and/or predators. This code works with matrices, making the implementation very clean and concise.
 Implementing the three boid flocking rules (separation, alignment and cohesion) was
-possible. However, by introducing rocks and predators, working with the matrices became
-too difficult. So for that reason, the code is not complete and we did not use it for
-analysis. But it shows that we tried it this way.   
+possible and because of the matrices, simulataneoulsy updating the herring and predator was easy. 
+However, with the limited amount of time, we chose to continue with the classes implementation, since 
+this model was the easiest to work with and to make small adaptions on. So for that reason, the code is not 
+complete and we did not use it for analysis, it simply shows we tried a different approach.   
 
 THE FUNCTION  
 Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring,
@@ -234,6 +241,10 @@ CHANGEABLE PARAMETERS
 * lower_lim_veloc (float)= Minimum range of the velocity of a herring.                      
 * upper_lim_veloc (float)= Maximum range of the velocity of a herring.
 
+upper_lim_flock = np.array([0, 100])
+lower_lim_flock = np.array([0, 100])
+upper_lim_veloc = np.array([10, 20])
+lower_lim_veloc = np.array([0, -20])
 
 HOW TO RUN:  
 Command to simulate the incomplete model with the values:
@@ -241,5 +252,7 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
           nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
+
+
 
 
