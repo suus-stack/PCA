@@ -49,9 +49,9 @@ class Experiment():
 
 
     def initialize_flock(self):
-        """ Function makes an array with the random start positions of the herring.
-        If you want the x-values to vary between 100 and 200 and the y-values to be
-        between 900 and 1100, you use: lower_lim = np.array([100, 900]) and upper_lim
+        """Function makes an array with the random start positions of the herring.
+        If the x-values should vary between 100 and 200 and the y-values to be
+        between 900 and 1100, use: lower_lim = np.array([100, 900]) and upper_lim
         = np.array([200, 1100]).
 
         Parameters:
@@ -118,8 +118,8 @@ class Experiment():
         return velocities
 
     def initialize_velocities_predator(self):
-        """ Function returns an array of size (2, N), where N is the number of predator,
-        with the random initialized velocities of the predator.
+        """ Function returns an array of size (2, N) with the random initialized
+        velocities of the predator, where N is the number of predators.
 
         Parameters:
         -----------
@@ -173,10 +173,10 @@ class Experiment():
 
          Example:
          --------
-         >>> instance = Experiment(0, 1, 0, 1, 10, 5, 1)
-         >>> instance.normalize(np.array([3, 4]))
+         >>> vector = Experiment(0, 1, 0, 1, 10, 5, 1)
+         >>> vector.normalize(np.array([3, 4]))
          array([0.6, 0.8])
-         >>> instance.normalize(np.array([0.5, 0.2]))
+         >>> vector.normalize(np.array([0.5, 0.2]))
          array([0.92847669, 0.37139068])
          """
         magnitude = np.linalg.norm(vector)
@@ -274,7 +274,6 @@ class Experiment():
         # Find the herring that are far away
         far_away = squared_distances > self.min_distance
         close_herring = np.copy(distances)
-
         # X-direction
         close_herring[0, :, :][far_away] = 0
         # Y-direction
@@ -291,7 +290,6 @@ class Experiment():
         # Periodic boundaries
         positions[0] %= 500
         positions[1] %= 500
-
 
     def herring_rock_avoidance(self, positions, rock_positions):
         """Function to adapt the herring velocity to avoid swimming through a rock.
@@ -352,7 +350,6 @@ class Experiment():
         # Periodic boundaries
         positions[0] %= 500
         positions[1] %= 500
-
 
     def predator_rock_avoidance(self, predator_pos, rock_positions):
         """Function to adapt the predator velocity to avoid the rocks.
@@ -534,11 +531,11 @@ if __name__ == '__main__':
     lower_lim_veloc = np.array([0, -20])
 
     # The number of herring, predators and rocks
-    nr_herring = 1
+    nr_herring = 10
     nr_predators = 2
-    nr_rocks = 4
+    nr_rocks = 10
 
-    # Do doc test and run simulation
+    # Do a doc test and runthe simulation
     doctest.testmod()
     simulation = Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators, nr_rocks)
     simulation.run()
