@@ -35,7 +35,7 @@ class Experiment():
         self.second_flock = False
 
         # Centre movement method, negative=repulsion, positive is attraction
-        self.attraction_to_center = 0.00008
+        self.attraction_to_center = 0.0008
 
         # Collision avoidance method
         self.min_distance = 20
@@ -46,7 +46,6 @@ class Experiment():
 
         # Cohesion method
         self.perception_length_herring = 0.002
-
 
     def initialize_flock(self):
         """Function makes an array with the random start positions of the herring.
@@ -351,6 +350,7 @@ class Experiment():
         positions[0] %= 500
         positions[1] %= 500
 
+
     def predator_rock_avoidance(self, predator_pos, rock_positions):
         """Function to adapt the predator velocity to avoid the rocks.
 
@@ -459,7 +459,7 @@ class Experiment():
         ax1.scatter(predator_pos[0], predator_pos[1], c='red', alpha=0.5, marker='o', s=20)
         ax1.scatter(rock_positions[0], rock_positions[1], c= 'grey', alpha = 0.5, marker = 's', s=20)
         plt.draw()
-        plt.pause(0.02)
+        plt.pause(0.08)
         ax1.cla()
 
     def setup_plot(self):
@@ -531,11 +531,11 @@ if __name__ == '__main__':
     lower_lim_veloc = np.array([0, -20])
 
     # The number of herring, predators and rocks
-    nr_herring = 10
+    nr_herring = 20
     nr_predators = 2
     nr_rocks = 10
 
-    # Do a doc test and runthe simulation
+    # Do doc test and run simulation
     doctest.testmod()
     simulation = Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring, nr_predators, nr_rocks)
     simulation.run()

@@ -745,11 +745,13 @@ class Experiment(pygame.sprite.Sprite):
 
         return screen
 
-    def update_perception_length(perception_length, adaption, elapsed_time):
+    def update_perception_length(self, perception_length, adaption, elapsed_time):
         """Function that updates the perception length
 
         Parameters:
         -----------
+        self: Experiment
+            The experiment being simulated.
         perception_length: Float
             The current perception length stored in the Config class.
         adaption: Int
@@ -767,12 +769,14 @@ class Experiment(pygame.sprite.Sprite):
         else:
          return perception_length - adaption
 
-    def handle_perception_change(perception_list, perception_length_attr, adaption, killed_count_ls):
+    def handle_perception_change(self, perception_list, perception_length_attr, adaption, killed_count_ls):
         """Function that changes the perception length of the herring or predator on specific time points
         during the simulation. Trying to create the concept of the water getting darker later on the day.
 
         Parameters:
         -----------
+        self: Experiment
+            The experiment being simulated.
         perception_list: List
             Empty list to store the perception lengths on each measured timepoint.
         perception_lenghth_attr: Float
