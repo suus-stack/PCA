@@ -968,6 +968,7 @@ if __name__ == "__main__":
     11: The separation distance (float). Default set to 6.
     12: The influence of boids rules (int). Default set to 0.
     """
+    # Do doc test and run the a simulation
     doctest.testmod()
     experiment_example = Experiment(200, 3, 40, 60, True, True, False, False, 32, 32, 6, 0)
     return_values = experiment_example.run()

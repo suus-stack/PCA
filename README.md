@@ -5,36 +5,40 @@ Student id's: 14773279, 15159337, 13717405
 
 THE GOAL  
 The main goal of this project is to make a 2D agent-based model that simulates the
-behaviour of a herring school. The aim is to assess the influence of the three boid
+behaviour of a herring school. The aim is to assess the influence of the three Boid
 rules, as well as the impact of environmental changes, rocks and predators (barracuda),
-on the killing rate within a herring school. For the parameter values of the predator 
+on the killing rate within a herring school. For the parameter values of the predator
 the values from barracudas are taken.
 
 
-THE MODEL: gamefish  
-Gamefish.py contains the code to run an agent-based model in which the herring, rocks
-and predators are represented as agents with their own positions and velocities.
+THE MODEL: herring_simulation  
+Herring_simulation.py contains the code to run an 2-dimensional agent-based model in
+which the herring, rocks and predators are represented as agents with their own
+positions and velocities.
 
 Herring features  
-The movement of a herring (boid) is based on three rules:
-- Separation: Herring maintain a minimum distance between themselves and others within the group.
+The movement of a herring (Boid) is based on three rules:
+- Separation: Herring maintain a minimum distance between each other.
 - Alignment: Herring aligns their direction with that of their closest neighbours
-- Cohesion:  Herring remains in close proximity to their nearest neighbors.
+- Cohesion:  Herring remains in close proximity to their nearest neighbours.
 
-The speed of the herring is the avarage speed for a herring. For a diversity of natural 
-speeds within the group, a value of the standard deviation spread, ranging between -1 and 1, 
-is also added to this. 
-The presence of rocks and predators in the environment influences the behavior of herring, when 
-it is in their perception range. Rocks alter the direction of herring, while predators can affect 
-both their speed and direction. As predators draw closer, the herring's speed accelerates.
+The speed of the herring is the average speed for a herring. For a diversity of natural
+speeds within the group, a value of the standard deviation (SD) spread, ranging between
+-1 and 1, is also added to this.
+The presence of rocks and predators in the environment influences the behavior of herring,
+when it is in their perception range. Rocks alter the direction of herring, while predators
+can affect both their speed and direction. As predators draw closer, the herring's speed
+accelerates.
 
 Barracuda features  
-The movement of a barracuda is initially random, but it changes when it encounters another barracuda, 
-causing it to change directions. Additionally, the presence of rocks and herring in the environment 
-also influences a barracuda's movement. Rocks can alter the direction of a barracuda, while herring 
-can impact both its speed and direction. When a herring is within the perception range of a barracuda, 
-the predator's speed increases, and it will move towards the herring. Moreover, the closer the herring, 
-the greater the acceleration of the barracuda's speed
+The movement of a barracuda is initially random, but it changes when it encounters another
+barracuda, causing it to change directions. For a diversity of natural speeds within the
+group, a value of the SD spread, ranging between -1 and 1, is also added to this.
+Additionally, the presence of rocks and herring in the environment also influences a
+barracuda's movement. Rocks can alter the direction of a barracuda, while herring can
+impact both its speed and direction. When a herring is within the perception range of a
+barracuda, the predator's speed increases, and it will move towards the herring. Moreover,
+the closer the herring, the greater the acceleration of the barracuda's speed.
 
 Rock features  
 The stones are randomly distributed. No creature can traverse these obstacles. When
@@ -49,19 +53,19 @@ alignment_distance, cohesion_distance, separation_distance, boids_influence)
 
 In the default function, the rocks get a random position, and connect_rocks is set to
 true. Start_school is also set to True, the herring get different positions
-close to each other to form a school. The barracudas are assigned random positions that 
+close to each other to form a school. The barracudas are assigned random positions that
 lie outside the perception range of any herring. This ensures that the entire attack is
-shown. The simulation is run for a specified number of seconds. 
+shown. The simulation is run for a specified number of seconds.
 In the perception length of the herring and predator do not change, perception_change
-_predator and perception_change_herring are set to False. And every boid rule has the
+_predator and perception_change_herring are set to False. And every Boid rule has the
 same amount of influence.
 
-Specifications in model 
-For longer simulation durations, the perception length of barracuda can dynamically change 
-over time using the 'perception_change' parameter. Additionally, the alignment distance, 
-cohesion distance, and separation distance are subject to modification to evaluate their 
-individual effects. This adjustment aims to explore whether these rule alterations affect 
-the killing rate of herring. If the 'boids_influence' parameter is set to a value other 
+Specifications in model
+For longer simulation durations, the perception length of barracuda can dynamically change
+over time using the 'perception_change' parameter. Additionally, the alignment distance,
+cohesion distance, and separation distance are subject to modification to evaluate their
+individual effects. This adjustment aims to explore whether these rule alterations affect
+the killing rate of herring. If the 'boids_influence' parameter is set to a value other
 than 0, the impact of a rule will be weighted accordingly.
 
 Output model  
@@ -94,7 +98,7 @@ FIXED PARAMETERS
 * ROCK_LENGHT (float) = the length of the square representing a rock in the simulation.
                          - Set to 10
 * ROCK_AVOIDANCE_DIST (float) = the distance at which both creatures will start sensing rocks.
-                               - Set to 16
+                         - Set to 16
 
 CHANGEABLE PARAMETERS  
 * herring_nr (int) = initial number of herring added to the simulation.
@@ -102,18 +106,26 @@ CHANGEABLE PARAMETERS
 * rock_nr (int) = initial number of rocks added to the simulation.
 * simulation_duration (int) = duration of a simulation in seconds.
 * connected_rocks (bool) = parameter for adding clustering of the initial rocks.
+                          True -- clustering of rocks,
+                          False -- no clustering of rocks.
 * start_school (bool) = herring start as one school instead of randomly.
+                          True -- the herring start in one school,
+                          False -- the herring start on random places no clustering of rocks.
 * perception_change_predator (bool) = change of the barracuda perception length over time.
+                          True -- the barracuda perception length changes over time,
+                          False -- the barracuda perception length does not changes over time.
 * perception_change_herring (bool) = change of the herring perception length over time.
+                          True -- the herring perception length changes over time,
+                          False -- the herring perception length does not changes over time.
 * SEPARATION_DISTANCE (float) = if another herring is within this distance, it will be
                           included in the separation rule.
 * ALIGNMENT_DISTANCE (float) = if another herring is within this distance, it will be
                           included in the alignment rule.
 * COHESION_DISTANCE (float) = if another herring is within this distance, it will be
                           included in the cohesion rule.
-* boids_influence (int) = Indicates the influence of boids rules. 
-                            0 --  all rules are equal, 
-                            1 -- separation is weighted 3 times more, 
+* boids_influence (int) = Indicates the influence of Boids rules.
+                            0 --  all rules are equal,
+                            1 -- separation is weighted 3 times more,
                             2 -- alignment is weighted 3 times more,
                             3 -- cohesion is weighted 3 times more.
 
@@ -124,55 +136,48 @@ Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration 
       perception_change_herring = False, alignment_distance = 32, cohesion_distance = 32,
       separation_distance = 6, boids_influence = 0)
 
-- python gamefish.py
+- python herring_simulation.py
 
 
-THE VISUALISATION: gamefish.py  
+THE VISUALISATION: herring_simulation.py  
 Visualization.py contains the code to make plots that show the influence of environmental
-changes on the killing rate and school density. It uses the gamefish.py code to run
-an simulation. 
+changes on the killing rate and school density. It uses the herring_simulation.py code to run
+an simulation.
 
 All results are provided in the folder data_visualisation.
 * 4-perception_change_plot: Line graph that shows the change in perception length and
                   the influence on the number of killed herring over the time.
-                  - ####HOW TO RUN###
 
-* Change_alignment_distance_plot: Line graph of the average killed herring with standard deviation error
-                  bars at different alignment distances.
-                  - ####HOW TO RUN###
+* Change_alignment_distance_plot: Line graph of the average killed herring with SD
+                  error bars at different alignment distances.
 
 * Change_predator_nr_plot: Violin plot of the distribution of the killed herring for
                   different numbers of barracudas with and without rocks.
-                  - ####HOW TO RUN###
 
-* Change_rock_nr_plot: Line graph of the average killed herring with the standardeviation error bars in
-                      environments with different numbers of rocks.
-                  - ####HOW TO RUN###
+* Change_rock_nr_plot: Line graph of the average killed herring with the SD error bars
+                  in environments with different numbers of rocks.
 
 * Density_Killing_combination_plot: Boxplots with strip plot overlap that show the
                   distribution of the herring count within the original separation distance
                   of 6 and the herring killing count across various conditions.
-                  - ####HOW TO RUN###
 
 * School_size_plot: Boxplot with strip plot overlap that shows the proportion of killed
                   herring in large and small schools, with and without rocks.
-                  - ####HOW TO RUN###
 
 * Boids_rules_influence_plot: Boxplot with strip plot overlap that shows the number of
-                  killed herring when different boid-flocking rules are emphasised
-                  - ####HOW TO RUN###
+                  killed herring when different Boid-flocking rules are emphasised
 
 * Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed
                   herring + 1 SD error bars for different values of the alignment,
                   cohesion and separation distance as sensitivity analysis.
-                  - ####HOW TO RUN###
 
+HOW TO RUN
 - python visualisation.py.
 
 
 THE STATISTICAL TESTS  
 Statistic_tests.py contains the code to do the statistical test on the data obtained
-in visualisation.py. 
+in visualisation.py.
 
 significant_test_school_size:
 - Test to determine if school size significantly changes the killing proportion.
@@ -184,18 +189,19 @@ significant_test_killed
 - Test to determine if environmental changes significantly influence the killing rate.
 
 significant_test_boidsrules
-- Test to determine if the different boid-flocking rules significantly influence the killing rate.
+- Test to determine if the different Boid-flocking rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected from visualisation.py.
 
 INCOMPLETE MODEL: vectorized implementation  
 boids.py contains code to run an agent-based simulation of herring schools and possibly
-rocks and/or predators. This code works with matrices, making the implementation very clean and concise.
-Implementing the three boid flocking rules (separation, alignment and cohesion) was
-possible and because of the matrices, simulataneoulsy updating the herring and predator was easy. 
-However, with the limited amount of time, we chose to continue with the classes implementation, since 
-this model was the easiest to work with and to make small adaptions on. So for that reason, the code is not 
-complete and we did not use it for analysis, it simply shows we tried a different approach.   
+rocks and/or predators. This code works with matrices, making the implementation very clean
+and concise. Implementing the three Boid flocking rules (separation, alignment and
+cohesion) was possible and because of the matrices, simultaneously updating the herring
+and predator was easy. However, with the limited amount of time, we chose to continue with
+the classes implementation, since this model was the easiest to work with and to make small
+adaptions on. So for that reason, the code is not complete and we did not use it for
+analysis, it simply shows we tried a different approach.   
 
 THE FUNCTION  
 Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring,
@@ -208,7 +214,7 @@ FIXED PARAMETERS
                         - Set to 2.
 * attraction_to_center (float) = the strength of the centre movement method, where a
                     negative value implies repulsion and a positive value attraction.
-                        - Set to 0.00008
+                        - Set to 0.0008
 * width_flock (float) = It determines the range or spread of the flocking behaviour
                     in the simulation.
                         - Set to upper_lim_flock - lower_lim_flock
@@ -252,7 +258,3 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
           nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
-
-
-
-
