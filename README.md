@@ -188,13 +188,14 @@ significant_test_boidsrules
 
 This cannot be run separately because it needs the data collected from visualisation.py.
 
-INCOMPLETE MODEL: matrixes  
+INCOMPLETE MODEL: vectorized implementation  
 boids.py contains code to run an agent-based simulation of herring schools and possibly
-rocks and/or predators. This code works with matrices.
+rocks and/or predators. This code works with matrices, making the implementation very clean and concise.
 Implementing the three boid flocking rules (separation, alignment and cohesion) was
-possible. However, by introducing rocks and predators, working with the matrices became
-too difficult. So for that reason, the code is not complete and we did not use it for
-analysis. But it shows that we tried it this way.   
+possible and because of the matrices, simulataneoulsy updating the herring and predator was easy. 
+However, with the limited amount of time, we chose to continue with the classes implementation, since 
+this model was the easiest to work with and to make small adaptions on. So for that reason, the code is not 
+complete and we did not use it for analysis, it simply shows we tried a different approach.   
 
 THE FUNCTION  
 Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring,
@@ -240,6 +241,10 @@ CHANGEABLE PARAMETERS
 * lower_lim_veloc (float)= Minimum range of the velocity of a herring.                      
 * upper_lim_veloc (float)= Maximum range of the velocity of a herring.
 
+upper_lim_flock = np.array([0, 100])
+lower_lim_flock = np.array([0, 100])
+upper_lim_veloc = np.array([10, 20])
+lower_lim_veloc = np.array([0, -20])
 
 HOW TO RUN:  
 Command to simulate the incomplete model with the values:
@@ -247,5 +252,7 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
           nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
+
+
 
 
