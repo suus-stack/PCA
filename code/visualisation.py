@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from gamefish import *
+from herring_simulation import *
 from statistic_tests import *
 import matplotlib.patches as patches
 
@@ -485,17 +485,17 @@ def visualizing_perception_change(number_simulations, time_simulation):
         return_values_dict1 = Experiment(250, 4, 20, time_simulation, True, True, False, False, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict1['Killed_herring_over_time'])])
         df_no_change = pd.concat([df_no_change, new_row_df], ignore_index=True)
-
+        print('hi')
         # Predator perception change
         return_values_dict2 = Experiment(250, 4, 20, time_simulation, True, True, True, False, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict2['Killed_herring_count_predator_perception_change'])])
         df_predator_change = pd.concat([df_predator_change, new_row_df], ignore_index=True)
-
+        print('hi')
         # Herring perception change
         return_values_dict3 = Experiment(250, 4, 20, time_simulation, True, True, False, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict3['Killed_herring_count_herring_perception_change'])])
         df_herring_change = pd.concat([df_herring_change, new_row_df], ignore_index=True)
-
+        print('hi')
         # Herring and predator perception change
         return_values_dict4 = Experiment(250, 4, 20, time_simulation, True, True, True, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict4['Killed_herring_count_herring_perception_change'])])
@@ -563,30 +563,30 @@ def visualizing_perception_change(number_simulations, time_simulation):
     plt.show()
 
 if __name__ == "__main__":
-    # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(40, 60)
-    significant_test_boidsrules(df_boid_killed)
-
-    # Determine the influence of rocks on the killing rate
-    influence_rocks(80, 20, 30)
-
-    #Determine the invluence of more predators
-    influence_predator_number(20, 20, 30)
-
-    # Determine the influence of the scoolsize
-    df_school_size = influence_school_size(40, 30)
-    significant_test_school_size(df_school_size)
-
-    # Determine the influence of the alignment distance
-    influence_alignment_distance(30, 30)
-
-    # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(40, 30)
-    significant_test_close(df_closeness_herring)
-    significant_test_killed(df_closeness_herring)
+    # # Determine the influence of the boid rules
+    # df_boid_killed = influence_boid_rules(40, 60)
+    # significant_test_boidsrules(df_boid_killed)
+    #
+    # # Determine the influence of rocks on the killing rate
+    # influence_rocks(80, 20, 30)
+    #
+    # #Determine the invluence of more predators
+    # influence_predator_number(20, 20, 30)
+    #
+    # # Determine the influence of the scoolsize
+    # df_school_size = influence_school_size(40, 30)
+    # significant_test_school_size(df_school_size)
+    #
+    # # Determine the influence of the alignment distance
+    # influence_alignment_distance(30, 30)
+    #
+    # # Determine what influence if predators are more within the separation distance
+    # df_closeness_herring = influences_closeness_herring(40, 30)
+    # significant_test_close(df_closeness_herring)
+    # significant_test_killed(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
-    visualizing_perception_change(10, 600)
+    visualizing_perception_change(1, 60)
 
     # Do a sensitivity analyse for the alignment, separation and cohesion distance
     sensitivity_rules_distance(30, 30)
