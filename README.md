@@ -138,7 +138,7 @@ Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration 
 
 - python herring_simulation.py
 
-TEST CODE
+TEST CODE   
 To test some functions in the model, doc test are added and automatically run when
 a simulation is run.
 
@@ -272,6 +272,6 @@ Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
 
 - python boids.py
 
-TEST CODE
+TEST CODE   
 To test some functions in the model, doc test are added and automatically run when
 a simulation is run.
