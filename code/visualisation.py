@@ -529,64 +529,66 @@ def visualizing_perception_change(number_simulations, time_simulation):
     axs[0, 0].fill_between(return_values_dict1['Elapsed_time'], summary_df_no_change['CI_low'], summary_df_no_change['CI_high'], alpha=0.3, label='95% CI')
     axs[0, 0].axhline(y=32, color='tab:green', linestyle='--',  label='Perception length herring')
     axs[0, 0].axhline(y=100, color='tab:orange', linestyle='--',  label='Perception length barracuda')
-    axs[0, 0].set_title('No perception change', fontsize=10)
+    axs[0, 0].set_title('No perception change', fontsize=11)
 
     # Predator perception change
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], summary_df_predator_change['Mean'])
     axs[0, 1].fill_between(return_values_dict2['Elapsed_time'], summary_df_predator_change['CI_low'], summary_df_predator_change['CI_high'], alpha=0.3 )
     axs[0, 1].axhline(y=32, color='tab:green', linestyle='--')
     axs[0, 1].plot(return_values_dict2['Elapsed_time'], return_values_dict2['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
-    axs[0, 1].set_title('Barracuda perception change', fontsize=10)
+    axs[0, 1].set_title('Barracuda perception change', fontsize=11)
 
     # Herring perception change
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], summary_df_herring_change['Mean'])
     axs[1, 0].fill_between(return_values_dict3['Elapsed_time'], summary_df_herring_change['CI_low'], summary_df_herring_change['CI_high'], alpha=0.3)
     axs[1, 0].axhline(y=100, color='tab:orange', linestyle='--')
     axs[1, 0].plot(return_values_dict3['Elapsed_time'], return_values_dict3['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
-    axs[1, 0].set_title('Herring perception change', fontsize=10)
+    axs[1, 0].set_title('Herring perception change', fontsize=11)
+    axs[1, 0].set_xlabel('Elapsed time (sec)')
 
     # Both herring and predator perception change (herring count lists should be the same so does not matter which one you choose)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], summary_df_both_change['Mean'])
     axs[1, 1].fill_between(return_values_dict4['Elapsed_time'], summary_df_both_change['CI_low'], summary_df_both_change['CI_high'], alpha=0.3)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_herring'], 'tab:green', linestyle='--', alpha=0.5)
     axs[1, 1].plot(return_values_dict4['Elapsed_time'], return_values_dict4['Perception_lenghts_predator'], 'tab:orange', linestyle='--', alpha=0.5)
-    axs[1, 1].set_title('Barracuda and herring perception change', fontsize=10)
+    axs[1, 1].set_title('Barracuda and herring perception change', fontsize=11)
+    axs[1, 1].set_xlabel('Elapsed time (sec)')
 
     fig.legend(loc='upper center', bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize='medium', framealpha=1)
 
     for ax in axs.flat:
-        ax.set(xlabel= 'Elapsed time', ylabel= 'Number of killed herring')
-        ax.tick_params(axis='y', which='both', labelleft=True, labelsize=6)
-        ax.tick_params(axis='x', which='both', labelsize=6)
+        ax.set(ylabel= 'Number of killed herring')
+        ax.tick_params(axis='y', which='both', labelleft=True, labelsize=8)
+        ax.tick_params(axis='y', which='both', labelleft=True, labelsize=8)
         ax.grid(True)
 
     plt.show()
 
 if __name__ == "__main__":
-    # # Determine the influence of the boid rules
-    # df_boid_killed = influence_boid_rules(40, 60)
-    # significant_test_boidsrules(df_boid_killed)
-    #
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(80, 20, 30)
-    #
-    # #Determine the invluence of more predators
-    # influence_predator_number(20, 20, 30)
-    #
-    # # Determine the influence of the scoolsize
-    # df_school_size = influence_school_size(40, 30)
-    # significant_test_school_size(df_school_size)
-    #
-    # # Determine the influence of the alignment distance
-    # influence_alignment_distance(30, 30)
-    #
-    # # Determine what influence if predators are more within the separation distance
-    # df_closeness_herring = influences_closeness_herring(40, 30)
-    # significant_test_close(df_closeness_herring)
-    # significant_test_killed(df_closeness_herring)
+    # Determine the influence of the boid rules
+    df_boid_killed = influence_boid_rules(40, 60)
+    significant_test_boidsrules(df_boid_killed)
+
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 20, 30)
+
+    #Determine the invluence of more predators
+    influence_predator_number(20, 20, 30)
+
+    # Determine the influence of the scoolsize
+    df_school_size = influence_school_size(40, 30)
+    significant_test_school_size(df_school_size)
+
+    # Determine the influence of the alignment distance
+    influence_alignment_distance(30, 30)
+
+    # Determine what influence if predators are more within the separation distance
+    df_closeness_herring = influences_closeness_herring(40, 30)
+    significant_test_close(df_closeness_herring)
+    significant_test_killed(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
-    visualizing_perception_change(1, 60)
+    visualizing_perception_change(1, 30)
 
     # Do a sensitivity analyse for the alignment, separation and cohesion distance
     sensitivity_rules_distance(30, 30)
