@@ -10,6 +10,8 @@ rules, as well as the impact of environmental changes, rocks and predators (barr
 on the killing rate within a herring school. For the parameter values of the predator
 the values from barracudas are taken.
 
+To test some functions in the model, doc test are added and automatically run when
+a simulation is run.  
 
 THE MODEL: herring_simulation  
 Herring_simulation.py contains the code to run an 2-dimensional agent-based model in

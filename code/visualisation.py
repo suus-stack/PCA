@@ -50,6 +50,7 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
             df = pd.concat([df, new_row], ignore_index=True)
 
     # Make a violin plot
+    plt.figure(figsize=(10, 6))
     sns.violinplot(data=df, x= 'Nr predators', y= 'Killed herring', hue= 'Rocks', split=True, gap=.1, inner="quart")
     legend = plt.legend(loc='upper left', fontsize=10, title='Rocks')
     plt.xlabel('Number of barracudas', fontsize=11)
@@ -57,6 +58,7 @@ def influence_predator_number(max_number_predators, number_simulations, time_sim
     plt.ylim(bottom=0)
     plt.title('Killed herring for different numbers of barracudas, with and without rocks')
     plt.show()
+
 
 def predator_killing_efficiency(max_number_predators, number_simulations, time_simulation):
     """Function that makes a line plot of the average number of killed herring per
@@ -93,25 +95,26 @@ def predator_killing_efficiency(max_number_predators, number_simulations, time_s
             df = pd.concat([df, new_row], ignore_index=True)
 
     # Make a violin plot
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     # Plot with Rocks
     rocks_data = df[df['Rocks'] == 'yes']
     rocks_avg = rocks_data.groupby('Nr predators')['Killed herring per predator'].mean()
     rocks_sd = rocks_data.groupby('Nr predators')['Killed herring per predator'].std()
-    ax.errorbar(x=rocks_avg.index, y=rocks_avg, yerr=rocks_sd, label='With Rocks', marker='o', linestyle='-', capsize=3, color='pink', markerfacecolor='red')
+    ax.errorbar(x=rocks_avg.index, y=rocks_avg, yerr=rocks_sd, label='rocks', linestyle='--', marker='o', capsize=3, color='pink', markerfacecolor='red')
 
     # Plot without Rocks
     no_rocks_data = df[df['Rocks'] == 'no']
     no_rocks_avg = no_rocks_data.groupby('Nr predators')['Killed herring per predator'].mean()
     no_rocks_sd = no_rocks_data.groupby('Nr predators')['Killed herring per predator'].std()
-    ax.errorbar(x=no_rocks_avg.index, y=no_rocks_avg, yerr=no_rocks_sd, label='Without Rocks', marker='o', linestyle='-', capsize=3, color='blue', markerfacecolor='purple')
+    ax.errorbar(x=no_rocks_avg.index, y=no_rocks_avg, yerr=no_rocks_sd, label='no rocks', linestyle='--', marker='o', capsize=3, color='blue', markerfacecolor='purple')
 
     ax.set_xlabel('Number of barracudas', fontsize =11)
-    ax.set_ylabel('Number of Killed Herring/ barracuda', fontsize =11)
-    ax.set_title('Average killed Herring + 1 SD error bars per barracuda, with and without rocks', fontsize =12)
+    ax.set_ylabel('Killed Herring/ barracuda', fontsize =11)
+    ax.set_title('Average killed herring + 1 SD error bars per barracuda, with and without rocks', fontsize =12)
     ax.legend()
     plt.show()
+
 
 
 def influence_rocks(max_number_rocks, number_simulations, time_simulation):
@@ -157,6 +160,7 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
         list_std_killed_3_predators.append(np.std(list_killed_herring_3_predators))
 
     # Make a plot of the average number of killed herring vs the number of rocks
+    plt.figure(figsize=(10, 6))
     plot = plt.errorbar(list_rock_number, list_mean_killed_1_predator, yerr=list_std_killed_1_predator, fmt='o--', color='orange', capsize=4, markerfacecolor='red', label='avarage killed herring + 1 SD, 1 barracuda')
     plot = plt.errorbar(list_rock_number, list_mean_killed_3_predators, yerr=list_std_killed_3_predators,fmt='o--', color='blue', capsize=4, markerfacecolor='purple', label='avarage killed herring + 1 SD, 3 barracudas')
     plt.xlabel('Number or rocks', fontsize=11)
@@ -208,6 +212,7 @@ def influence_alignment_distance(number_simulations, time_simulation):
         list_std_killed_no_rocks.append(np.std(list_killed_herring_no_rocks))
 
     # Make a plot of the average number of killed herring vs the alignment distance
+    plt.subplots(figsize=(10, 6))
     plot1 = plt.errorbar(list_alignment_distance, list_mean_killed_rocks, yerr = list_std_killed_rocks, fmt = 'o--', color = 'purple', markerfacecolor = 'blue', label = 'mean killed h + 1 SD with rocks', capsize = 4)
     plot2 = plt.errorbar(list_alignment_distance, list_mean_killed_no_rocks, yerr = list_std_killed_no_rocks, fmt = 'o--', color = 'red', markerfacecolor = 'pink', label = 'mean killed h + 1 SD without rocks', capsize = 4)
     plt.xlabel('Alignment distance')
@@ -269,7 +274,7 @@ def influence_school_size(number_simulations, time_simulation):
     colors_strip = {'yes': 'red' , 'no': 'blue'}
 
     # Make a figure in which both the boxplot an stripplot are plotted
-    plt.figure(figsize=(10, 6))
+    plt.subplots(figsize=(10, 6))
     boxplot = sns.boxplot(x = 'School size', y = 'Proportion killed herring', hue = 'Rocks', data = df_school_size, palette = colors_box, width = 0.8, dodge = True)
     stripplot = sns.stripplot(x = 'School size', y = 'Proportion killed herring', hue = 'Rocks', data = df_school_size, dodge = True, palette = colors_strip)
     plt.title('Proportion killed herring in large and small schools, with and without rocks')
@@ -339,7 +344,7 @@ def influences_closeness_herring(number_simulations, time_simulation):
     colors_box = {'1 p + no r + s d = 6': 'mistyrose', '4 p + no r + s d = 6': 'paleturquoise', '1 p + 20 r + s d = 6': 'wheat', '1 p + no r + s d = 3':'aquamarine', '1 p + no r + s d = 12': 'plum'}
     colors_strip = {'1 p + no r + s d = 6': 'red', '4 p + no r + s d = 6': 'blue', '1 p + 20 r + s d = 6': 'darkorange', '1 p + no r + s d = 3':'green', '1 p + no r + s d = 12': 'purple'}
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+    fig, axes = plt.subplots(1, 2, figsize=(10, 8))
 
     # Plot the first plot: density
     boxplot1 = sns.boxplot(x='Conditions', y='Times within separation distance', hue='Conditions', data=df_closeness, palette=colors_box, width=0.6, ax=axes[0])
@@ -421,7 +426,7 @@ def influence_boid_rules(number_simulations, time_simulation):
     # Create a boxplot of the different boid rules
     colors_box = ['mistyrose', 'paleturquoise', 'wheat', 'aquamarine']
     colors_strip = ['red', 'blue', 'darkorange', 'green']
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(12, 8))
     sns.boxplot(data=boids_rules_df, palette=colors_box)
     sns.stripplot(data=boids_rules_df, palette=colors_strip, jitter=0.2, size=5)
     ax = plt.gca()
@@ -580,7 +585,7 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
     ci_values_both_change = 1.96 * sem_values_both_change
     summary_df_both_change = pd.DataFrame({'Mean': mean_values_both_change, 'CI_low': mean_values_both_change - ci_values_both_change, 'CI_high': mean_values_both_change + ci_values_both_change})
 
-    fig, axs = plt.subplots(2, 2)
+    fig, axs = plt.subplots(2, 2, figsize=(12, 10))
 
     # No perception change
     axs[0, 0].plot(return_values_dict1['Elapsed_time'], summary_df_no_change['Mean'], label = 'Average killed herring')
@@ -622,31 +627,31 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
 
     plt.show()
 
-def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_range):
-    """The function makes two plots of the mean number of killed herrings 
+
+    def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_range):
+    """The function makes two plots of the mean number of killed herrings
         under different combinations of Boids Influence and Weighted X values.
 
-        Parameters:
-        -----------
-        number_simulation: int
-            The number of simulations to be executed.
-        time_simulation: int
-            The duration of each simulation.
-        min_range: int
-            The lower bound of the range of weighted_x values to be tested.
-        max_range: int
-            The upper bound of the range of weighted_x values to be tested.
-
-        Returns:
-        --------
-        boids_influence_df: DataFrame
-            DataFrame containing the results of all simulations, including 
-            the simulation number, Boids Influence value, Weighted X value, 
-            and the number of killed herrings.
-        mean_values: Series
-            Series containing the mean number of killed herrings for each 
-            combination of Boids Influence and Weighted X values.
-    """ 
+    Parameters:
+    -----------
+    number_simulation: int
+        The number of simulations to be executed.
+    time_simulation: int
+        The duration of each simulation.
+    min_range: int
+        The lower bound of the range of weighted_x values to be tested.
+    max_range: int
+        The upper bound of the range of weighted_x values to be tested.
+    Returns:
+    --------
+    boids_influence_df: DataFrame
+        DataFrame containing the results of all simulations, including
+        the simulation number, Boids Influence value, Weighted X value,
+        and the number of killed herrings.
+    mean_values: Series
+        Series containing the mean number of killed herrings for each
+        combination of Boids Influence and Weighted X values.
+    """
 
     # Keep other parameters the same for all simulations
     herring_nr = 200
@@ -723,41 +728,43 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
     plt.tight_layout()
     plt.show()
 
-
     return boids_influence_df, mean_values
 
 if __name__ == "__main__":
-    # predator_killing_efficiency(31, 20, 30)
-    # # Determine the influence of the boid rules
-    # df_boid_killed = influence_boid_rules(40, 60)
-    # significant_test_boidsrules(df_boid_killed)
-    #
-    # # Determine the influence of rocks on the killing rate
-    # influence_rocks(80, 20, 30)
+    # Determine the influence of the boid rules
+    df_boid_killed = influence_boid_rules(40, 60)
+    significant_test_boidsrules(df_boid_killed)
 
-    #Determine  the weighted_x best influence'
-    sensitivity_weighted_x(40, 30, -5, 5)
-    #
-    # #Determine the invluence of more predators
-    # influence_predator_number(20, 30, 30)
-    #
+    # Determine the influence of rocks on the killing rate
+    influence_rocks(80, 30, 30)
+
+    #Determine the invluence of more predators
+    influence_predator_number(20, 30, 30)
+
     # # Determine the influence of the scoolsize
-    # df_school_size = influence_school_size(40, 30)
-    # significant_test_school_size(df_school_size)
-    #
-    # # Determine the influence of the alignment distance
-    # influence_alignment_distance(30, 30)
-    #
-    # # Determine what influence if predators are more within the separation distance
-    # df_closeness_herring = influences_closeness_herring(40, 30)
-    # significant_test_close(df_closeness_herring)
-    # significant_test_killed(df_closeness_herring)
+    df_school_size = influence_school_size(40, 30)
+    significant_test_school_size(df_school_size)
+
+    # Determine the influence of the alignment distance
+    influence_alignment_distance(30, 30)
+
+    # Determine what influence if predators are more within the separation distance
+    df_closeness_herring = influences_closeness_herring(40, 30)
+    significant_test_close(df_closeness_herring)
+    significant_test_killed(df_closeness_herring)
 
     # Determine the influence of changes in the perception length
-    # visualizing_perception_change(6, 600, 250)
+    visualizing_perception_change(6, 600, 250)
 
-    # # Determine the influence of changes when there are only a few herring
-    # visualizing_perception_change(5, 600, 250)
+    # Determine the influence of changes when there are only a few herring
+    visualizing_perception_change(5, 600, 250)
 
-    # # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    # sensitivity_rules_distance(30, 30)
+    # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    sensitivity_rules_distance(30, 30)
+
+    # Determine the killing efficiency per predator if the number of predators increases
+    predator_killing_efficiency(30, 30, 30)
+
+    # Determine the difference in killed herring when boid rules get different weights
+     #Determine  the weighted_x best influence'
+    sensitivity_weighted_x(40, 30, -5, 5)
