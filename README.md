@@ -141,12 +141,18 @@ Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration 
 
 THE VISUALISATION: herring_simulation.py  
 Visualization.py contains the code to make plots that show the influence of environmental
-changes on the killing rate and school density. It uses the herring_simulation.py code to run
-an simulation.
+changes on the killing rate and school density. It uses the herring_simulation.py code
+to run an simulation.
 
-All results are provided in the folder data_visualisation.
-* 4-perception_change_plot: Line graph that shows the change in perception length and
-                  the influence on the number of killed herring over the time.
+Because the running of the figures takes a long time. All results are provided in the
+folder data_visualisation.
+* 4-perception_change_50_plot: Line graph that shows the change in perception length and
+                  the influence on the number of killed herring over the time when there
+                  are 50 herring at the beginning.
+
+* 4-perception_change_250_plot: Line graph that shows the change in perception length and
+                  the influence on the number of killed herring over the time when there
+                  are 250 herring in the beginning.
 
 * Change_alignment_distance_plot: Line graph of the average killed herring with SD
                   error bars at different alignment distances.
@@ -170,6 +176,9 @@ All results are provided in the folder data_visualisation.
 * Boid_rules_sensitivity_analysis_plot: Line plots of the average number of killed
                   herring + 1 SD error bars for different values of the alignment,
                   cohesion and separation distance as sensitivity analysis.
+
+* predator_killing_efficiency_plot = Line plot of the average number of killed herring per
+                      predator + 1 SD error bars in an environment with and without rocks.
 
 HOW TO RUN
 - python visualisation.py.
