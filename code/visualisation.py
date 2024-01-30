@@ -628,7 +628,7 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
     plt.show()
 
 
-    def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_range):
+def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_range):
     """The function makes two plots of the mean number of killed herrings
         under different combinations of Boids Influence and Weighted X values.
 
@@ -642,6 +642,7 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
         The lower bound of the range of weighted_x values to be tested.
     max_range: int
         The upper bound of the range of weighted_x values to be tested.
+
     Returns:
     --------
     boids_influence_df: DataFrame
@@ -731,40 +732,39 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
     return boids_influence_df, mean_values
 
 if __name__ == "__main__":
-    # Determine the influence of the boid rules
-    df_boid_killed = influence_boid_rules(40, 60)
-    significant_test_boidsrules(df_boid_killed)
-
-    # Determine the influence of rocks on the killing rate
-    influence_rocks(80, 30, 30)
-
-    #Determine the invluence of more predators
-    influence_predator_number(20, 30, 30)
-
-    # # Determine the influence of the scoolsize
-    df_school_size = influence_school_size(40, 30)
-    significant_test_school_size(df_school_size)
-
-    # Determine the influence of the alignment distance
-    influence_alignment_distance(30, 30)
-
-    # Determine what influence if predators are more within the separation distance
-    df_closeness_herring = influences_closeness_herring(40, 30)
-    significant_test_close(df_closeness_herring)
-    significant_test_killed(df_closeness_herring)
-
-    # Determine the influence of changes in the perception length
-    visualizing_perception_change(6, 600, 250)
-
-    # Determine the influence of changes when there are only a few herring
-    visualizing_perception_change(5, 600, 250)
-
-    # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    sensitivity_rules_distance(30, 30)
+    # # Determine the influence of the boid rules
+    # df_boid_killed = influence_boid_rules(40, 60)
+    # significant_test_boidsrules(df_boid_killed)
+    #
+    # # Determine the influence of rocks on the killing rate
+    # influence_rocks(80, 30, 30)
+    #
+    # #Determine the invluence of more predators
+    # influence_predator_number(20, 30, 30)
+    #
+    # # # Determine the influence of the scoolsize
+    # df_school_size = influence_school_size(40, 30)
+    # significant_test_school_size(df_school_size)
+    #
+    # # Determine the influence of the alignment distance
+    # influence_alignment_distance(30, 30)
+    #
+    # # Determine what influence if predators are more within the separation distance
+    # df_closeness_herring = influences_closeness_herring(40, 30)
+    # significant_test_close(df_closeness_herring)
+    # significant_test_killed(df_closeness_herring)
+    #
+    # # Determine the influence of changes in the perception length
+    # visualizing_perception_change(6, 600, 250)
+    #
+    # # Determine the influence of changes when there are only a few herring
+    # visualizing_perception_change(5, 600, 250)
+    #
+    # # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    # sensitivity_rules_distance(30, 30)
 
     # Determine the killing efficiency per predator if the number of predators increases
-    predator_killing_efficiency(30, 30, 30)
+    # predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
-     #Determine  the weighted_x best influence'
-    sensitivity_weighted_x(40, 30, -5, 5)
+    # sensitivity_weighted_x(2, 1, -5, 5)
