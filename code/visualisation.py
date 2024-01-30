@@ -622,6 +622,110 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
 
     plt.show()
 
+def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_range):
+    """The function makes two plots of the mean number of killed herrings 
+        under different combinations of Boids Influence and Weighted X values.
+
+        Parameters:
+        -----------
+        number_simulation: int
+            The number of simulations to be executed.
+        time_simulation: int
+            The duration of each simulation.
+        min_range: int
+            The lower bound of the range of weighted_x values to be tested.
+        max_range: int
+            The upper bound of the range of weighted_x values to be tested.
+
+        Returns:
+        --------
+        boids_influence_df: DataFrame
+            DataFrame containing the results of all simulations, including 
+            the simulation number, Boids Influence value, Weighted X value, 
+            and the number of killed herrings.
+        mean_values: Series
+            Series containing the mean number of killed herrings for each 
+            combination of Boids Influence and Weighted X values.
+    """ 
+
+    # Keep other parameters the same for all simulations
+    herring_nr = 200
+    predator_nr = 3
+    rock_nr = 20
+    simulation_duration = time_simulation
+    extra_rocks = True
+    start_school = True
+
+    all_simulation_values = []
+    for simulation in range(number_simulation):
+        print('simulation', simulation)
+        for boids_influence_value in range(4):
+            print('boids influence',boids_influence_value)
+            for weighted_x in range(min_range, max_range):
+                print(weighted_x)
+                return_values = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
+                        extra_rocks, start_school,boids_influence=boids_influence_value, weighted_x = weighted_x
+                    ).run()
+                all_simulation_values.append({
+                    'Simulation': simulation,
+                    'Boids_Influence': boids_influence_value,
+                    'Weighted_X': weighted_x,
+                    'Killed_Herring': return_values['Killed_herring']
+                })
+
+    # Maak een DataFrame van de opgeslagen waarden
+    boids_influence_df = pd.DataFrame(all_simulation_values)
+    print(boids_influence_df)
+    titles = ['No Weighted Boid Rules', 'Weighted Separation Rule', 'Weighted Alignment Rule', 'Weighted Cohesion Rule']
+    # Bereken de gemiddelde waarden voor elke combinatie van Boids Influence en Weighted X
+    mean_values = boids_influence_df.groupby(['Boids_Influence', 'Weighted_X'])['Killed_Herring'].mean()
+    std_values = boids_influence_df.groupby(['Boids_Influence', 'Weighted_X'])['Killed_Herring'].std()
+
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8), sharex=True, sharey=True)
+
+    for ax, (boids_influence, data), title in zip(axs.flat, mean_values.groupby('Boids_Influence'), titles):
+        std_data = data.reset_index(level=0, drop=True)
+        mean_data = data.reset_index(level=0, drop=True)
+
+        x_values = mean_data.index
+        scaled_std_data = std_data.reindex(x_values).interpolate()
+
+        ax.plot(x_values, mean_data, marker='o', label='Mean')
+        ax.fill_between(x_values, mean_data - std_data, mean_data + std_data, alpha=0.3)
+        ax.set_title(title)
+        ax.set_xlabel('Weighted X')
+        ax.set_ylabel('Mean Killed Herring')
+        ax.set_xticks(range(min_range, max_range+1))
+
+        # Toon aswaarden op alle subplots
+        ax.grid(True)
+        ax.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    fig, axs = plt.subplots(2, 2, figsize=(10, 8), sharex=True, sharey=True)
+
+    for ax, (boids_influence, data), title in zip(axs.flat, mean_values.groupby('Boids_Influence'), titles):
+        mean_data = data.reset_index(level=0, drop=True)
+        x_values = mean_data.index
+
+        ax.plot(x_values, mean_data, marker='o', label='Mean')
+        ax.set_title(title)
+        ax.set_xlabel('Weighted X')
+        ax.set_ylabel('Mean Killed Herring')
+        ax.set_xticks(range(min_range, max_range+1))
+
+        # Toon aswaarden op alle subplots
+        ax.grid(True)
+        ax.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+    return boids_influence_df, mean_values
+
 if __name__ == "__main__":
     # predator_killing_efficiency(31, 20, 30)
     # # Determine the influence of the boid rules
@@ -630,6 +734,9 @@ if __name__ == "__main__":
     #
     # # Determine the influence of rocks on the killing rate
     # influence_rocks(80, 20, 30)
+
+    #Determine  the weighted_x best influence'
+    sensitivity_weighted_x(40, 30, -5, 5)
     #
     # #Determine the invluence of more predators
     # influence_predator_number(20, 30, 30)
@@ -649,8 +756,8 @@ if __name__ == "__main__":
     # Determine the influence of changes in the perception length
     # visualizing_perception_change(6, 600, 250)
 
-    # Determine the influence of changes when there are only a few herring
-    visualizing_perception_change(5, 600, 250)
+    # # Determine the influence of changes when there are only a few herring
+    # visualizing_perception_change(5, 600, 250)
 
-    # Do a sensitivity analyse for the alignment, separation and cohesion distance
-    sensitivity_rules_distance(30, 30)
+    # # Do a sensitivity analyse for the alignment, separation and cohesion distance
+    # sensitivity_rules_distance(30, 30)
