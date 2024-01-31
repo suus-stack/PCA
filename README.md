@@ -10,8 +10,9 @@ rules, as well as the impact of environmental changes, rocks and predators (barr
 on the killing rate within a herring school. For the parameter values of the predator
 the values from barracudas are taken.
 
-NEEDED PACKAGES
-To run the different codes in the code file some libraries need to be installed.
+PYTHON AND LIBRARY VESIONS
+Python version 3.11.4 is used. To run the different codes in the code file some
+libraries need to be installed.
 
 Boids.py
 * numpy (version 1.26.0)
@@ -42,6 +43,8 @@ Visualisation.py
     - install: pip install seaborn==0.13.0
 * pandas (version 2.1.3)
     - install: pip install pandas==2.1.3
+
+The link to the GitHub containing the code is https://github.com/suus-stack/PCS
 
 THE MODEL: herring_simulation  
 Herring_simulation.py contains the code to run an 2-dimensional agent-based model in
