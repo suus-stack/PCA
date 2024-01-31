@@ -84,7 +84,7 @@ additional rocks along this distance line.
 THE FUNCTION  
 Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
 connect_rocks, start_school, perception_change_predator, perception_change_herring,
-alignment_distance, cohesion_distance, separation_distance, boids_influence)
+alignment_distance, cohesion_distance, separation_distance, boids_influence, weighted_x)
 
 In the default function, the rocks get a random position, and connect_rocks is set to
 true. Start_school is also set to True, the herring get different positions
@@ -101,7 +101,7 @@ over time using the 'perception_change' parameter. Additionally, the alignment d
 cohesion distance, and separation distance are subject to modification to evaluate their
 individual effects. This adjustment aims to explore whether these rule alterations affect
 the killing rate of herring. If the 'boids_influence' parameter is set to a value other
-than 0, the impact of a rule will be weighted accordingly.
+than 0, the impact of a rule will be assigned a weighted indicted with 'weighted_x'
 
 Output model  
 In the default function, the model returns a dictionary that contains the number
@@ -112,7 +112,7 @@ If 'perception_change_predator' is set to True it also returns a list with the p
 length of the predator and with the killed herring count at every time point.
 
 FIXED PARAMETERS  
-* HERRING_SIZE (float) = the radius of the circle wich represents herring in the simulation.
+* HERRING_SIZE (float) = the radius of the circle which represents herring in the simulation.
                          - Set to 3
 * HERRING_SPEED (float) = the average speed of a herring.
                          - Set to 1.24 (SD = 0.05)
@@ -160,23 +160,23 @@ CHANGEABLE PARAMETERS
                           included in the cohesion rule.
 * boids_influence (int) = Indicates the influence of Boids rules.
                             0 --  all rules are equal,
-                            1 -- separation is weighted 3 times more,
-                            2 -- alignment is weighted 3 times more,
-                            3 -- cohesion is weighted 3 times more.
+                            1 -- separation is weighted weighted_x times more,
+                            2 -- alignment is weighted weighted_x times more,
+                            3 -- cohesion is weighted weighted_x times more.
+* weighted_x (int) = Indicates the weight of the Boid rule of which the influence is changed  
 
 HOW TO RUN:  
 Command to simulate the default model with these values:
 Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration = 20,
       extra_rocks = False, start_school = True, perception_change_predator = False,
       perception_change_herring = False, alignment_distance = 32, cohesion_distance = 32,
-      separation_distance = 6, boids_influence = 0)
+      separation_distance = 6, boids_influence = 0, weight_x = 3)
 
 - python herring_simulation.py
 
 TEST CODE   
 To test some functions in the model, doc test are added and automatically run when
 a simulation is run.
-
 
 THE VISUALISATION: herring_simulation.py  
 Visualization.py contains the code to make plots that show the influence of environmental
@@ -216,8 +216,11 @@ folder data_visualisation.
                   herring + 1 SD error bars for different values of the alignment,
                   cohesion and separation distance as sensitivity analysis.
 
-* predator_killing_efficiency_plot = Line plot of the average number of killed herring per
-                      predator + 1 SD error bars in an environment with and without rocks.
+* Predator_killing_efficiency_plot = Line plot of the average number of killed herring per
+                  predator + 1 SD error bars in an environment with and without rocks.
+
+* Sensitivity_weight_plot =  line plots illustrating the mean number of killed herring + SD 
+                  for weight values ranging from -5 to 5 in increments of 1.
 
 HOW TO RUN
 - python visualisation.py.
@@ -240,6 +243,7 @@ significant_test_boidsrules
 - Test to determine if the different Boid-flocking rules significantly influence the killing rate.
 
 This cannot be run separately because it needs the data collected from visualisation.py.
+
 
 INCOMPLETE MODEL: vectorized implementation  
 boids.py contains code to run an agent-based simulation of herring schools and possibly

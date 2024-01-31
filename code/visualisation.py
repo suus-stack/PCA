@@ -101,16 +101,16 @@ def predator_killing_efficiency(max_number_predators, number_simulations, time_s
     rocks_data = df[df['Rocks'] == 'yes']
     rocks_avg = rocks_data.groupby('Nr predators')['Killed herring per predator'].mean()
     rocks_sd = rocks_data.groupby('Nr predators')['Killed herring per predator'].std()
-    ax.errorbar(x=rocks_avg.index, y=rocks_avg, yerr=rocks_sd, label='rocks', linestyle='--', marker='o', capsize=3, color='pink', markerfacecolor='red')
+    ax.errorbar(x=rocks_avg.index, y=rocks_avg, yerr=rocks_sd, label='rocks', linestyle='-', marker='o', capsize=3, color='pink', markerfacecolor='red')
 
     # Plot without Rocks
     no_rocks_data = df[df['Rocks'] == 'no']
     no_rocks_avg = no_rocks_data.groupby('Nr predators')['Killed herring per predator'].mean()
     no_rocks_sd = no_rocks_data.groupby('Nr predators')['Killed herring per predator'].std()
-    ax.errorbar(x=no_rocks_avg.index, y=no_rocks_avg, yerr=no_rocks_sd, label='no rocks', linestyle='--', marker='o', capsize=3, color='blue', markerfacecolor='purple')
+    ax.errorbar(x=no_rocks_avg.index, y=no_rocks_avg, yerr=no_rocks_sd, label='no rocks', linestyle='-', marker='o', capsize=3, color='blue', markerfacecolor='purple')
 
     ax.set_xlabel('Number of barracudas', fontsize =11)
-    ax.set_ylabel('Killed Herring/ barracuda', fontsize =11)
+    ax.set_ylabel('Killed herring/ barracuda', fontsize =11)
     ax.set_title('Average killed herring + 1 SD error bars per barracuda, with and without rocks', fontsize =12)
     ax.legend()
     plt.show()
