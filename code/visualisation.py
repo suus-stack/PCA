@@ -697,11 +697,11 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
         scaled_std_data = std_data.reindex(x_values).interpolate()
 
         ax.plot(x_values, mean_data, marker='o', label='Mean')
-        ax.fill_between(x_values, mean_data - std_data, mean_data + std_data, alpha=0.3)
+        ax.fill_between(x_values, mean_data - std_data, mean_data + std_data, alpha=0.3, label = 'standard deviation')
         ax.set_title(title)
         ax.set_xlabel('Weighted X')
         ax.set_ylabel('Mean Killed Herring')
-        ax.set_xticks(range(min_range, max_range+1))
+        ax.set_xticks(range(min_range, max_range))
 
         # Toon aswaarden op alle subplots
         ax.grid(True)
@@ -720,7 +720,7 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
         ax.set_title(title)
         ax.set_xlabel('Weighted X')
         ax.set_ylabel('Mean Killed Herring')
-        ax.set_xticks(range(min_range, max_range+1))
+        ax.set_xticks(range(min_range, max_range))
 
         # Toon aswaarden op alle subplots
         ax.grid(True)
@@ -764,7 +764,7 @@ if __name__ == "__main__":
     # sensitivity_rules_distance(30, 30)
 
     # Determine the killing efficiency per predator if the number of predators increases
-    predator_killing_efficiency(30, 30, 30)
+    #predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
-    # sensitivity_weighted_x(2, 1, -5, 5)
+     sensitivity_weighted_x(2, 1, -5, 6)
