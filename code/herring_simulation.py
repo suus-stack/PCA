@@ -66,7 +66,7 @@ class Herring(pygame.sprite.Sprite):
         # Pick velocity and multiply it with the correct speed and add randomness
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
-    def boids_rules_herring(self, all_herring, boids_influence):
+    def boids_rules_herring(self, all_herring, boids_influence, weighted_x):
         """ Function to adapt the herring velocity to implement the flocking rules:
         - The separation rule: herring maintain a certain minimum distance with respect
         to its surrounding herring.
@@ -83,6 +83,8 @@ class Herring(pygame.sprite.Sprite):
             Group containing all herring entities.
         boids_influence: Int
             Indicates if a boid rule is more important.
+        weighted_x: Int
+            Indicates the weight value at which the rule holds greater significance.
         """
         # Make needed vectors and counters
         separation_vector = pygame.Vector2(0, 0)
@@ -97,17 +99,17 @@ class Herring(pygame.sprite.Sprite):
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 1:
-            separation_influence = 3
+            separation_influence = weighted_x
             alignment_influence = 1
             cohesion_influence = 1
         if boids_influence == 2:
             separation_influence = 1
-            alignment_influence = 3
+            alignment_influence = weighted_x
             cohesion_influence = 1
         if boids_influence == 3:
             separation_influence = 1
             alignment_influence = 1
-            cohesion_influence = 3
+            cohesion_influence = weighted_x
 
         # Loop over all the herring
         for herring in all_herring:
@@ -239,7 +241,7 @@ class Herring(pygame.sprite.Sprite):
                 # Normalize velocity and multiply by the changed speed
                 self.velocity = self.velocity.normalize() * (Config.HERRING_SPEED + (Config.HERRING_SPEED_MAX - Config.HERRING_SPEED + random.uniform(-0.05, 0.05)) * closeness)
 
-    def update(self, all_herring, all_predators, all_rocks, boids_influence):
+    def update(self, all_herring, all_predators, all_rocks, boids_influence, weighted_x):
         """This function updates the position of a herring. The new position is
         dependent on the old position, the cohesion-, separation- and alignment rule,
         the rock positions and the positions of the predator(s).
@@ -256,9 +258,11 @@ class Herring(pygame.sprite.Sprite):
             Group containing all rock entities.
         boids_influence: Int
             Indicates if a boid rule is more important.
+        weighted_x: Int
+            Indicates the weight value at which the rule weighted.
         """
         # Appy the three boids rules
-        self.boids_rules_herring(all_herring, boids_influence)
+        self.boids_rules_herring(all_herring, boids_influence, weighted_x)
 
         # Determine influence of the environment
         self.avoid_predator(all_predators, all_herring)
@@ -476,7 +480,7 @@ class Rock(pygame.sprite.Sprite):
 
 class Experiment(pygame.sprite.Sprite):
     def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20, extra_rocks=False, start_school=False, perception_change_predator=False,
-        perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5, boids_influence=0):
+        perception_change_herring=False, alignment_distance=20, cohesion_distance=20, separation_distance=5, boids_influence=0, weighted_x=0):
         """
         Parameters:
         -----------
@@ -508,7 +512,9 @@ class Experiment(pygame.sprite.Sprite):
             The distance that determines which neighbouring herring are used for
             the separation rule.
         boids_influence: Int
-            Indicates if one boid rule is more important
+            Indicates if one boid rule is weighted.
+        weighted_x: Int
+            Indicates the weight value at which the rule more important.
         """
         self.herring_nr = herring_nr
         self.predator_nr = predator_nr
@@ -520,6 +526,7 @@ class Experiment(pygame.sprite.Sprite):
         self.perception_change_herring = perception_change_herring
         self.boids_influence = boids_influence
         self.perception_change_called = True
+        self.weighted_x = weighted_x
 
         Config.ALIGNMENT_DISTANCE = alignment_distance
         Config.COHESION_DISTANCE = cohesion_distance
@@ -904,7 +911,7 @@ class Experiment(pygame.sprite.Sprite):
                     simulation_run = False
 
             # Update the position of the herring and predators
-            all_herring.update(all_herring, all_predators, all_rocks, self.boids_influence)
+            all_herring.update(all_herring, all_predators, all_rocks, self.boids_influence, self.weighted_x)
             all_predators.update(all_herring, all_predators, all_rocks)
 
             elapsed_time = (showed_frames / Config.FRAMES_PER_SECOND)
@@ -966,8 +973,9 @@ if __name__ == "__main__":
     10: The cohesion distance (float). Default set to 32.
     11: The separation distance (float). Default set to 6.
     12: The influence of boids rules (int). Default set to 0.
+    13: The weighted value (int). Default set to 3.
     """
     # Do a doctest and run the simulation
     doctest.testmod()
-    experiment_example = Experiment(200, 3, 40, 60, True, True, False, False, 32, 32, 6, 0)
+    experiment_example = Experiment(200, 3, 40, 5, True, True, False, False, 32, 32, 6, 0, 3)
     return_values = experiment_example.run()
