@@ -21,35 +21,44 @@ def significant_test_school_size(df):
     df: Dataframe
         Datafframe with the values obtained from the simulated experiments.
     """
-    df['Proportion killed herring'] = pd.to_numeric(df['Proportion killed herring'], errors='coerce')
+    df['Proportion killed herring'] = pd.to_numeric(df['Proportion killed herring'], \
+                                                                    errors='coerce')
 
     # Extract the killing values for the small and large school with and without rocks
-    values_small_school_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == 'yes'), 'Proportion killed herring']
-    values_large_school_rocks = df.loc[(df['School size'] == 400) & (df['Rocks'] == 'yes'), 'Proportion killed herring']
-    values_small_school_no_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == 'no'), 'Proportion killed herring']
-    values_large_school_no_rocks = df.loc[(df['School size'] == 400) & (df['Rocks'] == 'no'), 'Proportion killed herring']
+    v_small_school_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == \
+                                            'yes'), 'Proportion killed herring']
+    v_large_school_rocks = df.loc[(df['School size'] == 400) & (df['Rocks'] == \
+                                            'yes'), 'Proportion killed herring']
+    v_small_school_no_rocks = df.loc[(df['School size'] == 200) & (df['Rocks'] == \
+                                                'no'), 'Proportion killed herring']
+    v_large_school_no_rocks = df.loc[(df['School size'] == 400) & (df['Rocks'] == \
+                                                'no'), 'Proportion killed herring']
 
     # Determine if the data is normally distributed
-    statistic_small_school_rocks, p_value_small_school_rocks = shapiro(values_small_school_rocks)
-    statistic_large_school_rocks, p_value_large_school_rocks = shapiro(values_large_school_rocks)
-    statistic_small_school_no_rocks, p_value_small_school_no_rocks = shapiro(values_small_school_no_rocks)
-    statistic_large_school_no_rocks, p_value_large_school_no_rocks = shapiro(values_large_school_no_rocks)
+    _, p_value_small_school_rocks = shapiro(v_small_school_rocks)
+    _, p_value_large_school_rocks = shapiro(v_large_school_rocks)
+    _, p_value_small_school_no_rocks = shapiro(v_small_school_no_rocks)
+    _, p_value_large_school_no_rocks = shapiro(v_large_school_no_rocks)
 
     # Influence of school size in an environment with rocks.
     if  p_value_large_school_rocks >= 0.05 and p_value_small_school_rocks >= 0.05:
-        t_statistic, p_value = ttest_rel(values_small_school_rocks, values_large_school_rocks)
-        print(f'Small vs large school in an environment with rocks; t-statistic: {t_statistic}, p-Value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_small_school_rocks, v_large_school_rocks)
+        print(f'Small vs large school in an environment with rocks; t-statistic: \
+                                                    {t_statistic}, p-Value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_small_school_rocks, values_large_school_rocks)
-        print(f'Small vs large school in an environment with rocks; Wilcoxon statistic: {w_statistic}, p-Value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_small_school_rocks, v_large_school_rocks)
+        print(f'Small vs large school in an environment with rocks; Wilcoxon \
+                                    statistic: {w_statistic}, p-Value: {p_value}')
 
     # Influence of school size in an environment without rocks.
     if  p_value_large_school_no_rocks >= 0.05 and p_value_small_school_no_rocks >= 0.05:
-        t_statistic, p_value = ttest_rel(values_small_school_no_rocks, values_large_school_no_rocks)
-        print(f'Small vs large school in an environment without rocks; t-statistic: {t_statistic}, p-Value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_small_school_no_rocks, v_large_school_no_rocks)
+        print(f'Small vs large school in an environment without rocks; t-statistic: \
+                                                    {t_statistic}, p-Value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_small_school_no_rocks, values_large_school_no_rocks)
-        print(f'Small vs large school in an environment without rocks; Wilcoxon statistic: {w_statistic}, p-Value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_small_school_no_rocks, v_large_school_no_rocks)
+        print(f'Small vs large school in an environment without rocks; Wilcoxon \
+                                    statistic: {w_statistic}, p-Value: {p_value}')
 
 
 def significant_test_close(df):
@@ -62,53 +71,67 @@ def significant_test_close(df):
     df: Dataframe
         Dataframe with the values obtained from the simulated experiments.
     """
-    df['Times within separation distance'] = pd.to_numeric(df['Times within separation distance'], errors='coerce')
+    df['Times within separation distance'] = pd.to_numeric(df['Times within separation \
+                                                        distance'], errors='coerce')
 
     # Extract the killing values for the different conditions
-    values_1_p_6_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 6'), 'Times within separation distance']
-    values_1_p_6_r = df.loc[(df['Conditions'] == '1 p + 20 r + s d = 6'), 'Times within separation distance']
-    values_4_p_6_no_r = df.loc[(df['Conditions'] == '4 p + no r + s d = 6'), 'Times within separation distance']
-    values_1_p_3_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 3'), 'Times within separation distance']
-    values_1_p_12_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 12'), 'Times within separation distance']
+    v_1_p_6_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 6'), \
+                                        'Times within separation distance']
+    v_1_p_6_r = df.loc[(df['Conditions'] == '1 p + 20 r + s d = 6'), \
+                                        'Times within separation distance']
+    v_4_p_6_no_r = df.loc[(df['Conditions'] == '4 p + no r + s d = 6'), \
+                                        'Times within separation distance']
+    v_1_p_3_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 3'), \
+                                        'Times within separation distance']
+    v_1_p_12_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 12'), \
+                                        'Times within separation distance']
 
     # Determine if the data is normally distributed
-    statistic_1_p_6_no_r, p_value_1_p_6_no_r = shapiro(values_1_p_6_no_r)
-    statistic_1_p_6_r, p_value_1_p_6_r = shapiro(values_1_p_6_r)
-    statistic_4_p_6_no_r, p_value_4_p_6_no_r = shapiro(values_4_p_6_no_r)
-    statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(values_1_p_3_no_r)
-    statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(values_1_p_12_no_r)
+    statistic_1_p_6_no_r, p_value_1_p_6_no_r = shapiro(v_1_p_6_no_r)
+    statistic_1_p_6_r, p_value_1_p_6_r = shapiro(v_1_p_6_r)
+    statistic_4_p_6_no_r, p_value_4_p_6_no_r = shapiro(v_4_p_6_no_r)
+    statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(v_1_p_3_no_r)
+    statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(v_1_p_12_no_r)
 
     # Determine if introducing predators has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_4_p_6_no_r)
-        print(f'Effect introduction predators on the density; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_4_p_6_no_r)
+        print(f'Effect introduction predators on the density; t-statistic: \
+                                            {t_statistic}, p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_4_p_6_no_r)
-        print(f'Effect introduction predators on the density; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_4_p_6_no_r)
+        print(f'Effect introduction predators on the density; Wilcoxon statistic: \
+                                                {w_statistic}, p-value: {p_value}')
 
     # Determine if introducing rocks has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_6_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_6_r)
-        print(f'Effect introduction rocks on density; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_6_r)
+        print(f'Effect introduction rocks on density; t-statistic: {t_statistic}, \
+                                                            p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_6_r)
-        print(f'Effect introduction rocks on the density; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_6_r)
+        print(f'Effect introduction rocks on the density; Wilcoxon statistic: \
+                                            {w_statistic}, p-value: {p_value}')
 
     # Determine if a lower separation distance has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_3_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the density; t-statistic: {t_statistic}, p-Value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_3_no_r)
+        print(f'Effect smaller separation distance on the density; t-statistic: \
+                                                {t_statistic}, p-Value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the density; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_3_no_r)
+        print(f'Effect smaller separation distance on the density; Wilcoxon \
+                                    statistic: {w_statistic}, p-value: {p_value}')
 
     # Determine if a higher separation distance has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_12_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_12_no_r)
-        print(f'Effect larger separation distance on the density; t-statistic: {t_statistic}, p-Value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_12_no_r)
+        print(f'Effect larger separation distance on the density; t-statistic: \
+                                                {t_statistic}, p-Value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_12_no_r)
-        print(f'Effect larger separation distance on the density; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_12_no_r)
+        print(f'Effect larger separation distance on the density; Wilcoxon statistic:\
+                                                {w_statistic}, p-value: {p_value}')
 
 
 def significant_test_killed(df):
@@ -124,50 +147,58 @@ def significant_test_killed(df):
     df['Killed herring'] = pd.to_numeric(df['Killed herring'], errors='coerce')
 
     # Extract the killing values for the different conditions
-    values_1_p_6_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 6'), 'Killed herring']
-    values_1_p_6_r = df.loc[(df['Conditions'] == '1 p + 20 r + s d = 6'), 'Killed herring']
-    values_4_p_6_no_r = df.loc[(df['Conditions'] == '4 p + no r + s d = 6'), 'Killed herring']
-    values_1_p_3_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 3'), 'Killed herring']
-    values_1_p_12_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 12'), 'Killed herring']
+    v_1_p_6_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 6'), 'Killed herring']
+    v_1_p_6_r = df.loc[(df['Conditions'] == '1 p + 20 r + s d = 6'), 'Killed herring']
+    v_4_p_6_no_r = df.loc[(df['Conditions'] == '4 p + no r + s d = 6'), 'Killed herring']
+    v_1_p_3_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 3'), 'Killed herring']
+    v_1_p_12_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 12'), 'Killed herring']
 
     # Determine if the data is normally distributed
-    statistic_1_p_6_no_r, p_value_1_p_6_no_r = shapiro(values_1_p_6_no_r)
-    statistic_1_p_6_r, p_value_1_p_6_r = shapiro(values_1_p_6_r)
-    statistic_4_p_6_no_r, p_value_4_p_6_no_r = shapiro(values_4_p_6_no_r)
-    statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(values_1_p_3_no_r)
-    statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(values_1_p_12_no_r)
+    statistic_1_p_6_no_r, p_value_1_p_6_no_r = shapiro(v_1_p_6_no_r)
+    statistic_1_p_6_r, p_value_1_p_6_r = shapiro(v_1_p_6_r)
+    statistic_4_p_6_no_r, p_value_4_p_6_no_r = shapiro(v_4_p_6_no_r)
+    statistic_1_p_3_no_r, p_value_1_p_3_no_r = shapiro(v_1_p_3_no_r)
+    statistic_1_p_12_no_r, p_value_1_p_12_no_r = shapiro(v_1_p_12_no_r)
 
-    # Determine if introducing predators has a significant influence on the killing rate
+    # Determine if introducing predators has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_4_p_6_no_r)
-        print(f'Effect introduction predators on the killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_4_p_6_no_r)
+        print(f'Effect introduction predators on the killing rate; t-statistic: \
+                                                {t_statistic}, p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_4_p_6_no_r)
-        print(f'Effect introduction predators on the killing rate; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_4_p_6_no_r)
+        print(f'Effect introduction predators on the killing rate; Wilcoxon \
+                                    statistic: {w_statistic}, p-value: {p_value}')
 
-    # Determine if introducing rocks has a significant influence on the killing rate
+    # Determine if introducing rocks has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_6_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_6_r)
-        print(f'Effect introduction rocks on the killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_6_r)
+        print(f'Effect introduction rocks on the killing rate; t-statistic: \
+                                            {t_statistic}, p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_6_r)
-        print(f'Effect introduction rocks on the killing rate; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_6_r)
+        print(f'Effect introduction rocks on the killing rate; Wilcoxon statistic: \
+                                                    {w_statistic}, p-value: {p_value}')
 
-    # Determine if a lower separation distance has a significant influence on the killing rate
+    # Determine if a lower separation distance has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_3_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_3_no_r)
+        print(f'Effect smaller separation distance on the killing rate; t-statistic: \
+                                                {t_statistic}, p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the killing rate; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_3_no_r)
+        print(f'Effect smaller separation distance on the killing rate; Wilcoxon \
+                                    statistic: {w_statistic}, p-value: {p_value}')
 
-    # Determine if a higher separation distance has a significant influence on the killing rate
+    # Determine if a higher separation distance has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_12_no_r >= 0.05:
-        t_statistic, p_value = ttest_rel(values_1_p_6_no_r, values_1_p_12_no_r)
-        print(f'Effect larger separation distance on the killing rate; t-statistic: {t_statistic}, p-value: {p_value}')
+        t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_12_no_r)
+        print(f'Effect larger separation distance on the killing rate; t-statistic: \
+                                                {t_statistic}, p-value: {p_value}')
     else:
-        w_statistic, p_value = wilcoxon(values_1_p_6_no_r, values_1_p_12_no_r)
-        print(f'Effect larger separation distance on the killing rate; Wilcoxon statistic: {w_statistic}, p-value: {p_value}')
+        w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_12_no_r)
+        print(f'Effect larger separation distance on the killing rate; Wilcoxon \
+                                    statistic: {w_statistic}, p-value: {p_value}')
 
 
 def significant_test_boidsrules(data):
@@ -196,11 +227,14 @@ def significant_test_boidsrules(data):
             t_stat, p_value = ttest_rel(group1_data, group2_data)
 
             # Print the results of the paired t-test
-            print(f'Paired t-test between "{group1_name}" and "{group2_name}": t-statistic = {t_stat}, p-value = {p_value}')
+            print(f'Paired t-test between "{group1_name}" and "{group2_name}": \
+                                    t-statistic = {t_stat}, p-value = {p_value}')
 
         else:
             # Perform Mann-Whitney U test
-            statistic, p_value_wilcoxon = wilcoxon(group1_data, group2_data, alternative='two-sided')
+            statistic, p_value_wilcoxon = wilcoxon(group1_data, group2_data,
+                                                        alternative='two-sided')
 
             # Print the results for wilcoxon test
-            print(f'Wilcoxon test between "{group1_name}" and "{group2_name}": Wilcoxon statistic = {statistic}, p-value = {p_value_wilcoxon}')
+            print(f'Wilcoxon test between "{group1_name}" and "{group2_name}": \
+                Wilcoxon statistic = {statistic}, p-value = {p_value_wilcoxon}')
