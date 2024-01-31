@@ -764,7 +764,7 @@ if __name__ == "__main__":
     # sensitivity_rules_distance(30, 30)
 
     # Determine the killing efficiency per predator if the number of predators increases
-    # predator_killing_efficiency(30, 30, 30)
+    predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
     # sensitivity_weighted_x(2, 1, -5, 5)

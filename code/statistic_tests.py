@@ -8,14 +8,9 @@ Description:  In this code the functions are given to do statistical tests in
               visualisation.py with the data from the runned simulations.
 """
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
-from scipy import stats
 import matplotlib.patches as patches
 from scipy.stats import shapiro, ttest_rel, wilcoxon
-import numpy as np
-
 
 def significant_test_school_size(df):
     """Function that determines if there is a significant difference in killed
