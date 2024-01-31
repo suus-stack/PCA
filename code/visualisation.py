@@ -741,4 +741,4 @@ if __name__ == "__main__":
     #predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
-    sensitivity_weighted_x(3, 5, -5, 6)
+    sensitivity_weighted_x(40, 30, -5, 6)
