@@ -43,22 +43,22 @@ def significant_test_school_size(df):
     # Influence of school size in an environment with rocks.
     if  p_value_large_school_rocks >= 0.05 and p_value_small_school_rocks >= 0.05:
         t_statistic, p_value = ttest_rel(v_small_school_rocks, v_large_school_rocks)
-        print(f'Small vs large school in an environment with rocks; t-statistic: \
-                                                    {t_statistic}, p-Value: {p_value}')
+        print(f'''Small vs large school in an environment with rocks; t-statistic:
+                {t_statistic}, p-Value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_small_school_rocks, v_large_school_rocks)
-        print(f'Small vs large school in an environment with rocks; Wilcoxon \
-                                    statistic: {w_statistic}, p-Value: {p_value}')
+        print(f'''Small vs large school in an environment with rocks; Wilcoxon
+                 statistic: {w_statistic}, p-Value: {p_value}''')
 
     # Influence of school size in an environment without rocks.
     if  p_value_large_school_no_rocks >= 0.05 and p_value_small_school_no_rocks >= 0.05:
         t_statistic, p_value = ttest_rel(v_small_school_no_rocks, v_large_school_no_rocks)
-        print(f'Small vs large school in an environment without rocks; t-statistic: \
-                                                    {t_statistic}, p-Value: {p_value}')
+        print(f'''Small vs large school in an environment without rocks; t-statistic:
+                {t_statistic}, p-Value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_small_school_no_rocks, v_large_school_no_rocks)
-        print(f'Small vs large school in an environment without rocks; Wilcoxon \
-                                    statistic: {w_statistic}, p-Value: {p_value}')
+        print(f'''Small vs large school in an environment without rocks; Wilcoxon
+                statistic: {w_statistic}, p-Value: {p_value}''')
 
 
 def significant_test_close(df):
@@ -71,8 +71,8 @@ def significant_test_close(df):
     df: Dataframe
         Dataframe with the values obtained from the simulated experiments.
     """
-    df['Times within separation distance'] = pd.to_numeric(df['Times within separation \
-                                                        distance'], errors='coerce')
+    df['Times within separation distance'] = pd.to_numeric(df[\
+                            'Times within separation distance'], errors='coerce')
 
     # Extract the killing values for the different conditions
     v_1_p_6_no_r = df.loc[(df['Conditions'] == '1 p + no r + s d = 6'), \
@@ -96,42 +96,42 @@ def significant_test_close(df):
     # Determine if introducing predators has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_4_p_6_no_r)
-        print(f'Effect introduction predators on the density; t-statistic: \
-                                            {t_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction predators on the density; t-statistic:
+               {t_statistic}, p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_4_p_6_no_r)
-        print(f'Effect introduction predators on the density; Wilcoxon statistic: \
-                                                {w_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction predators on the density; Wilcoxon statistic:
+                {w_statistic}, p-value: {p_value}''')
 
     # Determine if introducing rocks has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_6_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_6_r)
-        print(f'Effect introduction rocks on density; t-statistic: {t_statistic}, \
-                                                            p-value: {p_value}')
+        print(f'''Effect introduction rocks on density; t-statistic: {t_statistic},
+                p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_6_r)
-        print(f'Effect introduction rocks on the density; Wilcoxon statistic: \
-                                            {w_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction rocks on the density; Wilcoxon statistic:
+                {w_statistic}, p-value: {p_value}''')
 
     # Determine if a lower separation distance has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_3_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the density; t-statistic: \
-                                                {t_statistic}, p-Value: {p_value}')
+        print(f'''Effect smaller separation distance on the density; t-statistic:
+                {t_statistic}, p-Value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the density; Wilcoxon \
-                                    statistic: {w_statistic}, p-value: {p_value}')
+        print(f'''Effect smaller separation distance on the density; Wilcoxon
+                statistic: {w_statistic}, p-value: {p_value}''')
 
     # Determine if a higher separation distance has a significant influence on the density
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_12_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_12_no_r)
-        print(f'Effect larger separation distance on the density; t-statistic: \
-                                                {t_statistic}, p-Value: {p_value}')
+        print(f'''Effect larger separation distance on the density; t-statistic:
+                {t_statistic}, p-Value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_12_no_r)
-        print(f'Effect larger separation distance on the density; Wilcoxon statistic:\
-                                                {w_statistic}, p-value: {p_value}')
+        print(f'''Effect larger separation distance on the density; Wilcoxon statistic:
+                {w_statistic}, p-value: {p_value}''')
 
 
 def significant_test_killed(df):
@@ -163,42 +163,42 @@ def significant_test_killed(df):
     # Determine if introducing predators has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_4_p_6_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_4_p_6_no_r)
-        print(f'Effect introduction predators on the killing rate; t-statistic: \
-                                                {t_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction predators on the killing rate; t-statistic:
+                {t_statistic}, p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_4_p_6_no_r)
-        print(f'Effect introduction predators on the killing rate; Wilcoxon \
-                                    statistic: {w_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction predators on the killing rate; Wilcoxon
+                statistic: {w_statistic}, p-value: {p_value}''')
 
     # Determine if introducing rocks has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_6_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_6_r)
-        print(f'Effect introduction rocks on the killing rate; t-statistic: \
-                                            {t_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction rocks on the killing rate; t-statistic:
+                {t_statistic}, p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_6_r)
-        print(f'Effect introduction rocks on the killing rate; Wilcoxon statistic: \
-                                                    {w_statistic}, p-value: {p_value}')
+        print(f'''Effect introduction rocks on the killing rate; Wilcoxon statistic:
+                {w_statistic}, p-value: {p_value}''')
 
     # Determine if a lower separation distance has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_3_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the killing rate; t-statistic: \
-                                                {t_statistic}, p-value: {p_value}')
+        print(f'''Effect smaller separation distance on the killing rate; t-statistic:
+                {t_statistic}, p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_3_no_r)
-        print(f'Effect smaller separation distance on the killing rate; Wilcoxon \
-                                    statistic: {w_statistic}, p-value: {p_value}')
+        print(f'''Effect smaller separation distance on the killing rate; Wilcoxon
+                statistic: {w_statistic}, p-value: {p_value}''')
 
     # Determine if a higher separation distance has an influence on the killing rate
     if p_value_1_p_6_no_r >= 0.05 and p_value_1_p_12_no_r >= 0.05:
         t_statistic, p_value = ttest_rel(v_1_p_6_no_r, v_1_p_12_no_r)
-        print(f'Effect larger separation distance on the killing rate; t-statistic: \
-                                                {t_statistic}, p-value: {p_value}')
+        print(f'''Effect larger separation distance on the killing rate; t-statistic:
+                {t_statistic}, p-value: {p_value}''')
     else:
         w_statistic, p_value = wilcoxon(v_1_p_6_no_r, v_1_p_12_no_r)
-        print(f'Effect larger separation distance on the killing rate; Wilcoxon \
-                                    statistic: {w_statistic}, p-value: {p_value}')
+        print(f'''Effect larger separation distance on the killing rate; Wilcoxon
+                statistic: {w_statistic}, p-value: {p_value}''')
 
 
 def significant_test_boidsrules(data):
@@ -227,8 +227,8 @@ def significant_test_boidsrules(data):
             t_stat, p_value = ttest_rel(group1_data, group2_data)
 
             # Print the results of the paired t-test
-            print(f'Paired t-test between "{group1_name}" and "{group2_name}": \
-                                    t-statistic = {t_stat}, p-value = {p_value}')
+            print(f'''Paired t-test between "{group1_name}" and "{group2_name}":
+                    t-statistic = {t_stat}, p-value = {p_value}''')
 
         else:
             # Perform Mann-Whitney U test
@@ -236,5 +236,5 @@ def significant_test_boidsrules(data):
                                                         alternative='two-sided')
 
             # Print the results for wilcoxon test
-            print(f'Wilcoxon test between "{group1_name}" and "{group2_name}": \
-                Wilcoxon statistic = {statistic}, p-value = {p_value_wilcoxon}')
+            print(f'''Wilcoxon test between "{group1_name}" and "{group2_name}":
+                    Wilcoxon statistic = {statistic}, p-value = {p_value_wilcoxon}''')

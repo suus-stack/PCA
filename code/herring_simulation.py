@@ -23,7 +23,7 @@ class Config():
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
-    FRAMES_PER_SECOND = 20
+    FRAMES_PER_SECOND = 25
 
     # Parameters herring
     HERRING_SIZE = 3
@@ -66,7 +66,7 @@ class Herring(pygame.sprite.Sprite):
 
         # Pick velocity and multiply it with the correct speed and add randomness
         self.velocity = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, \
-         1)).normalize() \* (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
+         1)).normalize() * (Config.HERRING_SPEED + random.uniform(-0.05, 0.05))
 
     def boids_rules_herring(self, all_herring, boids_influence, weighted_x):
         """ Function to adapt the herring velocity to implement the flocking rules:
@@ -978,9 +978,9 @@ class Experiment(pygame.sprite.Sprite):
             # Determine if perception length changes should be included
             if self.perception_change_predator or self.perception_change_herring:
                 perception_list_predator, perception_list_herring, killed_count_ls_pred, \
-                killed_count_ls_herr = self.perception_change(showed_frames, perception_ \
-                lengths_predator, perception_lengths_herring, killed_herring_count_pred, \
-                killed_herring_count_herr)
+                killed_count_ls_herr = self.perception_change(showed_frames, \
+                perception_lengths_predator, perception_lengths_herring, \
+                killed_herring_count_pred, killed_herring_count_herr)
                 return_values['Perception_lenghts_predator'] = perception_list_predator
                 return_values['Killed_herring_count_predator_perception_change'] =  \
                                                                     killed_count_ls_pred
@@ -1031,5 +1031,5 @@ if __name__ == "__main__":
     """
     # Do a doctest and run the simulation
     doctest.testmod()
-    experiment_example = Experiment(200, 3, 40, 5, True, True, False, False, 32, 32, 6, 0, 3)
+    experiment_example = Experiment(150, 3, 40, 300, True, True, False, False, 32, 32, 6, 0, 3)
     return_values = experiment_example.run()
