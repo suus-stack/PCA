@@ -1033,6 +1033,11 @@ if __name__ == "__main__":
     13: The weighted value (int). Default set to 3.
     """
     # Do a doctest and run the simulation
-    doctest.testmod()
-    experiment_example = Experiment(180, 2, 40, 300, True, True, False, False, 32, 32, 6, 0, 3)
-    return_values = experiment_example.run()
+    # doctest.testmod()
+    # experiment_example = Experiment(180, 2, 40, 300, True, True, False, False, 32, 32, 6, 0, 3)
+    # return_values = experiment_example.run()
+
+    while True:
+        # Adjust the parameters as needed
+        experiment_instance = Experiment(180, 2, 30, 10, True, True, False, False, 32, 32, 6, 0, 3)
+        experiment_instance.run()
