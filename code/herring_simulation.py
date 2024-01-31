@@ -23,7 +23,7 @@ class Config():
     # Experimental setting
     WIDTH = 600
     HEIGHT = 600
-    FRAMES_PER_SECOND = 25
+    FRAMES_PER_SECOND = 20
 
     # Parameters herring
     HERRING_SIZE = 3
@@ -158,9 +158,10 @@ class Herring(pygame.sprite.Sprite):
                                                     random.uniform(-0.05, 0.05))
 
     def avoid_predator(self, all_predators, all_herring):
-        """This function adapts the velocity of a herring to avoid the predators within the
-        perception length of the herring. The closer the predator the higher its impact on the
-        direction of the herring. If the herring is within killing distance, it will be killed.
+        """This function adapts the velocity of a herring to avoid the predators within
+        the perception length of the herring. The closer the predator the higher its
+        impact on the direction of the herring. If the herring is within killing distance,
+        it will be killed.
 
         Parameters:
         -----------
@@ -330,8 +331,8 @@ class Predator(pygame.sprite.Sprite):
         for predator in all_predators:
             distance_between_predator = self.position.distance_to(predator.position)
 
-            if predator != self and distance_between_predator !=0 and distance_between_predator \
-                                                < (Config.PERCEPTION_LENGTH_PREDATOR/ 2):
+            if predator != self and distance_between_predator !=0 and \
+                    distance_between_predator < (Config.PERCEPTION_LENGTH_PREDATOR/ 2):
 
                     # Make a collision avoidance vector and add it to total vector
                     collision_avoidance_vector += (self.position - predator.position)\
@@ -655,7 +656,8 @@ class Experiment(pygame.sprite.Sprite):
                     # Add the rock to the rock population
                     all_rocks.add(Rock(new_x, new_y))
 
-                # Adding additional rocks >> introduce variability in the placement of rocks for a more natural look
+                # Adding additional rocks >> introduce variability in the placement
+                # of rocks for a more natural look
                 for _ in range(num_extra_rocks):
                     random_ratio = random.uniform(0, 1)
                     random_radius = random.uniform(0, 10)
@@ -862,7 +864,8 @@ class Experiment(pygame.sprite.Sprite):
             else:
              return perception_length - adaption
 
-        def handle_perception_change(perception_list, perception_length_attr, adaption, killed_count_ls):
+        def handle_perception_change(perception_list, perception_length_attr, adaption,
+                                                                        killed_count_ls):
             """Function that changes the perception length of the herring or predator
             on specific time pointsduring the simulation. Trying to create the concept
             of the water getting darker later on the day.
@@ -1031,5 +1034,5 @@ if __name__ == "__main__":
     """
     # Do a doctest and run the simulation
     doctest.testmod()
-    experiment_example = Experiment(150, 3, 40, 300, True, True, False, False, 32, 32, 6, 0, 3)
+    experiment_example = Experiment(180, 2, 40, 300, True, True, False, False, 32, 32, 6, 0, 3)
     return_values = experiment_example.run()

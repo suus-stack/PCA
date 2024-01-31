@@ -439,8 +439,8 @@ def influences_closeness_herring(number_simulations, time_simulation):
                                     facecolor='lightcyan', transform=axes[1].transAxes)
     axes[1].add_patch(background_legend2)
     axes[1].set_xticks([0, 1, 2, 3, 4])
-    axes[1].set_xticklabels(['1 p, no r,\ns d = 6', '4 p, no r,\ns d = 6', '1 p, 20 r, \ns d = 6',
-                                    '1 p, no r,\ns d = 3', '1 p, no r,\ns d = 12'], fontsize=11)
+    axes[1].set_xticklabels(['1 p, no r,\ns d = 6', '4 p, no r,\ns d = 6',
+    '1 p, 20 r, \ns d = 6', '1 p, no r,\ns d = 3', '1 p, no r,\ns d = 12'], fontsize=11)
     axes[1].set_title('Herring killing count', fontsize=12)
     axes[1].set_xlabel('Environmental situation', fontsize=11)
     axes[1].set_ylabel('Killing count', fontsize=11)
@@ -481,9 +481,9 @@ def influence_boid_rules(number_simulations, time_simulation):
     for simulation in range(number_simulations):
         print('Simulation:', simulation)
         for boids_influence_value in range(4):
-            return_values = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
-                extra_rocks, start_school,boids_influence=boids_influence_value
-            ).run()
+            return_values = Experiment(herring_nr, predator_nr, rock_nr,
+                        simulation_duration, extra_rocks, start_school,
+                        boids_influence=boids_influence_value).run()
             print('Boids influence rule:', boids_influence_value)
 
             data_array_killed_herring[simulation, boids_influence_value] = \
@@ -778,9 +778,9 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
             print('Boids influence:', boids_influence_value)
             for weighted_x in range(min_range, max_range):
                 print('Weight boid rule:', weighted_x)
-                return_values = Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
-                                           extra_rocks, start_school, boids_influence= \
-                                           boids_influence_value, weighted_x=weighted_x).run()
+                return_values = Experiment(herring_nr, predator_nr, rock_nr,
+                    simulation_duration, extra_rocks, start_school, boids_influence= \
+                                boids_influence_value, weighted_x=weighted_x).run()
 
                 # Add the values of the experiment to the list
                 all_simulation_values.append({
@@ -793,8 +793,8 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
     # Convert the list with values to a DataFrame
     df_boid_rules = pd.DataFrame(all_simulation_values)
     fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(10, 8), sharey=True)
-    titles = ['No Weighted Boid Rules', 'Weighted Separation Rule', 'Weighted Alignment Rule',
-                                                                    'Weighted Cohesion Rule']
+    titles = ['No Weighted Boid Rules', 'Weighted Separation Rule',
+                            'Weighted Alignment Rule','Weighted Cohesion Rule']
 
     # Plot the averagenumber of killed herring per weight for each Boids rule
     for i, ax in enumerate(axes.flatten()):
@@ -854,4 +854,4 @@ if __name__ == "__main__":
     predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
-    sensitivity_weighted_x(40, 30, -5, 6)
+    sensitivity_weighted_x(20, 30, -5, 6)

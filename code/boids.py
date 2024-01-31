@@ -259,7 +259,8 @@ class Experiment():
         velocity_differences_if_close[0, :, :][excluded_from_formation] = 0
         velocity_differences_if_close[1, :, :][excluded_from_formation] = 0
 
-        velocities -= np.mean(velocity_differences_if_close, 1) * self.formation_flying_strength
+        velocities -= np.mean(velocity_differences_if_close, 1) * \
+                                                self.formation_flying_strength
 
     def collision_avoidance(self, positions, velocities):
         """ Function that makes sure the herring do not collide.
@@ -445,7 +446,8 @@ class Experiment():
             direction_predator_herring_normal = direction_predator_herring / all_distances
 
             # Adjust the positions of the predator close to the herring
-            attraction_directions = np.where(close_predators_mask, direction_predator_herring_normal, 0)
+            attraction_directions = np.where(close_predators_mask,
+                                                    direction_predator_herring_normal, 0)
             predator_pos += np.sum(attraction_directions * (self.perception_predator - \
                                 all_distances), axis=2)
 
