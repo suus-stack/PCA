@@ -46,7 +46,7 @@ Visualisation.py
 
 The link to the GitHub containing the code is https://github.com/suus-stack/PCS
 
-THE MODEL: herring_simulation  
+THE MODEL: herring_simulation.py  
 Herring_simulation.py contains the code to run an 2-dimensional agent-based model in
 which the herring, rocks and predators are represented as agents with their own
 positions and velocities.
@@ -55,25 +55,25 @@ Herring features
 The movement of a herring (Boid) is based on three rules:
 - Separation: Herring maintain a minimum distance between each other.
 - Alignment: Herring aligns their direction with that of their closest neighbours
-- Cohesion:  Herring remains in close proximity to their nearest neighbours.
+- Cohesion: Herring remains in close proximity to their nearest neighbours.
 
 The speed of the herring is the average speed for a herring. For a diversity of natural
 speeds within the group, a value of the standard deviation (SD) spread, ranging between
 -1 and 1, is also added to this.
 The presence of rocks and predators in the environment influences the behavior of herring,
 when it is in their perception range. Rocks alter the direction of herring, while predators
-can affect both their speed and direction. As predators draw closer, the herring's speed
-accelerates.
+can affect both their speed and direction. As predators comes closer, the herring's speed
+increases.
 
 Barracuda features  
-The movement of a barracuda is initially random, but it changes when it encounters another
-barracuda, causing it to change directions. For a diversity of natural speeds within the
-group, a value of the SD spread, ranging between -1 and 1, is also added to this.
-Additionally, the presence of rocks and herring in the environment also influences a
-barracuda's movement. Rocks can alter the direction of a barracuda, while herring can
+The movement of a barracuda is initially random, but it changes when it encounters
+anotherbarracuda, causing it to change directions. For a diversity of natural speeds
+within the group, a value of the SD spread, ranging between -1 and 1, is also added to
+this. Additionally, the presence of rocks and herring in the environment also influences
+a barracuda's movement. Rocks can alter the direction of a barracuda, while herring can
 impact both its speed and direction. When a herring is within the perception range of a
-barracuda, the predator's speed increases, and it will move towards the herring. Moreover,
-the closer the herring, the greater the acceleration of the barracuda's speed.
+barracuda, the predator's speed increases, and it will move towards the herring.
+Moreover, the closer the herring, the greater the acceleration of the barracuda's speed.
 
 Rock features  
 The stones are randomly distributed. No creature can traverse these obstacles. When
@@ -82,15 +82,16 @@ by identifying stones within a Euclidean distance of less than 60 units and plac
 additional rocks along this distance line.
 
 THE FUNCTION  
-Experiment(herring_nr, predator_nr, rock_nr, simulation_duration,
-connect_rocks, start_school, perception_change_predator, perception_change_herring,
-alignment_distance, cohesion_distance, separation_distance, boids_influence, weighted_x)
+Experiment(herring_nr, predator_nr, rock_nr, simulation_duration, connect_rocks,
+  start_school, perception_change_predator, perception_change_herring, alignment_distance,
+  cohesion_distance, separation_distance, boids_influence, weighted_x)
 
 In the default function, the rocks get a random position, and connect_rocks is set to
-true. Start_school is also set to True, the herring get different positions
+true. Start_school is also set to True, so the herring get different positions
 close to each other to form a school. The barracudas are assigned random positions that
 lie outside the perception range of any herring. This ensures that the entire attack is
-shown. The simulation is run for a specified number of seconds.
+shown. The simulation is run for a with the 'simulation_duration' parameter specified
+number of seconds.
 In the perception length of the herring and predator do not change, perception_change
 _predator and perception_change_herring are set to False. And every Boid rule has the
 same amount of influence.
@@ -106,10 +107,11 @@ than 0, the impact of a rule will be assigned a weighted indicted with 'weighted
 Output model  
 In the default function, the model returns a dictionary that contains the number
 of killed herring and the number of times herring came within the separation distance
-of 6. If 'perception_change_herring' is set to True it also returns a list with the
-perception length of the herring and with the killed herring count at every time point.
-If 'perception_change_predator' is set to True it also returns a list with the perception
-length of the predator and with the killed herring count at every time point.
+of 6. If 'perception_change_herring' is set to True the returned dictionary also will
+contain a list with the perception length of the herring and with the killed herring
+count at every time point. If 'perception_change_predator' is set to True the returned
+dictionary also will contain a list with the perception length of the predator and
+with the killed herring count at every time point.
 
 FIXED PARAMETERS  
 * HERRING_SIZE (float) = the radius of the circle which represents herring in the simulation.
@@ -166,7 +168,7 @@ CHANGEABLE PARAMETERS
 * weighted_x (int) = Indicates the weight of the Boid rule of which the influence is changed  
 
 HOW TO RUN:  
-Command to simulate the default model with these values:
+Command in to simulate the default model with these values:
 Experiment(herring_nr = 100, predator_nr = 3, rock_nr = 30, simulation_duration = 20,
       extra_rocks = False, start_school = True, perception_change_predator = False,
       perception_change_herring = False, alignment_distance = 32, cohesion_distance = 32,
@@ -219,7 +221,7 @@ folder data_visualisation.
 * Predator_killing_efficiency_plot = Line plot of the average number of killed herring per
                   predator + 1 SD error bars in an environment with and without rocks.
 
-* Sensitivity_weight_plot =  line plots illustrating the mean number of killed herring + SD 
+* Sensitivity_weight_plot = Line plots illustrating the mean number of killed herring + SD
                   for weight values ranging from -5 to 5 in increments of 1.
 
 HOW TO RUN
@@ -258,6 +260,10 @@ analysis, it simply shows we tried a different approach.
 THE FUNCTION  
 Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc, nr_herring,
            nr_predators, nr_rocks)
+
+In the default function the herring get a random position between the lower_lim_flock
+and upper_lim_flock. The rocks and predators also get a random different position. The
+herring also get a random velocity between the stated lower_lim_veloc and upper_lim_veloc.
 
 FIXED PARAMETERS  
 * perception_predator (float) = perception rate of predator.
@@ -299,15 +305,12 @@ CHANGEABLE PARAMETERS
 * lower_lim_veloc (float)= Minimum range of the velocity of a herring.                      
 * upper_lim_veloc (float)= Maximum range of the velocity of a herring.
 
-upper_lim_flock = np.array([0, 100])
-lower_lim_flock = np.array([0, 100])
-upper_lim_veloc = np.array([10, 20])
-lower_lim_veloc = np.array([0, -20])
 
 HOW TO RUN:  
 Command to simulate the incomplete model with the values:
-Experiment(lower_lim_flock, upper_lim_flock, lower_lim_veloc, upper_lim_veloc,
-          nr_herring = 20, nr_predators = 2, nr_rocks = 10)
+Experiment(lower_lim_flock = np.array([0, 100]), upper_lim_flock = np.array([0, 100]),
+        lower_lim_veloc = np.array([10, 20]), upper_lim_veloc = np.array([0, -20]),
+        nr_herring = 20, nr_predators = 2, nr_rocks = 10)
 
 - python boids.py
 
