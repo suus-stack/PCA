@@ -24,6 +24,8 @@ Python version 3.11.4 is used.
 THE CODE: herring_simulation.py
 Contains the code to run an 2-dimensional agent-based model in which the herring, rocks and predators are represented as agents with their own
 positions and velocities.
+>> For a more elaborate explanation of the code and parameters check out the elaborated_readme file here:
+>> https://github.com/suus-stack/PCS/blob/main/ELABORATED_README.md 
 
 OUTPUT: returns a dictionary with the number of killed herring and number of times herring came to close with eachother.
 
