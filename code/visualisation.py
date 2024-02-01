@@ -124,8 +124,7 @@ def predator_killing_efficiency(max_number_predators, number_simulations, time_s
 
     ax.set_xlabel('Number of barracudas', fontsize =11)
     ax.set_ylabel('Killed herring/ barracuda', fontsize =11)
-    ax.set_title('''Average killed herring + 1 SD error bars per barracuda, with and \
-                                                    without rocks''', fontsize =12)
+    ax.set_title('Average killed herring + 1 SD error bars per barracuda, with and without rocks')
 
     ax.legend()
     plt.show()
@@ -186,8 +185,7 @@ def influence_rocks(max_number_rocks, number_simulations, time_simulation):
         'purple', label='avarage killed herring + 1 SD, 3 barracudas')
     plt.xlabel('Number or rocks', fontsize=11)
     plt.ylabel('Average killed herring', fontsize=11)
-    plt.title('''Average killed herring + 1 SD errorbars in environments with different
-                                                                    numbers of rocks''')
+    plt.title('Average killed herring + 1 SD errorbars in environments with differ numbers of rocks')
     plt.ylim(bottom=0)
     plt.legend(fontsize=10)
     plt.show()
@@ -637,14 +635,14 @@ def visualizing_perception_change(number_simulations, time_simulation, number_he
         new_row_df = pd.DataFrame([np.diff(return_values_dict2[ \
                             'Killed_herring_count_predator_perception_change'])])
         df_predator_change = pd.concat([df_predator_change, new_row_df], ignore_index=True)
-        print('hi')
+
         # Herring perception change
         return_values_dict3 = Experiment(number_herring, 4, 20, time_simulation,
                                         True, True, False, True, 32, 32, 6).run()
         new_row_df = pd.DataFrame([np.diff(return_values_dict3[\
                             'Killed_herring_count_herring_perception_change'])])
         df_herring_change = pd.concat([df_herring_change, new_row_df], ignore_index=True)
-        print('hi')
+
         # Herring and predator perception change
         return_values_dict4 = Experiment(number_herring, 4, 20, time_simulation,
                                         True, True, True, True, 32, 32, 6).run()
@@ -772,7 +770,7 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
 
     all_simulation_values = []
 
-    Do a number of simulations emphasizing different boid rules with different weights 
+    # Do a number of simulations emphasizing different boid rules with different weights
     for simulation in range(number_simulation):
         print('Simulation:', simulation)
         for boids_influence_value in range(4):
