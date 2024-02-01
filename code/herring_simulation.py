@@ -510,7 +510,7 @@ class Rock(pygame.sprite.Sprite):
                                                                 - other_position[1])**2)
 
 class Experiment(pygame.sprite.Sprite):
-    def __init__(self, herring_nr=100, predator_nr=1, rock_nr=10, simulation_duration=20,
+    def __init__(self, herring_nr=200, predator_nr=3, rock_nr=20, simulation_duration=20,
         extra_rocks=False, start_school=True, perception_change_predator=False,
         perception_change_herring=False, alignment_distance=20, cohesion_distance=20,
         separation_distance=5, boids_influence=0, weighted_x=0):
@@ -1018,9 +1018,9 @@ class Experiment(pygame.sprite.Sprite):
 if __name__ == "__main__":
     """
     The parameters that have to be given:
-    1: The number of herring in the simulation (int). Default set to one hunderd.
-    2: The number of predators in the simulation (int). Default set to one.
-    3: The number of rocks in the simulation (int). Default set to ten.
+    1: The number of herring in the simulation (int). Default set to two hunderd.
+    2: The number of predators in the simulation (int). Default set to three.
+    3: The number of rocks in the simulation (int). Default set to twenty.
     4: The duration of the simulation in seconds (int). Defaut set to twenty.
     5: Closeby rocks should be connected via more rocks (Bool). Default set to True.
     6: Herring start as one school instead of randomly (bool). Default set to True.
