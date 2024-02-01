@@ -22,6 +22,8 @@ Python version 3.11.4 is used.
     - install: pip install scipy==1.11.4
 * seabron (version 0.13.0)
     - install: pip install seaborn==0.13.0
+* matplotlib (version 3.8.2)
+    - install: pip install matplotlib==3.8.2
 
 >> For a more elaborate explanation of the code and parameters check out the elaborated_readme file here:
 >> https://github.com/suus-stack/PCS/blob/main/ELABORATED_README.md
