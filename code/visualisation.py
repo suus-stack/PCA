@@ -826,10 +826,10 @@ if __name__ == "__main__":
     # Determine the influence of rocks on the killing rate
     influence_rocks(80, 30, 30)
 
-    #Determine the invluence of more predators
+    # Determine the invluence of more predators
     influence_predator_number(20, 30, 30)
 
-    # # Determine the influence of the scoolsize
+    # Determine the influence of the scoolsize
     df_school_size = influence_school_size(40, 30)
     significant_test_school_size(df_school_size)
 
@@ -854,4 +854,4 @@ if __name__ == "__main__":
     predator_killing_efficiency(30, 30, 30)
 
     # Determine the difference in killed herring when boid rules get different weights
-    sensitivity_weighted_x(20, 30, -5, 6)
+    sensitivity_weighted_x(30, 30, -5, 6)
