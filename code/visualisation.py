@@ -772,6 +772,7 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
 
     all_simulation_values = []
 
+    Do a number of simulations emphasizing different boid rules with different weights 
     for simulation in range(number_simulation):
         print('Simulation:', simulation)
         for boids_influence_value in range(4):
@@ -796,7 +797,7 @@ def sensitivity_weighted_x(number_simulation, time_simulation, min_range, max_ra
     titles = ['No Weighted Boid Rules', 'Weighted Separation Rule',
                             'Weighted Alignment Rule','Weighted Cohesion Rule']
 
-    # Plot the averagenumber of killed herring per weight for each Boids rule
+    # Plot the average number of killed herring per weight for each Boids rule
     for i, ax in enumerate(axes.flatten()):
         boids_rule_data = df_boid_rules[df_boid_rules['Boids_Influence'] == i]
         avg_killed_herring = boids_rule_data.groupby('Weighted_X')['Killed_Herring'].agg([\
